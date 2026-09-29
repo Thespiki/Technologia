@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ICI",
+    "BFB",
+    "ICI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "B": {
+      "item": "minecraft:chest"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    }
+  },
+  "result": {
+    "id": "technologia:storage_core",
+    "count": 1
+  }
+}

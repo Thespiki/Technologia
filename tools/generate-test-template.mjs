@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import zlib from 'node:zlib';
+const short=n=>{const b=Buffer.alloc(2);b.writeUInt16BE(n);return b};
+const int=n=>{const b=Buffer.alloc(4);b.writeInt32BE(n);return b};
+const string=s=>Buffer.concat([short(Buffer.byteLength(s)),Buffer.from(s)]);
+const tag=(type,name,data)=>Buffer.concat([Buffer.from([type]),string(name),data]);
+const list=(type,values)=>Buffer.concat([Buffer.from([type]),int(values.length),...values]);
+const nbt=Buffer.concat([Buffer.from([10,0,0]),tag(3,'DataVersion',int(3955)),tag(9,'size',list(3,[int(8),int(8),int(8)])),tag(9,'palette',list(10,[Buffer.concat([tag(8,'Name',string('minecraft:air')),Buffer.from([0])])])),tag(9,'blocks',list(10,[])),tag(9,'entities',list(10,[])),Buffer.from([0])]);
+const directory='neoforge/src/main/resources/data/technologia/structure';
+fs.mkdirSync(directory,{recursive:true});fs.writeFileSync(`${directory}/empty.nbt`,zlib.gzipSync(nbt));

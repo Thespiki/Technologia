@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "technologia:tin_ore",
+    "technologia:deepslate_tin_ore",
+    "technologia:lead_ore",
+    "technologia:deepslate_lead_ore",
+    "technologia:resonite_ore"
+  ]
+}

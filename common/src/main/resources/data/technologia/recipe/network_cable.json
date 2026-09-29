@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " T ",
+    "CRC",
+    " T "
+  ],
+  "key": {
+    "T": {
+      "tag": "c:ingots/tin"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "technologia:network_cable",
+    "count": 8
+  }
+}

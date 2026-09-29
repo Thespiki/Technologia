@@ -1,0 +1,83 @@
+List of mods or features from mods to add their content to Technologia. Some of the mods have features, blocks, mechanics and other that doesn't match the goal of Technologia. As a reminder : Technologia is mainly a tech mod but also brings back older mods mechanics that disappeared or even mods that totally disappeared. Nothing prevents it from having some magic, mystical interactions or other. But it's mainly a machine mod. The most convenient would be that, as this mod will contain a lot of things in it, some mechanics from a different domain can interact with others (for exemple, a magical part of the mod could interact with the tech part to make it more efficient, or a tech part could interact with natural to accelerate or have better rendement).
+
+Magnets, and like other things there would be a tiers.
+Multi tool with tiers.
+Crops to grow things that could be natural like food, and maybe ore but for those it would cost a lot to maintain the growth, the harvest and the making of the seeds.
+Like in exnihilo a sieve, with autoseives, compacted blocks etc... Except won't need another tool to do all of the things, we could change the mod of the multitool with a key or a rotary menu. For this mod no need for upgrade, directly available.
+Multitool : different tiers, able to upgrade with a tool station, first tiers would work without electricity, limited tools available, no upgrades, and durability depending on the materials used to make it. Would be working a bit like tinkers construct.
+For the baubles/curios like inventory we will be using curios. Add the necessary slots for sure.
+For the applied energistics like part : 
+-autocrafting, need processing units but no need for both processor and co processor, just different tiers and upgrades.
+-disks/storage cells : different tiers.
+-for cables : different types, cable electricity, item pipe, fluid pipe, gaz pipe. Different tiers for each. Data cables with different throughputs regarding the tier (for those ones maybe regarding the material used we'll get to materials further down).
+-a channels system like ae2, but not a general limit only. Yes there would be a limit but mainly would be good if it depends on the upgrades, tiers, and modifiers applied to the systems and cables. Regarding what we plug in it takes more or less channels. Yes there would be more channels as we could do something like if it needs, electricity, data, storage, fluids, 4 channels. If maybe the machine doesn't consume a lot of data, or electricity or other (depending on the tier of the cable), maybe it won't take a whole channel.
+-appart, a difference from ae2. It would look more like a irl server room : everything is done in racks, crafting processing units, storage managers, storage cells/disks, security of the system, and other aspectes of the mod/system. For sure there won't be only server racks, there will be other things. Either ask for precisions about that because there is a lot to say, but normally there would be a lot of things said in the description of other things.
+-interfaces
+-energy, depends on what's connected to the network. Having a power surge, too much power asked for the power supplies, and boom. Redundancy, electricity storage in case of outage or other, etc...
+-this part of the mods, will have a lot of ores and ressources that would be found in nature and regarding the tiers and upgrades, it would asks more ressource or less in quantity and rarity. Some of the ressources would be found in other dimensions, we'll get to that later.
+-about connection, there should be a way to transmit things from a distance. There would be no distance limits, but channels and throughputs. Like the quantum ring in ae2. On this, the tiers would be a bit easier in the way that it would not limit that much.
+-if it could go great with this mod, p2p like in ae2 is welcomed
+-for spatial storage let's combine the mod compact machines and spatial io of ae2, with tiers.
+-subnetworks would be working like networking with the mod
+-in a guide for the mod, in the part where everything is explained for that, propose exemples of setups maybe.
+
+A miners dimension like aroma but not only miner. It would contain all the biomes the mod could add, and maybe ressources only available there. There would be tiers but it would be a bit like rftools dimensions, tiers would more look like efficiency in the ressources, let's have a balance for that.
+Rftools like mod, just add things that could be relevant to this mod.
+
+A galacticraft side, again certain ressources needed with processing, needs a certain tier of advancement in the mod, and has different tiers that would allow you to go further, go on harder planets etc...
+
+More about tools and armors, would be like tinkers, avaritita etc... Tiers, upgrades, materials, alloys, energized, magnetic force/protection field etc...
+
+Multitools would also be able to use builders wand (the one belonging to the mod), it's an addon to the tool, not a base thing. The same for a hammer mod and other mods.
+
+A bonsai pot mod, and add crates with different sizes. A guidebook accessible either with a key, in jei, mei or other display everything mods, or a book (easy to craft, can get by a non admin command, etc...)
+A dependency, compatibily and use of cooking for blockheads, for food that could be added by the mod.
+
+We could have the wand that teleports you where you click using ender pearls in ender io. Maybe have a version with a tier that proposes using ender pearl or liquid ender pearl stored in an addon on the armor/backpack.
+
+Environmental tech, let's add the miners, have tiers, and different purposes (vegetale, ore, misc ressources).
+
+Reactors, generators, solar panels, etc... Multiple tiers.
+For the reactor it would be multiple types of reactor : gaz, coal, etc... And NUCLEAR HEHEHEHE.
+
+A crop farming side of the mod. With growth accelerators, different tiers. Tiers for the crops, auto harvesters etc...
+
+A part like flux networks. Here there are no tiers. Just you know, once you arrive at a certain tier, you now have the necessary ressources to craft those. Just a energy sender, energy receiver, limits, différents channels to the networks, throughput etc...
+A portable energy storage. Either as a cell for the tools and armor. A block for a power bank for machines and other. Different tiers. For the block one, being able to make a multiblock.
+
+Now for what we could add like immersive engeeniring: petrol, refinery (like the old one not the new one 1.12.2). Multiblocks, press, fuel etc... Water wheel, wind mill, thermoelectric generator, diesel generator to generate electricity in the early tiers. (the energy type is RF, or the most compatible with other mods, or one proprietary for the mod but able to convert with other mods electricity).
+
+
+Don't forget that there will be a lot of tiers.
+In the book, add a quest like page where it shows a way to go further in the progression of the mod.
+Add advancements to track progression.
+
+Like mekanism : enerichment chambers, turbines, digital miner (easier to use and to understand), pumps, chemical machines suite, energized machine suite, electrolytic separator, smelter, metalurgic infuser, sawmill, purification chamber, rotary condensatior, and other can be useful machines. Tiers, upgrades and all. Also, about the tiers, for all the machines where it could be relevant, in mekanism regarding the tier, the machine has less or more slots. Like a base smelter have one input slot, and one output slot (works with electricity, also for me the smelter is like a furnace), and the latest tier have more input slots and more output slots as an exemple.
+
+A feature that allows chunck loading.
+
+A lot of decorations blocks, furniture, etc...
+
+A part like woot for mob farms like multiblocks, different tiers and upgrade, but easier to understand and use than woot.
+
+Compatibility with storage drawers.
+
+Thermal mods like expansion, foundation, cultivation etc..., add a lot of the features, items and blocks that we could find.
+
+For the storage system add a modular terminal where we could add the different services available with the system. Also like applied, it doesn't not display stack by stack but item per item : let's say i have a 1000 coal, it won't show stacks of coal but one thousand coal.
+
+Some things from botania.
+
+Dark utilities addtions.
+
+Ender storage like : ender chest that change which storage it takes by dying em, same with tanks.
+
+Like pneumaticraft.
+
+Industril craft and forgoing addons.
+
+Mob grinding utilities
+
+All of the above will have be regarding what they are, needs etc... upgrades, tiers, addons etc...
+Don't hesitate to propose things to add, I forgot etc...
+This mod might take a lot of ressources. Optmizing is might be important. Also, although Minecraft is single core, if there is the possibiltiy to use mutli-core processing would be nice for chunk loading, the storage system and others...

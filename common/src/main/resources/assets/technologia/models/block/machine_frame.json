@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "technologia:block/machine_frame",
+    "down": "technologia:block/casing",
+    "up": "technologia:block/top",
+    "north": "technologia:block/machine_frame",
+    "south": "technologia:block/casing",
+    "east": "technologia:block/casing",
+    "west": "technologia:block/casing"
+  }
+}

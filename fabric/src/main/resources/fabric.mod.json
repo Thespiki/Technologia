@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "technologia",
+  "version": "${version}",
+  "name": "Technologia",
+  "description": "Industrial automation with a unified visual language.",
+  "authors": [
+    "Technologia"
+  ],
+  "license": "All Rights Reserved",
+  "environment": "*",
+  "accessWidener": "technologia.accesswidener",
+  "entrypoints": {
+    "main": [
+      "dev.technologia.TechnologiaFabric"
+    ],
+    "client": [
+      "dev.technologia.TechnologiaFabricClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.9",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*",
+    "team_reborn_energy": ">=4.1.0"
+  }
+}

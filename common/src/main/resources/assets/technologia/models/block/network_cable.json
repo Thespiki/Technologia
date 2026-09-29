@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "technologia:block/network_cable",
+    "down": "technologia:block/casing",
+    "up": "technologia:block/top",
+    "north": "technologia:block/network_cable",
+    "south": "technologia:block/casing",
+    "east": "technologia:block/casing",
+    "west": "technologia:block/casing"
+  }
+}

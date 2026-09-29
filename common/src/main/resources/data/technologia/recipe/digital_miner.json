@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DAD",
+    "EFP",
+    "CRC"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "P": {
+      "item": "minecraft:iron_pickaxe"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "R": {
+      "item": "technologia:resonite"
+    }
+  },
+  "result": {
+    "id": "technologia:digital_miner",
+    "count": 1
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "replace": false,
+  "values": [
+    "technologia:machine_frame",
+    "technologia:coal_generator",
+    "technologia:crusher",
+    "technologia:electric_furnace",
+    "technologia:digital_miner",
+    "technologia:storage_core",
+    "technologia:storage_terminal",
+    "technologia:energy_cell",
+    "technologia:network_cable",
+    "technologia:tin_ore",
+    "technologia:deepslate_tin_ore",
+    "technologia:lead_ore",
+    "technologia:deepslate_lead_ore",
+    "technologia:resonite_ore"
+  ]
+}

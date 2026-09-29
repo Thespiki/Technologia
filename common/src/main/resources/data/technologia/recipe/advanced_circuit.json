@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RGR",
+    "CBC",
+    "RGR"
+  ],
+  "key": {
+    "R": {
+      "item": "technologia:resonite"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "B": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "result": {
+    "id": "technologia:advanced_circuit",
+    "count": 1
+  }
+}

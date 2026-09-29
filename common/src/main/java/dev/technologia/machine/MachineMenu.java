@@ -1,0 +1,53 @@
+package dev.technologia.machine;
+
+import dev.technologia.Technologia;
+import net.minecraft.world.*;
+import net.minecraft.world.entity.player.*;
+import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.ItemStack;
+
+public final class MachineMenu extends AbstractContainerMenu {
+    private final Container machine;
+    private final ContainerData data;
+    public MachineMenu(int id, Inventory player) { this(id, player, new SimpleContainer(27), new SimpleContainerData(7)); }
+    public MachineMenu(int id, Inventory player, Container machine, ContainerData data) {
+        super(Technologia.MACHINE_MENU, id);
+        checkContainerSize(machine, 27); checkContainerDataCount(data, 7);
+        this.machine = machine; this.data = data;
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) {
+            final int slotIndex = row * 9 + col;
+            addSlot(new Slot(machine, slotIndex, 34 + col * 18, 66 + row * 18) {
+                @Override public boolean mayPlace(ItemStack stack) { return slotIndex == 0 && machine.canPlaceItem(slotIndex, stack); }
+            });
+        }
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, col + row * 9 + 9, 34 + col * 18, 164 + row * 18));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 34 + col * 18, 222));
+        addDataSlots(data);
+    }
+    public int energy() { return (data.get(0) & 65535) | (data.get(1) << 16); }
+    public MachineKind kind() { return MachineKind.values()[Math.clamp(data.get(2), 0, MachineKind.values().length - 1)]; }
+    public int progress() { return data.get(3); }
+    public int duration() { return Math.max(1, data.get(6)); }
+    public int status() { return data.get(4); }
+    public boolean enabled() { return data.get(5) != 0; }
+    @Override public boolean stillValid(Player player) { return machine.stillValid(player); }
+    @Override public boolean clickMenuButton(Player player, int button) {
+        if (!stillValid(player) || !(machine instanceof MachineBlockEntity be) || !be.mayConfigure(player)) return false;
+        if (button == 0) be.toggle(player);
+        else if (button == 1 && be.kind == MachineKind.MINER) be.rescan(player);
+        else return false;
+        return true;
+    }
+    @Override public ItemStack quickMoveStack(Player player, int index) {
+        if (index < 0 || index >= slots.size()) return ItemStack.EMPTY;
+        Slot slot = slots.get(index);
+        if (!slot.hasItem()) return ItemStack.EMPTY;
+        ItemStack current = slot.getItem(), original = current.copy();
+        if (index < 27) {
+            if (!moveItemStackTo(current, 27, slots.size(), true)) return ItemStack.EMPTY;
+        } else if (!moveItemStackTo(current, 0, 1, false)) return ItemStack.EMPTY;
+        if (current.isEmpty()) slot.setByPlayer(ItemStack.EMPTY); else slot.setChanged();
+        slot.onTake(player, current);
+        return original;
+    }
+}
