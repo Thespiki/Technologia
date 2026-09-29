@@ -11,6 +11,8 @@ This record distinguishes compilation, automated behavior checks and hands-on pl
 | NeoForge 1.21.1 build | Passed; final alpha jar rebuilt after registry and model changes |
 | Forge 1.21.1 build | Passed; final alpha jar rebuilt after registry and model changes |
 | NeoForge game tests | All 8 required server tests passed |
+| GitHub CI | All three loader jobs passed, including the NeoForge server tests |
+| Versioned packaging | `packageRelease` passed; exactly three installable jars copied to the current version folder and hashes matched their build outputs |
 | Presentation site | Static build and JavaScript syntax passed; search, status filters, empty results and combined filtering checked in browser; mobile and desktop layouts reviewed |
 | Minecraft client visual review | Not performed |
 | Fabric / Forge in-game tests | Not performed |

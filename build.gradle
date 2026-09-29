@@ -4,3 +4,40 @@ plugins {
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
     id 'net.neoforged.moddev' version '2.0.147' apply false
 }
+
+// Resolve each loader's final installable artifact after its plugin is configured.
+gradle.projectsEvaluated {
+    def releaseArtifacts = [
+        fabric: [task: project(':fabric').tasks.named('remapJar'), metadata: 'fabric.mod.json'],
+        neoforge: [task: project(':neoforge').tasks.named('jar'), metadata: 'META-INF/neoforge.mods.toml'],
+        forge: [task: project(':forge').tasks.named('jar'), metadata: 'META-INF/mods.toml']
+    ]
+
+    tasks.register('packageRelease', Copy) {
+        group = 'distribution'
+        description = 'Build and collect the three installable jars in releases/<mod version>.'
+        dependsOn ':common:test', ':fabric:build', ':neoforge:build', ':forge:build'
+        into layout.projectDirectory.dir("releases/${project.version}")
+
+        releaseArtifacts.each { loader, artifact ->
+            from(artifact.task.flatMap { it.archiveFile }) {
+                rename { "${mod_id}-${loader}-${minecraft_version}-${project.version}.jar" }
+            }
+        }
+
+        // Check all inputs before copying any files into the version folder.
+        doFirst {
+            releaseArtifacts.each { loader, artifact ->
+                def jarFile = artifact.task.get().archiveFile.get().asFile
+                if (!jarFile.isFile()) {
+                    throw new GradleException("Missing ${loader} release jar: ${jarFile}")
+                }
+                new java.util.zip.ZipFile(jarFile).withCloseable { zip ->
+                    if (zip.getEntry(artifact.metadata) == null) {
+                        throw new GradleException("Missing ${loader} mod metadata in ${jarFile}")
+                    }
+                }
+            }
+        }
+    }
+}

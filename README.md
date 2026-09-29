@@ -25,6 +25,8 @@ Draconic and chaotic cores are **creative-only concept items**. Equipment, bosse
 
 Install the jar for your Minecraft version and loader on client and server. Fabric additionally requires Fabric API; Team Reborn Energy is bundled. Do not install multiple Technologia loader jars together.
 
+Download builds from [GitHub Releases](https://github.com/Thespiki/Technologia/releases). Each mod release contains separate Fabric, NeoForge and Forge jars.
+
 1. Mine tin and smelt it. Craft a machine frame, basic circuits and a combustion generator.
 2. Place an ore crusher directly beside the generator. Put coal or charcoal in the generator's upper-left slot. Put raw iron in the crusher's upper-left slot. The other slots receive output.
 3. Smelt the dust in a vanilla furnace or powered electric furnace. Hoppers can feed input and collect output.
@@ -59,6 +61,16 @@ node tools/verify-resources.mjs
 ```
 
 On Linux/macOS use `./gradlew`. Installable jars are under `fabric/build/libs`, `neoforge/build/libs` or `forge/build/libs`; choose the main jar, not a `sources` or `javadoc` jar. The `common` module is not an installable mod.
+
+To build all three loaders and collect their installable jars together:
+
+```powershell
+.\gradlew.bat packageRelease
+```
+
+This runs the shared unit tests and all three loader builds, then puts the three jars in `releases/<mod version>/`, using `version` from `gradle.properties`. For example, `releases/0.1.0-alpha.1/` contains the Fabric, NeoForge and Forge jars for Minecraft 1.21.1. Older version folders are kept; repeating the same version refreshes its files. Generated release jars stay local and are excluded from Git.
+
+Pushing a `v<mod version>` tag publishes those three variants to GitHub Releases after build/resource checks and server GameTests pass. See [release packaging and publishing](releases/README.md) for the versioned notes and tag workflow.
 
 `node tools/generate-resources.mjs` reproducibly rebuilds prototype textures, recipes, loot, tags, worldgen and loader metadata. `node tools/generate-test-template.mjs` rebuilds the game-test structure. Edit the generators when changing generated content.
 
