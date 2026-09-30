@@ -11,7 +11,7 @@ This record distinguishes compilation, automated behavior checks and hands-on pl
 | NeoForge 1.21.1 build | Final alpha.2 build passed as part of local release packaging |
 | Forge 1.21.1 build | Final alpha.2 build passed as part of local release packaging |
 | NeoForge game tests | All 18 required server tests passed on 2026-09-30, including native guide content and read-only menu checks |
-| GitHub CI | Final alpha.2 run pending |
+| GitHub CI | [All three loader builds and server tests passed](https://github.com/Thespiki/Technologia/actions/runs/36703809541) for release source `24bec56018b62dc656ce2e63766223d14080b1b2`; [release workflow passed](https://github.com/Thespiki/Technologia/actions/runs/36703826971) and published all three jars |
 | Versioned packaging | Local packageRelease succeeded on 2026-09-30 and produced the three alpha.2 loader jars; overwrite protection added |
 | Presentation site | Static build and JavaScript syntax passed; search, status filters, empty results and combined filtering checked in browser; mobile and desktop layouts reviewed; added guide screenshot checked at a 1265px viewport |
 | Minecraft client visual review | Initial NeoForge checks at 854×480 and 1920×1009 client sizes covered the guide, storage catalogue/empty search and furnace layout; details below |
@@ -19,6 +19,8 @@ This record distinguishes compilation, automated behavior checks and hands-on pl
 | Fabric / Forge in-game tests | Not performed |
 | Create, external cables, claim mods and modpacks | Not tested in a running pack |
 | Later Minecraft releases | Ports not started |
+
+Published on 2026-09-30: [alpha.2 release](https://github.com/Thespiki/Technologia/releases/tag/v0.1.0-alpha.2). The [Pages deployment](https://github.com/Thespiki/Technologia/actions/runs/36703809538) passed, and the live presentation and guide screenshot returned HTTP 200. Local alpha.1 jar checksums and its source tag were verified unchanged; its three GitHub release assets remain available.
 
 The original eight GameTests cover generator-to-crusher processing, full-output backpressure, data-driven smelting, block-entity save/load, network disconnection, a paused miner, FE simulation and sided inventory access. Ten new tests cover aggregation of 1,000 identical items while separating named/component variants; stack/one/shift withdrawals and cursor/shift deposits; full inventories and partial space; stale/invalid catalogue requests and hidden-slot packets; disconnected open menus; inventory preservation across facing/activity changes; actual processing indicators; cable arm updates; and guide content, recipes and command permissions.
 
