@@ -41,6 +41,10 @@ public final class TechnologiaForge {
         event.register(Registries.MENU, helper -> {
             Technologia.MACHINE_MENU = new net.minecraft.world.inventory.MenuType<>(MachineMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
             helper.register(Technologia.id("machine"), Technologia.MACHINE_MENU);
+            Technologia.STORAGE_MENU = new net.minecraft.world.inventory.MenuType<>(dev.technologia.storage.StorageMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
+            helper.register(Technologia.id("storage"), Technologia.STORAGE_MENU);
+            Technologia.GUIDE_MENU = new net.minecraft.world.inventory.MenuType<>(dev.technologia.guide.GuideMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
+            helper.register(Technologia.id("guide"), Technologia.GUIDE_MENU);
         });
         event.register(Registries.CREATIVE_MODE_TAB, helper -> { Technologia.createTab(); helper.register(Technologia.id("technologia"), Technologia.TAB); });
     }

@@ -23,9 +23,13 @@ public final class TechnologiaFabric implements ModInitializer {
         Technologia.ITEMS.forEach((id, item) -> Registry.register(BuiltInRegistries.ITEM, Technologia.id(id), item));
         Technologia.MACHINE_TYPE = net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder.create(MachineBlockEntity::new, Technologia.machineBlocks()).build();
         Technologia.MACHINE_MENU = new net.minecraft.world.inventory.MenuType<>(MachineMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
+        Technologia.STORAGE_MENU = new net.minecraft.world.inventory.MenuType<>(dev.technologia.storage.StorageMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
+        Technologia.GUIDE_MENU = new net.minecraft.world.inventory.MenuType<>(dev.technologia.guide.GuideMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
         Technologia.createTab();
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Technologia.id("machine"), Technologia.MACHINE_TYPE);
         Registry.register(BuiltInRegistries.MENU, Technologia.id("machine"), Technologia.MACHINE_MENU);
+        Registry.register(BuiltInRegistries.MENU, Technologia.id("storage"), Technologia.STORAGE_MENU);
+        Registry.register(BuiltInRegistries.MENU, Technologia.id("guide"), Technologia.GUIDE_MENU);
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, Technologia.id("technologia"), Technologia.TAB);
         for (String ore : new String[]{"tin_ore", "lead_ore", "resonite_ore"}) {
             BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Decoration.UNDERGROUND_ORES,

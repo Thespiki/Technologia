@@ -1,7 +1,57 @@
 {
-  "variants": {
-    "": {
-      "model": "technologia:block/network_cable"
+  "multipart": [
+    {
+      "apply": {
+        "model": "technologia:block/network_cable_core"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "technologia:block/network_cable_north"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "technologia:block/network_cable_south"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "technologia:block/network_cable_east"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "technologia:block/network_cable_west"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "technologia:block/network_cable_up"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "technologia:block/network_cable_down"
+      }
     }
-  }
+  ]
 }

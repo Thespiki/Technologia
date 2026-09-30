@@ -37,6 +37,10 @@ gradle.projectsEvaluated {
                         throw new GradleException("Missing ${loader} mod metadata in ${jarFile}")
                     }
                 }
+                def preservedJar = file("releases/${project.version}/${mod_id}-${loader}-${minecraft_version}-${project.version}.jar")
+                if (preservedJar.exists() && java.nio.file.Files.mismatch(jarFile.toPath(), preservedJar.toPath()) != -1L) {
+                    throw new GradleException("Version ${project.version} already has a different ${loader} jar. Increment version before packaging; existing releases are preserved.")
+                }
             }
         }
     }

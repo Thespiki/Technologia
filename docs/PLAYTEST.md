@@ -29,6 +29,9 @@ Record Minecraft, Java, loader, modpack and Technologia versions with each resul
 ## Interface and server load
 
 1. Test small/large GUI scale, keyboard navigation, tooltips, status strings and simultaneous viewers.
+   Check the separate machine input/output areas and that cells do not show unused item slots. Read every Field Guide page and its contents links. Craft a guide, request it without operator permissions, repeat the request and try with a full inventory.
+   Search Nexus by name and registry ID, switch sorting and pages, and test stack/one/shift withdrawals, cursor deposits and repeated fast clicks while a second player or hopper changes the core. Search typing must not trigger hotbar shortcuts.
+   Place machines facing each direction; check active/inactive fronts, recessed bays, terminal depth and all six cable arms. Existing alpha.1 worlds should preserve inventories and acquire default facing after upgrade; back up a test world before upgrading.
 2. Confirm display of stored energy above 32,767 and 65,535; vanilla menu synchronization uses split integer parts.
 3. Profile an active factory before setting advertised scale limits. Record tick time and memory for 10, 100 and 500 machines.
 4. Test with all optional mods absent, then each integration individually. Do not claim blanket compatibility based only on registration.

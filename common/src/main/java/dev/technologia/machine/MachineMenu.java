@@ -14,14 +14,16 @@ public final class MachineMenu extends AbstractContainerMenu {
         super(Technologia.MACHINE_MENU, id);
         checkContainerSize(machine, 27); checkContainerDataCount(data, 7);
         this.machine = machine; this.data = data;
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) {
-            final int slotIndex = row * 9 + col;
-            addSlot(new Slot(machine, slotIndex, 34 + col * 18, 66 + row * 18) {
-                @Override public boolean mayPlace(ItemStack stack) { return slotIndex == 0 && machine.canPlaceItem(slotIndex, stack); }
+        for (int i = 0; i < 27; i++) {
+            final int slotIndex = i;
+            addSlot(new Slot(machine, slotIndex, i == 0 ? 18 : 66 + (i - 1) % 9 * 18, i == 0 ? 64 : 64 + (i - 1) / 9 * 18) {
+                @Override public boolean isActive() { return slotIndex == 0 ? hasInput() : hasOutput(); }
+                @Override public boolean mayPlace(ItemStack stack) { return isActive() && slotIndex == 0 && machine.canPlaceItem(slotIndex, stack); }
+                @Override public boolean mayPickup(Player player) { return isActive(); }
             });
         }
-        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, col + row * 9 + 9, 34 + col * 18, 164 + row * 18));
-        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 34 + col * 18, 222));
+        for (int row = 0; row < 3; row++) for (int col = 0; col < 9; col++) addSlot(new Slot(player, col + row * 9 + 9, 42 + col * 18, 161 + row * 18));
+        for (int col = 0; col < 9; col++) addSlot(new Slot(player, col, 42 + col * 18, 219));
         addDataSlots(data);
     }
     public int energy() { return (data.get(0) & 65535) | (data.get(1) << 16); }
@@ -30,6 +32,8 @@ public final class MachineMenu extends AbstractContainerMenu {
     public int duration() { return Math.max(1, data.get(6)); }
     public int status() { return data.get(4); }
     public boolean enabled() { return data.get(5) != 0; }
+    public boolean hasInput() { return kind() != MachineKind.CELL && kind() != MachineKind.CORE && kind() != MachineKind.TERMINAL; }
+    public boolean hasOutput() { return kind() == MachineKind.CRUSHER || kind() == MachineKind.FURNACE || kind() == MachineKind.MINER; }
     @Override public boolean stillValid(Player player) { return machine.stillValid(player); }
     @Override public boolean clickMenuButton(Player player, int button) {
         if (!stillValid(player) || !(machine instanceof MachineBlockEntity be) || !be.mayConfigure(player)) return false;
@@ -39,9 +43,9 @@ public final class MachineMenu extends AbstractContainerMenu {
         return true;
     }
     @Override public ItemStack quickMoveStack(Player player, int index) {
-        if (index < 0 || index >= slots.size()) return ItemStack.EMPTY;
+        if (!stillValid(player) || index < 0 || index >= slots.size()) return ItemStack.EMPTY;
         Slot slot = slots.get(index);
-        if (!slot.hasItem()) return ItemStack.EMPTY;
+        if (!slot.isActive() || !slot.mayPickup(player) || !slot.hasItem()) return ItemStack.EMPTY;
         ItemStack current = slot.getItem(), original = current.copy();
         if (index < 27) {
             if (!moveItemStackTo(current, 27, slots.size(), true)) return ItemStack.EMPTY;
@@ -49,5 +53,9 @@ public final class MachineMenu extends AbstractContainerMenu {
         if (current.isEmpty()) slot.setByPlayer(ItemStack.EMPTY); else slot.setChanged();
         slot.onTake(player, current);
         return original;
+    }
+    @Override public void clicked(int slotId, int button, ClickType type, Player player) {
+        if (!stillValid(player) || (slotId >= 0 && slotId < 27 && !slots.get(slotId).isActive())) return;
+        super.clicked(slotId, button, type, player);
     }
 }

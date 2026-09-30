@@ -6,20 +6,22 @@ An original Minecraft technology mod inspired by the automation and enormous fac
 
 The first development/playtest target is **Minecraft 1.21.1 + NeoForge**. The requested long-term target is **1.21.1 and later stable releases**, across the three loaders where available. Newer versions require tested ports, not just a wider version range in metadata.
 
-## What is implemented in the first slice
+## What is implemented in 0.1.0-alpha.2
 
 - Combustion generator: coal/charcoal → power; pauses when full.
 - Energy cell: one million energy units; adjacent transfer and loader energy adapters.
 - Ore crusher: raw iron, gold, copper, tin or lead → two dust.
 - Electric furnace: reads the game's smelting recipes, including datapacks.
 - Survey miner: selective ore mining in a bounded region, one filter slot, start/pause/rescan, permission callbacks and an owner-online requirement. Starts paused.
-- Nexus storage core: 54 slots. A terminal opens the connected core through a network of up to 128 blocks. It is not yet searchable digital storage or autocrafting.
+- Nexus storage core: 54 backing slots with a searchable item catalogue, combined counts, name/count sorting and cursor/shift-click transfers. Each terminal accesses one connected core through a network of up to 128 blocks. Multiple-core aggregation and autocrafting are still planned.
 - Tin, lead and resonite generation, drops, common material tags and survival crafting/smelting recipes.
-- A shared machine screen, status messages, energy/progress indicators, help tooltips and original 32px prototype art.
-- Static 3D models with recessed storage drive bays and a recessed terminal screen, pending in-game visual review.
+- Machine screens with separate input/output areas, status messages, energy/progress indicators and help tooltips. A native Field Guide has a nine-chapter atlas, 17 articles, scrolling and keyboard navigation; craft it or use `/technologia guide` without operator permissions.
+- Original 32px art, machine fronts facing the placing player, active processing indicators, recessed storage bays/screens and cable geometry that follows its connections.
 - Server balance config, operator diagnostics, automated resource checks, unit tests and NeoForge game tests.
 
 Draconic and chaotic cores are **creative-only concept items**. Equipment, bosses, fusion, reactors, RFTools-style building and full AE2/Mekanism-scale systems are planned. This project is not an unofficial port of those mods.
+
+Initial NeoForge singleplayer playtesting covered storage connectivity, energy transfer, processing and miner filters. Client checks at small and maximized window sizes covered the Field Guide, combined storage counts, empty search results and the corrected furnace layout. Broader interface, multiplayer, Fabric/Forge runtime and modpack checks remain; see the [verification record](docs/VALIDATION.md).
 
 ## Try the workshop
 
@@ -27,13 +29,13 @@ Install the jar for your Minecraft version and loader on client and server. Fabr
 
 Download builds from [GitHub Releases](https://github.com/Thespiki/Technologia/releases). Each mod release contains separate Fabric, NeoForge and Forge jars.
 
-1. Mine tin and smelt it. Craft a machine frame, basic circuits and a combustion generator.
+1. Craft a Field Guide from a book and copper ingot, or use `/technologia guide`. Mine tin and smelt it. Craft a machine frame, basic circuits and a combustion generator.
 2. Place an ore crusher directly beside the generator. Put coal or charcoal in the generator's upper-left slot. Put raw iron in the crusher's upper-left slot. The other slots receive output.
 3. Smelt the dust in a vanilla furnace or powered electric furnace. Hoppers can feed input and collect output.
-4. Place a storage core and terminal connected by network cable. Both access the same stored items. Network cable currently carries storage connectivity, not power.
+4. Place a storage core and terminal connected by network cable. Both access the same stored items. Search by item name or registry ID; left-click a result for a stack, right-click for one item, or shift-click to withdraw into your inventory. Shift-click your inventory to deposit, or use **Deposit held** for the cursor stack. Network cable carries storage connectivity, not power.
 5. Place a Survey Miner above ore and supply power. Its first slot is an optional ore/raw-material filter; leave it empty for all tagged ores. Press Start. Default area: 9×9 horizontally, up to 32 blocks below the machine. Only its owner can start/pause/rescan it, and that owner must be online in the same dimension.
 
-Ore generation affects newly generated chunks. Machine inventories persist across saves and drop when machines are broken. Energy is not retained in a broken machine item in this prototype. The electric furnace does not award smelting XP yet. Machine fronts currently have a fixed orientation; connected cable geometry and active animations are future polish.
+Ore generation affects newly generated chunks. Machine inventories persist across saves and drop when machines are broken. Energy is not retained in a broken machine item in this prototype. The electric furnace does not award smelting XP yet. Active fronts change appearance during operation; moving mechanical animations remain future work.
 
 ## Manage it
 
@@ -68,7 +70,7 @@ To build all three loaders and collect their installable jars together:
 .\gradlew.bat packageRelease
 ```
 
-This runs the shared unit tests and all three loader builds, then puts the three jars in `releases/<mod version>/`, using `version` from `gradle.properties`. For example, `releases/0.1.0-alpha.1/` contains the Fabric, NeoForge and Forge jars for Minecraft 1.21.1. Older version folders are kept; repeating the same version refreshes its files. Generated release jars stay local and are excluded from Git.
+This runs the shared unit tests and all three loader builds, then puts the three jars in `releases/<mod version>/`, using `version` from `gradle.properties`. Each folder contains the Fabric, NeoForge and Forge jars for Minecraft 1.21.1. Delivered versions are preserved: packaging refuses to overwrite an existing jar with different bytes. Increment the version for a changed build. Generated release jars stay local and are excluded from Git; Git tags preserve the corresponding source.
 
 Pushing a `v<mod version>` tag publishes those three variants to GitHub Releases after build/resource checks and server GameTests pass. See [release packaging and publishing](releases/README.md) for the versioned notes and tag workflow.
 

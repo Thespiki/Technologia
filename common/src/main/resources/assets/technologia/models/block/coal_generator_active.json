@@ -1,0 +1,7 @@
+{
+  "parent": "technologia:block/coal_generator",
+  "textures": {
+    "north": "technologia:block/coal_generator_active",
+    "particle": "technologia:block/coal_generator_active"
+  }
+}

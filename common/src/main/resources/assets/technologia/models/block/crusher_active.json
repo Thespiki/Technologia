@@ -1,0 +1,7 @@
+{
+  "parent": "technologia:block/crusher",
+  "textures": {
+    "north": "technologia:block/crusher_active",
+    "particle": "technologia:block/crusher_active"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "technologia:block/electric_furnace",
+  "textures": {
+    "north": "technologia:block/electric_furnace_active",
+    "particle": "technologia:block/electric_furnace_active"
+  }
+}

@@ -1,6 +1,7 @@
 package dev.technologia.machine;
 
 import dev.technologia.Technologia;
+import dev.technologia.storage.StorageMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -32,7 +33,11 @@ public final class StorageNetwork {
     }
 
     public static MenuProvider access(MachineBlockEntity core, BlockPos terminal) {
-        return new SimpleMenuProvider((id, inventory, player) -> ChestMenu.sixRows(id, inventory, new Container() {
+        return new SimpleMenuProvider((id, inventory, player) -> new StorageMenu(id, inventory, connectedContainer(core, terminal)), Component.translatable("block.technologia.storage_terminal"));
+    }
+
+    public static Container connectedContainer(MachineBlockEntity core, BlockPos terminal) {
+        return new Container() {
             public int getContainerSize() { return core.getContainerSize(); }
             public boolean isEmpty() { return core.isEmpty(); }
             public ItemStack getItem(int slot) { return core.getItem(slot); }
@@ -48,7 +53,7 @@ public final class StorageNetwork {
                         && level.getBlockState(terminal).is(Technologia.BLOCKS.get("storage_terminal"))
                         && findCore(level, terminal) == core;
             }
-        }), Component.translatable("block.technologia.storage_core"));
+        };
     }
     private StorageNetwork() {}
 }

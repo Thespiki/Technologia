@@ -14,7 +14,7 @@ releases/
 
 Each filename identifies the loader, Minecraft version and mod version. Install only the jar matching your loader. Fabric also requires Fabric API; Team Reborn Energy is bundled.
 
-Change the mod version before packaging a new release. Older version folders are preserved, including when cleaning the modules' build directories. Packaging the same version again refreshes its jars. This folder contains the runtime jars only, without source or Javadoc archives. Generated jars are local build outputs and are excluded from Git.
+Change the mod version before packaging a new release. Older version folders are preserved, including when cleaning the modules' build directories. Packaging refuses to replace an existing jar with different bytes; an identical repeat is allowed. Each GitHub release and its source tag are retained. This folder contains the runtime jars only, without source or Javadoc archives. Generated jars are local build outputs and are excluded from Git.
 
 Packaging confirms the builds and shared unit tests pass. It does not replace server GameTests, client playtesting or compatibility checks; consult `docs/VALIDATION.md` for tested behavior.
 

@@ -1,0 +1,7 @@
+{
+  "parent": "technologia:block/digital_miner",
+  "textures": {
+    "north": "technologia:block/digital_miner_active",
+    "particle": "technologia:block/digital_miner_active"
+  }
+}

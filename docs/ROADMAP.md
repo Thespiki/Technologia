@@ -2,14 +2,14 @@
 
 ## Current slice
 
-Shared Java gameplay, three loader adapters, first machine UI and original prototype art. Coal power, buffering, crusher doubling, electric smelting, bounded selective mining, a core/terminal storage connection, new ores and basic recipes. See README and VALIDATION for actual verification status.
+Shared Java gameplay, three loader adapters and original prototype art. Coal power, buffering, crusher doubling, electric smelting, bounded selective mining, searchable single-core storage, new ores and basic recipes. Alpha.2 adds machine facing/activity, connected cable geometry, clearer screens and an in-game Field Guide. See README and VALIDATION for actual verification status.
 
 The agreed rollout is to develop and playtest on one version first: **Minecraft 1.21.1, NeoForge as the first in-game test platform**. The eventual coverage requested is **1.21.1 and every later stable Minecraft release**, across Fabric, NeoForge and Forge wherever those loaders are available. The loader adapters are prepared early to keep gameplay portable; simultaneous release on every target is not a prerequisite for the first playable milestone. Snapshots are excluded unless requested.
 
 ## Next milestones
 
-1. **Harden the workshop:** client and dedicated-server tests on all three loaders; persistence/reload, multiplayer, full inventory, recipe reload and automation edge cases; facing and active block states; guide pages; accessible screens and localization.
-2. **Nexus and logistics:** searchable storage, multiple cores/disks, import/export, energy/fluid conduits, side setup, sorting, item filters, owner/team permissions and a live network inspector.
+1. **Harden the workshop:** client and dedicated-server tests on all three loaders; persistence/reload, multiplayer, recipe reload and automation edge cases; guide and screen accessibility, localization and recipe viewer integration.
+2. **Nexus and logistics:** multiple cores/disks, import/export, energy/fluid conduits, side setup, item filters, owner/team permissions and a live network inspector.
 3. **Production:** data-driven crusher recipes, alloys, fluid tanks, washing/chemistry, factory upgrades and first autocrafting. Show recipe dependencies and unavailable steps in the UI.
 4. **Architect and control:** builder previews, blueprint material planning, named travel, dashboard, stock rules and machine configuration copying.
 5. **Ascendant:** modular tools, shields, flight, fusion assembly, reactor engineering and multiblock reservoir. Survival progression must have uses at each tier.

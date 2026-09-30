@@ -2,6 +2,8 @@ package dev.technologia;
 
 import dev.technologia.machine.*;
 import dev.technologia.config.Balance;
+import dev.technologia.storage.StorageMenu;
+import dev.technologia.guide.GuideItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +27,8 @@ public final class Technologia {
     public static final Map<String, Item> ITEMS = new LinkedHashMap<>();
     public static BlockEntityType<MachineBlockEntity> MACHINE_TYPE;
     public static MenuType<MachineMenu> MACHINE_MENU;
+    public static MenuType<StorageMenu> STORAGE_MENU;
+    public static MenuType<dev.technologia.guide.GuideMenu> GUIDE_MENU;
     public static CreativeModeTab TAB;
     public static Balance BALANCE = Balance.defaults();
     // Destructive automation fails closed until a loader installs its protection hook.
@@ -37,9 +41,10 @@ public final class Technologia {
         if (!BLOCKS.isEmpty()) return;
         addBlock("machine_frame", new Block(BlockBehaviour.Properties.of().strength(4).requiresCorrectToolForDrops()));
         for (MachineKind kind : MachineKind.values()) {
-            addBlock(kind.id, new MachineBlock(kind, BlockBehaviour.Properties.of().strength(4).requiresCorrectToolForDrops()));
+            addBlock(kind.id, new MachineBlock(kind, BlockBehaviour.Properties.of().strength(4).requiresCorrectToolForDrops().noOcclusion()
+                    .lightLevel(state -> state.getValue(MachineBlock.ACTIVE) ? 6 : 0)));
         }
-        addBlock("network_cable", new Block(BlockBehaviour.Properties.of().strength(1).requiresCorrectToolForDrops()));
+        addBlock("network_cable", new NetworkCableBlock(BlockBehaviour.Properties.of().strength(1).requiresCorrectToolForDrops().noOcclusion()));
         for (String ore : List.of("tin_ore", "deepslate_tin_ore", "lead_ore", "deepslate_lead_ore", "resonite_ore")) {
             addBlock(ore, new Block(BlockBehaviour.Properties.of().strength(3, 3).requiresCorrectToolForDrops()));
         }
@@ -50,6 +55,7 @@ public final class Technologia {
         for (String name : List.of("raw_tin", "raw_lead", "tin_ingot", "lead_ingot", "resonite", "iron_dust", "gold_dust", "copper_dust", "tin_dust", "lead_dust", "basic_circuit", "advanced_circuit", "draconic_core", "chaotic_core")) {
             ITEMS.put(name, new Item(new Item.Properties()));
         }
+        ITEMS.put("field_guide", new GuideItem(new Item.Properties()));
     }
     public static Block[] machineBlocks() { return BLOCKS.values().stream().filter(b -> b instanceof MachineBlock).toArray(Block[]::new); }
     public static void createTab() {

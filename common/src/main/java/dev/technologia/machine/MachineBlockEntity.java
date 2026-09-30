@@ -1,6 +1,7 @@
 package dev.technologia.machine;
 
 import dev.technologia.Technologia;
+import dev.technologia.storage.StorageMenu;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -99,6 +100,10 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
             }
         }
         if (previousEnergy != machine.energy.stored()) machine.setChanged();
+        boolean active = machine.enabled && machine.status == 1;
+        if (state.getValue(MachineBlock.ACTIVE) != active) {
+            level.setBlock(pos, state.setValue(MachineBlock.ACTIVE, active), Block.UPDATE_CLIENTS);
+        }
     }
     private void generate() {
         if (energy.stored() == energy.capacity()) { status = 0; return; }
@@ -228,6 +233,6 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) { return kind == MachineKind.CORE || slot > 0; }
     public Component getDisplayName() { return Component.translatable("block.technologia." + kind.id); }
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-        return kind == MachineKind.CORE ? ChestMenu.sixRows(id, inventory, this) : new MachineMenu(id, inventory, this, data);
+        return kind == MachineKind.CORE ? new StorageMenu(id, inventory, this) : new MachineMenu(id, inventory, this, data);
     }
 }

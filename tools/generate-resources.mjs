@@ -7,7 +7,8 @@ const write=(p,s)=>{fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileS
 const json=(p,o)=>write(`${base}/${p}.json`,JSON.stringify(o,null,2)+'\n');
 const id=n=>'technologia:'+n;
 const blocks=['machine_frame','coal_generator','crusher','electric_furnace','digital_miner','storage_core','storage_terminal','energy_cell','network_cable','tin_ore','deepslate_tin_ore','lead_ore','deepslate_lead_ore','resonite_ore'];
-const items=['raw_tin','raw_lead','tin_ingot','lead_ingot','resonite','iron_dust','gold_dust','copper_dust','tin_dust','lead_dust','basic_circuit','advanced_circuit','draconic_core','chaotic_core'];
+const machines=['coal_generator','crusher','electric_furnace','digital_miner','storage_core','storage_terminal','energy_cell'];
+const items=['raw_tin','raw_lead','tin_ingot','lead_ingot','resonite','iron_dust','gold_dust','copper_dust','tin_dust','lead_dust','basic_circuit','advanced_circuit','draconic_core','chaotic_core','field_guide'];
 const palette={base:[27,39,53],dark:[12,18,27],rim:[65,82,103],light:[174,190,209],cyan:[85,217,208],amber:[232,180,106],violet:[176,141,245]};
 const crc=b=>{let n=0xffffffff;for(const v of b){n^=v;for(let i=0;i<8;i++)n=(n>>>1)^((n&1)?0xedb88320:0)}return (n^0xffffffff)>>>0};
 function png(name,paint){
@@ -20,21 +21,26 @@ function png(name,paint){
 const casing=(r)=>{r(0,0,32,32,palette.dark);r(1,1,30,30,palette.rim);r(2,2,28,28,palette.base);for(const x of [3,27])for(const y of [3,27])r(x,y,2,2,palette.light)};
 png('block/casing',r=>{casing(r);for(let y=10;y<25;y+=4)r(8,y,16,2,palette.dark)});
 png('block/top',r=>{casing(r);r(8,8,16,16,palette.dark);for(let x=9;x<24;x+=4)r(x,9,2,14,palette.rim)});
-png('block/drive_bay',r=>{r(0,0,32,32,palette.dark);r(1,3,30,26,palette.rim);r(3,5,26,22,palette.base);r(5,11,17,3,palette.light);r(5,17,12,2,palette.rim);r(25,10,3,5,palette.cyan);r(25,18,3,4,palette.light)});
-png('block/terminal_screen',r=>{r(0,0,32,32,palette.dark);r(1,1,30,30,[25,59,66]);for(let y=5;y<26;y+=6){r(4,y,3,3,palette.cyan);r(10,y,15-(y%4),2,palette.light)}r(27,4,1,24,palette.rim);r(27,4,1,9,palette.cyan)});
+for(const active of [false,true]) {
+ const suffix=active?'_active':'';
+ png('block/drive_bay'+suffix,r=>{r(0,0,32,32,palette.dark);r(1,3,30,26,palette.rim);r(3,5,26,22,palette.base);r(5,11,17,3,palette.light);r(5,17,12,2,palette.rim);r(25,10,3,5,active?palette.cyan:palette.rim);r(25,18,3,4,active?palette.light:palette.base)});
+ png('block/terminal_screen'+suffix,r=>{r(0,0,32,32,palette.dark);r(1,1,30,30,active?[25,59,66]:[18,30,39]);for(let y=5;y<26;y+=6){r(4,y,3,3,active?palette.cyan:palette.rim);r(10,y,15-(y%4),2,active?palette.light:palette.rim)}r(27,4,1,24,palette.rim);r(27,4,1,9,active?palette.cyan:palette.base)});
+}
+png('block/cable_jacket',r=>{r(0,0,32,32,palette.dark);r(2,0,28,32,palette.base);r(4,0,3,32,palette.rim);r(24,0,3,32,palette.rim);r(14,0,4,32,palette.cyan);for(const y of [3,25]){r(2,y,28,4,palette.rim);r(14,y,4,4,palette.light)}});
+png('block/cable_hub',r=>{casing(r);r(8,8,16,16,palette.dark);r(12,12,8,8,palette.cyan);r(14,14,4,4,palette.base)});
 // Static cuboids give real depth without a per-frame block entity renderer.
 const cuboid=(from,to,texture='#casing',front=null)=>({from,to,faces:Object.fromEntries(['down','up','north','south','west','east'].map(face=>[face,{texture:face==='north'&&front?front:texture,...(face==='north'&&front?{uv:[0,0,16,16]}:{})}]))});
-function recessedModel(name){
+function recessedModel(name,active=false){
  const elements=[cuboid([0,0,2.5],[16,16,16]),cuboid([0,0,0],[2,16,2.5]),cuboid([14,0,0],[16,16,2.5]),cuboid([2,0,0],[14,2,2.5]),cuboid([2,14,0],[14,16,2.5])];
  if(name==='storage_core')for(const x of [2.5,8.5])for(const y of [2.5,6.5,10.5])elements.push(cuboid([x,y,1],[x+5,y+3,2.5],'#casing','#detail'));
  else {elements.push(cuboid([2,5,1.7],[14,14,2.5],'#casing','#detail'));elements.push(cuboid([3,2.5,0.5],[13,4,2.5],'#casing'));}
- return {parent:'minecraft:block/block',ambientocclusion:true,textures:{particle:'technologia:block/casing',casing:'technologia:block/casing',detail:`technologia:block/${name==='storage_core'?'drive_bay':'terminal_screen'}`},elements};
+ return {parent:'minecraft:block/block',ambientocclusion:true,textures:{particle:'technologia:block/casing',casing:'technologia:block/casing',detail:`technologia:block/${name==='storage_core'?'drive_bay':'terminal_screen'}${active?'_active':''}`},elements};
 }
 for(const n of blocks){
  const ore=n.includes('_ore');
- png('block/'+n,r=>{
+ const paintFront=(active=false)=>r=>{
   if(ore){const deep=n.startsWith('deepslate');for(let y=0;y<32;y++)for(let x=0;x<32;x++){let q=(x*17+y*31+x*y*3)%19+(deep?43:100);r(x,y,1,1,[q,q+2,q+3])}const c=n.includes('tin')?[180,213,209]:n.includes('lead')?[136,133,172]:palette.cyan;for(const [x,y] of [[7,6],[22,9],[12,18],[25,24],[3,26]]){r(x-1,y-1,5,4,palette.dark);r(x,y,4,3,c);r(x,y,2,1,palette.light)}return;}
-  casing(r);const c=['crusher','electric_furnace','coal_generator'].includes(n)?palette.amber:palette.cyan;
+  casing(r);const c=active?(['crusher','electric_furnace','coal_generator'].includes(n)?palette.amber:palette.cyan):palette.rim;
   r(5,6,22,18,palette.dark);r(6,26,16,2,c);r(25,26,2,2,c);
   if(n==='crusher'){for(let y=9;y<23;y+=4){r(8,y,7,2,c);r(17,y+1,7,2,palette.light)}}
   else if(n==='electric_furnace'||n==='coal_generator'){r(9,12,14,10,palette.rim);r(11,15,10,5,c);r(14,10,4,10,c)}
@@ -43,18 +49,35 @@ for(const n of blocks){
   else if(n==='storage_core'){for(let y=9;y<23;y+=5){r(8,y,16,3,palette.rim);r(21,y,2,2,c)}}
   else if(n==='storage_terminal'){r(8,9,16,12,[34,76,83]);for(let y=11;y<19;y+=3)r(10,y,7+(y%2)*4,1,c);r(11,23,10,1,palette.light)}
   else {r(12,10,8,10,palette.rim);r(14,12,4,6,c)}
- });
- json(`assets/technologia/blockstates/${n}`,{variants:{'':{model:`technologia:block/${n}`}}});
+ };
+ png('block/'+n,paintFront());
+ if(machines.includes(n)) {
+  png('block/'+n+'_active',paintFront(true));
+  const variants={};
+  for(const [facing,y] of Object.entries({north:0,east:90,south:180,west:270}))for(const active of [false,true])variants[`active=${active},facing=${facing}`]={model:`technologia:block/${n}${active?'_active':''}`,...(y?{y}:{})};
+  json(`assets/technologia/blockstates/${n}`,{variants});
+  json(`assets/technologia/models/block/${n}_active`,['storage_core','storage_terminal'].includes(n)?recessedModel(n,true):{parent:`technologia:block/${n}`,textures:{north:`technologia:block/${n}_active`,particle:`technologia:block/${n}_active`}});
+ } else json(`assets/technologia/blockstates/${n}`,{variants:{'':{model:`technologia:block/${n}`}}});
  json(`assets/technologia/models/block/${n}`,['storage_core','storage_terminal'].includes(n)?recessedModel(n):ore?{parent:'minecraft:block/cube_all',textures:{all:`technologia:block/${n}`}}:{parent:'minecraft:block/cube',textures:{particle:`technologia:block/${n}`,down:'technologia:block/casing',up:'technologia:block/top',north:`technologia:block/${n}`,south:'technologia:block/casing',east:'technologia:block/casing',west:'technologia:block/casing'}});
  json(`assets/technologia/models/item/${n}`,{parent:`technologia:block/${n}`});
  const drop=ore?(n.includes('tin')?'raw_tin':n.includes('lead')?'raw_lead':'resonite'):n;
  const entry=ore?{type:'minecraft:alternatives',children:[{type:'minecraft:item',name:id(n),conditions:[{condition:'minecraft:match_tool',predicate:{predicates:{'minecraft:enchantments':[{enchantments:'minecraft:silk_touch',levels:{min:1}}]}}}]},{type:'minecraft:item',name:id(drop),functions:[{function:'minecraft:apply_bonus',enchantment:'minecraft:fortune',formula:'minecraft:ore_drops'},{function:'minecraft:explosion_decay'}]}]}:{type:'minecraft:item',name:id(drop)};
  json(`data/technologia/loot_table/blocks/${n}`,{type:'minecraft:block',pools:[{rolls:1,entries:[entry],...(!ore?{conditions:[{condition:'minecraft:survives_explosion'}]}:{})}]});
 }
+// Six small arm models avoid a dynamic renderer and match PipeBlock's cached shapes.
+const cableElement=(from,to,texture)=>({from,to,faces:Object.fromEntries(['down','up','north','south','west','east'].map(face=>[face,{texture,uv:[0,0,16,16]}]))});
+const cableModel=elements=>({parent:'minecraft:block/block',textures:{particle:'technologia:block/cable_jacket',jacket:'technologia:block/cable_jacket',hub:'technologia:block/cable_hub'},elements});
+const cableHub=cableElement([5,5,5],[11,11,11],'#hub');
+const cableArms={north:[[5,5,0],[11,11,5]],south:[[5,5,11],[11,11,16]],east:[[11,5,5],[16,11,11]],west:[[0,5,5],[5,11,11]],up:[[5,11,5],[11,16,11]],down:[[5,0,5],[11,5,11]]};
+json('assets/technologia/models/block/network_cable_core',cableModel([cableHub]));
+for(const [direction,[from,to]] of Object.entries(cableArms))json(`assets/technologia/models/block/network_cable_${direction}`,cableModel([cableElement(from,to,'#jacket')]));
+json('assets/technologia/models/block/network_cable',cableModel([cableHub,...['north','south'].map(direction=>cableElement(...cableArms[direction],'#jacket'))]));
+json('assets/technologia/blockstates/network_cable',{multipart:[{apply:{model:'technologia:block/network_cable_core'}},...Object.keys(cableArms).map(direction=>({when:{[direction]:'true'},apply:{model:`technologia:block/network_cable_${direction}`}}))]});
 for(const n of items){
  let c=n.includes('gold')?palette.amber:n.includes('copper')?[221,139,99]:n.includes('lead')?[148,138,186]:n.includes('chaotic')?palette.violet:n.includes('draconic')?[236,136,73]:n.includes('circuit')||n==='resonite'?palette.cyan:palette.light;
  png('item/'+n,r=>{
-  if(n.endsWith('dust')){r(7,21,18,4,palette.dark);r(9,17,14,6,c);r(13,13,6,5,c);r(5,24,4,2,c);r(25,21,3,2,c)}
+  if(n==='field_guide'){r(5,4,22,25,palette.dark);r(7,5,19,21,palette.rim);r(9,7,15,16,palette.base);r(7,26,18,2,palette.light);r(7,5,2,21,palette.amber);r(15,10,4,10,palette.cyan);r(12,13,10,4,palette.cyan)}
+  else if(n.endsWith('dust')){r(7,21,18,4,palette.dark);r(9,17,14,6,c);r(13,13,6,5,c);r(5,24,4,2,c);r(25,21,3,2,c)}
   else if(n.includes('circuit')){r(6,6,20,20,palette.dark);r(8,8,16,16,[37,75,72]);r(12,12,8,8,c);for(let x=10;x<25;x+=5){r(x,4,2,3,palette.amber);r(x,25,2,3,palette.amber)}}
   else if(n.endsWith('core')){r(11,4,10,24,palette.dark);r(5,10,22,12,palette.dark);r(10,8,12,16,c);r(7,12,18,8,c);r(13,12,6,8,[246,244,240])}
   else if(n.endsWith('ingot')){r(5,14,22,10,palette.dark);r(7,13,18,8,c);r(10,10,14,4,c);r(10,11,12,2,[225,233,238])}
@@ -69,6 +92,11 @@ for(const n of blocks)lang['block.technologia.'+n]=names[n]??title(n);
 for(const n of items)lang['item.technologia.'+n]=names[n]??title(n);
 ['Ready','Working','Needs power','Output is full','Needs input','Paused','Owner unavailable','Scan complete','Protected block skipped','Waiting for loaded chunk'].forEach((s,i)=>lang['status.technologia.'+i]=s);
 Object.assign(lang,{'hint.technologia.coal_generator':'Input: coal or charcoal. Outputs power to adjacent blocks.','hint.technologia.crusher':'Input: raw metal. Produces two dust per raw material.','hint.technologia.electric_furnace':'Input: any vanilla smelting recipe. Output slots follow.','hint.technologia.digital_miner':'Filter: ore or raw material. Empty = all ores. Starts paused.','hint.technologia.energy_cell':'Stores power. Connect consumers on any face.'});
+Object.assign(lang, {'ui.technologia.input':'Input','ui.technologia.output':'Output','ui.technologia.filter':'Filter','tooltip.technologia.field_guide':'Use to read the workshop guide'});
+const storageText={title:'Nexus storage',search:'Search items',search_hint:'Search name or mod:item',previous:'Previous page',next:'Next page',deposit:'Deposit held',deposit_hint:'Store the stack on your cursor. Shift-click your inventory to deposit directly.',sort_count:'Count (high)',sort_name:'Name (A-Z)',stored:'%s stored',withdraw_hint:'Left: stack | Right: one | Shift: to inventory',page:'%s / %s',status:'%s/%s types | %s items | %s/54 slots',empty:'Storage is empty',no_matches:'No matching items'};
+for(const [key,value] of Object.entries(storageText))lang['ui.technologia.storage.'+key]=value;
+lang['ui.technologia.storage.empty_hint']='Shift-click inventory items to deposit.';
+lang['ui.technologia.storage.no_matches_hint']='Try another name or mod:item.';
 json('assets/technologia/lang/en_us',lang);
 const tag=(ns,type,n,values)=>json(`data/${ns}/tags/${type}/${n}`,{replace:false,values});
 tag('minecraft','block','mineable/pickaxe',blocks.map(id));
@@ -99,6 +127,7 @@ for(const ns of ['c','forge']){
 }
 const ingredient=s=>s.startsWith('#')?{tag:s.slice(1)}:{item:s.includes(':')?s:id(s)};
 const craft=(n,pattern,key,count=1)=>json(`data/technologia/recipe/${n}`,{type:'minecraft:crafting_shaped',category:'misc',pattern,key:Object.fromEntries(Object.entries(key).map(([k,v])=>[k,ingredient(v)])),result:{id:id(n),count}});
+json('data/technologia/recipe/field_guide',{type:'minecraft:crafting_shapeless',category:'misc',ingredients:[ingredient('minecraft:book'),ingredient('minecraft:copper_ingot')],result:{id:id('field_guide'),count:1}});
 craft('machine_frame',['ICI','C C','ICI'],{I:'minecraft:iron_ingot',C:'minecraft:copper_ingot'});
 craft('basic_circuit',[' R ','CTC',' R '],{R:'minecraft:redstone',C:'minecraft:copper_ingot',T:'#c:ingots/tin'},2);
 craft('advanced_circuit',['RGR','CBC','RGR'],{R:'resonite',G:'minecraft:gold_ingot',C:'basic_circuit',B:'minecraft:redstone_block'});

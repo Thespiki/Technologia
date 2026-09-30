@@ -39,7 +39,7 @@ The storage core now has six physically recessed drive bays, and the terminal ha
 
 Every final machine UI should answer: What goes in? What comes out? How much power does it need? Why has it stopped? Keep basic operation on the first screen. Put side routing, redstone rules and upgrades in consistent secondary panels. Show recipes, missing ingredients and costs before starting. Tooltips must describe actions in player language. Keyboard navigation, readable contrast, small GUI scales and localization are release requirements.
 
-The prototype uses a common machine screen and vanilla storage screens. A unified searchable storage UI, side configuration UI, guidebook and control dashboard are still planned.
+Alpha.2 uses a common machine screen with separated inputs/outputs, a searchable storage catalogue with item totals and a native Field Guide with nine connected chapters and 17 articles. The guide takes inspiration from quest-book navigation while using original Technologia visuals; actual quest completion, rewards and progression tracking remain future work. Side configuration, a control dashboard and storage services spanning multiple cores are still planned.
 
 ## Main requested systems
 

@@ -1,0 +1,7 @@
+{
+  "parent": "technologia:block/energy_cell",
+  "textures": {
+    "north": "technologia:block/energy_cell_active",
+    "particle": "technologia:block/energy_cell_active"
+  }
+}
