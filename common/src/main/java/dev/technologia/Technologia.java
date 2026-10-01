@@ -26,6 +26,7 @@ public final class Technologia {
     public static final Map<String, Block> BLOCKS = new LinkedHashMap<>();
     public static final Map<String, Item> ITEMS = new LinkedHashMap<>();
     public static BlockEntityType<MachineBlockEntity> MACHINE_TYPE;
+    public static BlockEntityType<dev.technologia.logistics.ItemTransferBlockEntity> ITEM_TRANSFER_TYPE;
     public static MenuType<MachineMenu> MACHINE_MENU;
     public static MenuType<StorageMenu> STORAGE_MENU;
     public static MenuType<dev.technologia.guide.GuideMenu> GUIDE_MENU;
@@ -45,6 +46,10 @@ public final class Technologia {
                     .lightLevel(state -> state.getValue(MachineBlock.ACTIVE) ? 6 : 0)));
         }
         addBlock("network_cable", new NetworkCableBlock(BlockBehaviour.Properties.of().strength(1).requiresCorrectToolForDrops().noOcclusion()));
+        addBlock("energy_conduit", new dev.technologia.logistics.EnergyConduitBlock(BlockBehaviour.Properties.of().strength(1).requiresCorrectToolForDrops().noOcclusion()));
+        addBlock("item_transfer", new dev.technologia.logistics.ItemTransferBlock(BlockBehaviour.Properties.of().strength(3).requiresCorrectToolForDrops().noOcclusion()));
+        for (String name : List.of("steel_casing", "bronze_casing", "industrial_bricks", "steel_grate", "hazard_block", "engineering_lamp", "steel_pillar", "ventilation_grille", "control_panel", "reinforced_glass"))
+            addBlock(name, new FactoryBlock(name, BlockBehaviour.Properties.of().strength(4).requiresCorrectToolForDrops().noOcclusion().lightLevel(state -> name.equals("engineering_lamp") ? 15 : 0)));
         for (String ore : List.of("tin_ore", "deepslate_tin_ore", "lead_ore", "deepslate_lead_ore", "resonite_ore")) {
             addBlock(ore, new Block(BlockBehaviour.Properties.of().strength(3, 3).requiresCorrectToolForDrops()));
         }
@@ -56,6 +61,9 @@ public final class Technologia {
             ITEMS.put(name, new Item(new Item.Properties()));
         }
         ITEMS.put("field_guide", new GuideItem(new Item.Properties()));
+        ITEMS.put("wrench", new WrenchItem(new Item.Properties()));
+        for (String name : List.of("bronze_ingot", "steel_ingot", "iron_plate", "copper_plate", "gold_plate", "bronze_plate", "steel_plate", "sawdust", "coal_dust"))
+            ITEMS.put(name, new Item(new Item.Properties()));
     }
     public static Block[] machineBlocks() { return BLOCKS.values().stream().filter(b -> b instanceof MachineBlock).toArray(Block[]::new); }
     public static void createTab() {

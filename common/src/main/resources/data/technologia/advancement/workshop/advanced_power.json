@@ -1,0 +1,31 @@
+{
+  "parent": "technologia:workshop/steel",
+  "display": {
+    "icon": {
+      "id": "technologia:advanced_energy_cell"
+    },
+    "title": "Power reserve",
+    "description": "Build a five-million-FE battery.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:advanced_energy_cell"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

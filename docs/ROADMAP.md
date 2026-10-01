@@ -2,15 +2,17 @@
 
 ## Current slice
 
-Shared Java gameplay, three loader adapters and original prototype art. Coal power, buffering, crusher doubling, electric smelting, bounded selective mining, searchable single-core storage, new ores and basic recipes. Alpha.2 adds machine facing/activity, connected cable geometry, clearer screens and an in-game Field Guide. See README and VALIDATION for actual verification status.
+Alpha.3 expands the workshop to 17 machine types: eight processors, four generators, two cells, a miner, a storage core and a terminal. It adds counted alloy recipes, metal plates, sawmill byproducts, compacting, separation, equipment recycling, renewable power, energy conduits, filtered item transfer and terminals combining up to four storage cores. All machines receive distinct baked geometry, with ten matching factory building blocks. The native Field Guide contains 32 articles; 20 vanilla advancements record workshop milestones.
+
+Gameplay remains shared across three loader adapters. All three builds and all 38 required local NeoForge GameTests passed. Targeted NeoForge client checks passed for the models, alloy UI, conduit power, item transfer, combined storage and wrench; publication checks remain in progress; see [README](../README.md) for implemented behavior and [VALIDATION](VALIDATION.md) for the actual checks. Building a loader jar is separate from testing its client, dedicated server and modpack behavior.
 
 The agreed rollout is to develop and playtest on one version first: **Minecraft 1.21.1, NeoForge as the first in-game test platform**. The eventual coverage requested is **1.21.1 and every later stable Minecraft release**, across Fabric, NeoForge and Forge wherever those loaders are available. The loader adapters are prepared early to keep gameplay portable; simultaneous release on every target is not a prerequisite for the first playable milestone. Snapshots are excluded unless requested.
 
 ## Next milestones
 
 1. **Harden the workshop:** client and dedicated-server tests on all three loaders; persistence/reload, multiplayer, recipe reload and automation edge cases; guide and screen accessibility, localization and recipe viewer integration.
-2. **Nexus and logistics:** multiple cores/disks, import/export, energy/fluid conduits, side setup, item filters, owner/team permissions and a live network inspector.
-3. **Production:** data-driven crusher recipes, alloys, fluid tanks, washing/chemistry, factory upgrades and first autocrafting. Show recipe dependencies and unavailable steps in the UI.
+2. **Nexus and logistics:** storage disks, network-aware import/export and autocrafting; fluid conduits, per-face setup, richer filter rules, owner/team permissions and a live network inspector. The current terminal limit is four cores/216 slots; Item Transfer handles adjacent vanilla inventories rather than network-wide stock requests.
+3. **Production:** fluid tanks, washing/chemistry, gases, factory upgrades and parallel processing. Extend the existing counted-ingredient/byproduct recipe system and show dependencies and unavailable steps in the UI. Measure the bronze/steel workshop route in survival before adding more tiers.
 4. **Architect and control:** builder previews, blueprint material planning, named travel, dashboard, stock rules and machine configuration copying.
 5. **Ascendant:** modular tools, shields, flight, fusion assembly, reactor engineering and multiblock reservoir. Survival progression must have uses at each tier.
 6. **Chaos:** original encounters, rifts, exotic fabrication and optional creative-item objectives. Add content only after server load and encounter readability are tested.
@@ -19,15 +21,16 @@ The agreed rollout is to develop and playtest on one version first: **Minecraft 
 
 | System | Foundation | Next verification/work |
 | --- | --- | --- |
-| Energy | Forge/NeoForge FE capability adapters; Fabric Team Reborn Energy adapter | Test push/pull directions, simulation, nested transaction rollback and representative cable mods |
+| Energy | Forge/NeoForge FE and Fabric Team Reborn Energy adapters; conduits route Technologia suppliers at 200 FE/t per supplier across at most 128 conduits | Test external endpoints, push/pull directions, simulation, nested transaction rollback and representative cable mods; conduits have no external input buffer |
 | Units | One internal unit maps to one FE or one Fabric E | Balance remains a gameplay choice; no hidden voltage conversion |
-| Inventory | Vanilla sided containers; Forge/NeoForge item capabilities | Exercise external pipes and Create funnels; prevent output insertion and input extraction |
+| Inventory | Vanilla sided containers; Forge/NeoForge item capabilities; filtered adjacent Item Transfers | Add adapters for capability-only transfer endpoints; exercise external pipes and Create funnels, component filters and full targets |
+| Storage | Up to four cores/216 slots per terminal, bounded to 128 loaded network blocks; stale actions and topology changes invalidate access | Multiplayer contention, chunk-boundary changes, storage disks and network stock management |
 | Materials | Shared `c:` tags and legacy `forge:` exports | Check tag conventions with actual pack dependencies |
-| Recipes | Vanilla JSON crafting and smelting; furnace reads recipe manager | Move crusher mapping to a custom recipe serializer, then JEI/EMI/REI displays |
+| Recipes | Vanilla crafting/smelting plus `technologia:processing` for crusher, alloys, plates, sawmill, compactor, centrifuge and recycler; counted ingredients and optional byproducts | JEI/EMI/REI displays, overlapping recipe rules, pack reload tests and progression balancing |
 | Create | Common inventory/material surfaces are provided | Optional crushing/mixing/pressing recipes and a dedicated kinetic bridge; no direct Create integration is claimed yet |
 | Mining protection | Owner-online restriction and loader break callbacks; no forced chunks | Verify each claim mod; add dedicated integration where callback coverage is insufficient |
-| Pack management | Restart-required server balance config, bounded values, invalid-file fallback | Config UI, per-world profiles, diagnostics command, pack overrides and migration policy |
-| Scripting | Datapacks can change standard recipes and tags | Explicit KubeJS/CraftTweaker hooks only after recipe/API stabilization |
+| Pack management | Restart-required server balance config, bounded values, invalid-file fallback, operator status command and processing datapacks | Config UI, per-world profiles, network diagnostics and versioned migration policy |
+| Scripting | Datapacks can change standard and custom processing recipes and tags | Explicit KubeJS/CraftTweaker hooks only after recipe/API stabilization |
 
 Create's kinetic stress/rotation is not FE. A generator/motor bridge needs its own speed, stress, efficiency and feedback-loop design. Availability of a Create version or addon on one loader does not imply availability on the other two. Pin and test actual versions before advertising support.
 
@@ -47,3 +50,9 @@ The baseline versions are Minecraft 1.21.1, Java 21, Fabric Loader 0.16.9/API 0.
 - Save migrations have versioned fixtures before released data layouts change.
 
 Prefer many small, complete and tested milestones. The desired final mod is large; the first alpha must not describe planned content as already playable.
+
+## Visual development
+
+The current models establish one industrial language: dark steel, copper conductors, recessed panels, readable status lights and visible machinery. Presses, sawmills, generators, cells, racks and terminals have different silhouettes. Machine and decoration collision/selection shapes are generated from their model geometry. The ten-block factory building kit carries the same materials into the surrounding base.
+
+Next visual work includes moving mechanisms, more informative ports, visual multiblock assembly guides, richer machine dashboards and accessibility checks at multiple GUI scales. Visible sockets are not yet configurable side modes, and decorative control panels do not operate other machines. Palette colors describe functions; they do not limit the number of progression tiers.

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ITI",
+    "CFC",
+    "IRI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "T": {
+      "tag": "c:ingots/tin"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "R": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "id": "technologia:alloy_smelter",
+    "count": 1
+  }
+}

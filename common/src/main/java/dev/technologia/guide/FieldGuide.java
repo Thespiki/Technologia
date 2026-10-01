@@ -1,259 +1,63 @@
 package dev.technologia.guide;
-
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.ClickEvent;
+import java.util.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.network.Filterable;
 import net.minecraft.world.item.component.WrittenBookContent;
-
-/** One content source for the native field guide and serialized item metadata. */
+/** Shared reference atlas and archival metadata. Actual milestones use vanilla advancements. */
 public final class FieldGuide {
-    private FieldGuide() {}
-
-    public record Chapter(String title, String summary, String icon, int firstPage, int lastPage, boolean planned) {}
-    public record Page(String title, List<String> paragraphs, int chapter) {}
-
-    public static List<Chapter> chapters() {
-        return List.of(
-                new Chapter("Workshop", "Your first processing line", "coal_generator", 0, 4, false),
-                new Chapter("Nexus", "Connect and use digital storage", "storage_terminal", 4, 6, false),
-                new Chapter("Automation", "Move items between machines", "network_cable", 6, 7, false),
-                new Chapter("Mining", "Set up a selective miner", "digital_miner", 7, 11, false),
-                new Chapter("Controls", "Read the machine dashboard", "energy_cell", 11, 12, false),
-                new Chapter("Diagnostics", "Get a stalled workshop running", "basic_circuit", 12, 14, false),
-                new Chapter("Settings", "Tune your server", "advanced_circuit", 14, 15, false),
-                new Chapter("Alpha status", "What is playable today", "field_guide", 15, 16, false),
-                new Chapter("Future", "Ideas beyond this alpha", "chaotic_core", 16, 17, true));
-    }
-
-    /** Reflows the short archival lines into paragraphs for any native GUI size. */
-    public static List<Page> pages() {
-        List<Page> result = new ArrayList<>();
-        List<Filterable<Component>> source = content().pages();
-        List<Chapter> chapters = chapters();
-        for (int i = 1; i < source.size(); i++) {
-            String text = source.get(i).raw().getString();
-            int titleEnd = text.indexOf("\n\n");
-            String body = text.substring(titleEnd + 2, text.lastIndexOf("\n\nContents"));
-            List<String> paragraphs = new ArrayList<>();
-            // Terminal controls form a reference list; other articles use prose paragraphs.
-            for (String paragraph : body.split(i == 6 ? "\n" : "\n\n")) {
-                if (!paragraph.isBlank()) paragraphs.add(paragraph.replace('\n', ' '));
-            }
-            int chapter = 0;
-            while (i - 1 >= chapters.get(chapter).lastPage()) chapter++;
-            result.add(new Page(text.substring(0, titleEnd), List.copyOf(paragraphs), chapter));
-        }
-        return List.copyOf(result);
-    }
-
-    public static WrittenBookContent content() {
-        List<Filterable<Component>> pages = new ArrayList<>();
-        MutableComponent contents = Component.empty().append(heading("Technologia")).append("\n\n");
-        contents.append(link("Getting started", 2)).append("\n");
-        contents.append(link("Power", 3)).append("\n");
-        contents.append(link("Processing", 4)).append("\n");
-        contents.append(link("Storage", 6)).append("\n");
-        contents.append(link("Automation", 8)).append("\n");
-        contents.append(link("Selective miner", 9)).append("\n");
-        contents.append(link("Machine controls", 13)).append("\n");
-        contents.append(link("Troubleshooting", 14)).append("\n");
-        contents.append(link("Server settings", 16)).append("\n");
-        contents.append(link("What comes next", 17));
-        pages.add(Filterable.passThrough(contents));
-
-        pages.add(page("Your workshop",
-                "Start with a coal",
-                "generator, crusher",
-                "and electric furnace.",
-                "",
-                "Craft this guide with",
-                "a book and copper",
-                "ingot, or use:",
-                "/technologia guide"));
-        pages.add(page("First power",
-                "Place a generator",
-                "beside a machine.",
-                "Put coal or charcoal",
-                "in its input slot.",
-                "",
-                "An energy cell stores",
-                "surplus power and",
-                "powers nearby blocks.",
-                "Network cable is data."));
-        pages.add(page("Crushing ores",
-                "Feed raw iron, gold,",
-                "copper, tin or lead",
-                "into the input slot.",
-                "",
-                "One raw metal makes",
-                "two dust. Move the",
-                "dust to a powered",
-                "electric furnace.",
-                "Leave output space."));
-        pages.add(page("Electric smelting",
-                "A furnace uses power",
-                "instead of fuel.",
-                "Each dust smelts to",
-                "an ingot. Normal",
-                "smelting recipes work",
-                "here too.",
-                "",
-                "The full loop gives",
-                "two ingots per raw."));
-        pages.add(page("Connect storage",
-                "Place a storage core",
-                "and a terminal. Join",
-                "them with network",
-                "cable, or touch them.",
-                "",
-                "The core holds items",
-                "in 54 backing slots.",
-                "The terminal is your",
-                "view into the network."));
-        pages.add(page("Using a terminal",
-                "Search: name or ID.",
-                "Sort: name or count.",
-                "",
-                "Left-click: a stack.",
-                "Right-click: one item.",
-                "Shift-click: transfer.",
-                "Deposit: cursor stack.",
-                "",
-                "One core per terminal."));
-        pages.add(page("Move items",
-                "Use hoppers or item",
-                "pipes to feed inputs",
-                "and collect outputs.",
-                "",
-                "Output slots reject",
-                "incoming items.",
-                "Network cables carry",
-                "storage connections,",
-                "not machine power."));
-        pages.add(page("Set up a miner",
-                "The selective miner",
-                "starts paused.",
-                "Supply power, inspect",
-                "the site, then enable",
-                "it from its screen.",
-                "",
-                "It scans below itself:",
-                "default 9 by 9 blocks,",
-                "up to 32 blocks deep."));
-        pages.add(page("Miner filters",
-                "Put an ore block or",
-                "its drop in the first",
-                "slot to filter mining.",
-                "The filter is kept.",
-                "",
-                "An empty filter allows",
-                "all supported ores.",
-                "It only mines ores an",
-                "iron pick can harvest."));
-        pages.add(page("Mine responsibly",
-                "Owner must be online",
-                "in this dimension.",
-                "Claim support depends",
-                "on your other mods.",
-                "",
-                "It skips block entities",
-                "and does not load",
-                "chunks for you.",
-                "Leave output space."));
-        pages.add(page("Miner stopped?",
-                "Check power, outputs",
-                "and loaded chunks.",
-                "Only the owner can",
-                "change its controls.",
-                "",
-                "After a scan finishes,",
-                "use Rescan, then",
-                "enable it to try again.",
-                "Test your claim mod."));
-        pages.add(page("Machine controls",
-                "Read the status line",
-                "before changes.",
-                "Power and progress",
-                "show what is missing.",
-                "",
-                "Pause stops work.",
-                "Generators and cells",
-                "can still share their",
-                "stored power."));
-        pages.add(page("No power?",
-                "Check generator fuel",
-                "and the pause state.",
-                "Start with simple",
-                "direct contact.",
-                "",
-                "A network cable is not",
-                "an energy cable.",
-                "External energy links",
-                "need a compatible API."));
-        pages.add(page("No processing?",
-                "Check the input recipe",
-                "and free output slots.",
-                "Leave output space",
-                "for the whole result.",
-                "",
-                "A storage terminal",
-                "needs a loaded path",
-                "to at least one core.",
-                "No autocrafting yet."));
-        pages.add(page("Server settings",
-                "Balance settings live",
-                "in the config folder:",
-                "technologia.json",
-                "",
-                "The server owner can",
-                "tune power costs and",
-                "miner range there.",
-                "Restart to apply them.",
-                "Packs may tune these."));
-        pages.add(page("This is an alpha",
-                "Workshop machines,",
-                "storage and the miner",
-                "are playable systems.",
-                "",
-                "Art and balance will",
-                "evolve with playtests.",
-                "Draconic and chaotic",
-                "cores are concepts.",
-                "They have no powers."));
-        pages.add(page("Future workshop",
-                "Planned: autocrafting,",
-                "chemical processing,",
-                "reactors, resource",
-                "farms, worlds, space",
-                "and modular tools.",
-                "",
-                "The 18-stage roadmap",
-                "is a proposal, not",
-                "content already built."));
-
-        return new WrittenBookContent(Filterable.passThrough("Technologia Field Guide"),
-                "Technologia", 0, List.copyOf(pages), true);
-    }
-
-    private static Filterable<Component> page(String title, String... lines) {
-        if (lines.length > 9) throw new IllegalArgumentException("Guide pages must stay readable");
-        MutableComponent text = Component.empty().append(heading(title)).append("\n\n")
-                .append(Component.literal(String.join("\n", lines)))
-                .append("\n\n").append(link("Contents", 1));
-        return Filterable.passThrough(text);
-    }
-
-    private static MutableComponent heading(String text) {
-        return Component.literal(text).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_AQUA);
-    }
-
-    private static MutableComponent link(String text, int page) {
-        return Component.literal(text).withStyle(style -> style.withColor(ChatFormatting.DARK_BLUE)
-                .withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.CHANGE_PAGE,
-                        Integer.toString(page))));
-    }
+ private FieldGuide() {}
+ public record Chapter(String title,String summary,String icon,int firstPage,int lastPage,boolean planned) {}
+ public record Page(String title,List<String> paragraphs,int chapter) {}
+ private static final List<Page> PAGES=List.of(
+  new Page("Start a workshop",List.of("Collect copper, iron, tin and redstone. Craft Machine Frames and Basic Circuits, then a Combustion Generator, Ore Crusher and Electric Furnace.","Crush raw metal into two dust, then smelt the dust into ingots. Place machines beside the generator until you can craft Energy Conduits."),0),
+  new Page("Coal and biomass",List.of("The combustion generator burns coal or charcoal at 40 FE/t by default. Each fuel lasts 1,600 ticks.","The Biomass Generator makes 20 FE/t by default. Sawdust burns for 200 ticks, saplings for 100, and wheat, kelp or sugar cane for 80. Fuel pauses when the buffer is full."),0),
+  new Page("Power in daylight",List.of("Solar Generators make 16 FE/t. Advanced Solar Generators make 64 FE/t. Both need a dimension with skylight, daytime, no rain and open sky above the panel.","Energy Cells store 1,000,000 FE; Advanced Energy Cells store 5,000,000 FE. Both share a 200 FE/t output budget across their connections."),0),
+  new Page("Crushing and smelting",List.of("The crusher doubles raw iron, gold, copper, tin and lead into dust: 100 ticks at 20 FE/t. Coal becomes coal dust in 60 ticks.","The Electric Furnace uses the loaded vanilla smelting recipes. Its default cycle is 100 ticks at 20 FE/t. It does not award furnace XP yet."),0),
+  new Page("Bronze and steel",List.of("Alloy Smelter: 3 copper ingots + 1 tin ingot = 4 bronze ingots. The cycle takes 160 ticks at 30 FE/t.","1 iron ingot + 2 coal dust = 1 steel ingot, taking 240 ticks at 30 FE/t. Either ingredient order works. Both inputs and all output space are checked before processing."),0),
+  new Page("Metal plates",List.of("The Metal Press turns one iron, copper, gold, bronze or steel ingot into one matching plate. Each cycle takes 60 ticks at 15 FE/t.","Bronze unlocks the press. Plates are used for solar generation, conduits, the building kit and later equipment. Steel gates the compactor and advanced power."),0),
+  new Page("Wood and byproducts",List.of("The Sawmill supports ten vanilla wood families, including stems, stripped logs and wood through their tags. One input yields six planks and one sawdust.","A cycle takes 80 ticks at 15 FE/t. Route sawdust into biomass power, or craft nine sawdust into one charcoal. Full byproduct space stops the machine safely."),0),
+  new Page("Compacting bulk materials",List.of("The Compactor packs nine iron, gold or copper ingots into a block. It also packs coal, redstone, lapis, diamonds and emeralds.","Four sand become sandstone; four clay balls become a clay block. These are powered automation recipes, not extra material multiplication."),0),
+  new Page("Centrifuge and recycling",List.of("The Centrifuge separates gravel into flint, clay blocks into four clay balls, two moss blocks into bone meal, and four cactus into slime.","The Recycler salvages three matching nuggets from iron or gold tools and armor. It destroys the original item, including enchantments and components. Keep valuable gear away from its input."),0),
+  new Page("Workshop milestones",List.of("Minecraft Advancements contains twenty persistent workshop milestones, from your first Machine Frame to advanced power and selective mining.","The milestones record obtaining the equipment. They do not lock recipes or grant repeatable item rewards. The Field Guide remains a reference atlas."),0),
+  new Page("Build a factory",List.of("Use steel or bronze casings, industrial bricks, hazard markings, steel grates, reinforced glass, structural pillars, ventilation grilles, control panels and engineering lamps.","Lamps provide level-15 light. Other building-kit blocks are decorative. Machine shapes use baked geometry, including press frames, saw housings, exposed coils and solar panels."),0),
+  new Page("Connect four cores",List.of("A terminal can combine one to four connected Storage Cores: 54 slots per core, up to 216. Connect them with Network Cable or direct contact.","Right-clicking a core opens that individual core. A terminal opens the combined network. Each core keeps its own saved inventory; the catalogue owns no items."),1),
+  new Page("Using the catalogue",List.of("Search by item name or registry ID; sort by name or count. Identical components combine into a single entry.","Left-click: withdraw a stack. Right-click: one item. Shift-click: transfer into your inventory. Shift-click inventory items to deposit, or use Deposit held for your cursor stack."),1),
+  new Page("Changing a network",List.of("Adding, removing or replacing a core invalidates an open terminal view. Reopen it to get the new capacity safely. A broken cable immediately blocks further transfers.","Networks are limited to four cores and 128 loaded network blocks. A larger network fails closed. No chunks are force-loaded. Autocrafting and storage disks are future systems."),1),
+  new Page("Energy conduit routes",List.of("Place Energy Conduits between a generator or cell and consumers. They connect in six directions, keep no energy of their own and route at most 200 FE/t per supplier.","Direct neighbors share that same budget. First priority rotates each tick. Generators may charge cells; cells do not charge each other, preventing buffer ping-pong. Routes inspect at most 128 conduits."),2),
+  new Page("Item Transfer arrows",List.of("Place an Item Transfer between two inventories. It pulls from the rear and sends toward its arrow, up to eight items every eight ticks. Use a wrench to cycle all six directions.","Right-click with an item to set a component-aware ghost filter. Your sample stays in your hand. Empty-hand right-click clears the filter. A redstone signal pauses transfer."),2),
+  new Page("An automated alloy line",List.of("Feed copper and tin into the Alloy Smelter with hoppers or Item Transfers. Supply power from a generator through Energy Conduits. Send bronze output to a chest or core.","Machines accept ingredients only in their inputs and expose only outputs for automatic extraction. For two different ingredients, use filtered transfers; preserve space for each input."),2),
+  new Page("Sawmill fuel loop",List.of("A chest of logs feeds a sawmill. A filtered transfer takes sawdust into a Biomass Generator, while another route collects planks. Start the sawmill with an external energy supply.","A sawdust byproduct is a small fuel credit, not a perpetual-motion promise. Energy generation, recipe costs and transfer limits remain explicit."),2),
+  new Page("Survey Miner setup",List.of("Place a Survey Miner above the region, give it power, insert an optional filter and press Start. The miner starts paused.","Default radius is four blocks; depth is 32 blocks below the machine. It checks a bounded number of loaded blocks rather than scanning whole chunks at once."),3),
+  new Page("Ore filters",List.of("The filter slot accepts an ore block or its drop, such as raw iron or coal. Empty means all tagged ores the mining tool can harvest.","The filter is a retained sample. The miner uses iron-pickaxe harvest rules and cannot mine every exotic material. Output-full and no-power states preserve the target."),3),
+  new Page("Ownership and rescanning",List.of("The owner must remain online, in the same dimension and able to build. Protected targets use loader break hooks; actual claim-mod behavior still requires pack tests.","Rescan restarts the scan cursor. It does not regenerate ore. Scan complete pauses the machine; review the area before restarting."),3),
+  new Page("The machine dashboard",List.of("Input slots are amber; outputs are separate. The Alloy Smelter has two inputs. Hover over the energy bar for exact FE amounts.","The progress line stays below the output slots. Pause stops production. Generator and cell buffers may still export stored energy while production is paused."),4),
+  new Page("Configuration wrench",List.of("Right-click a machine with the wrench to rotate its front without breaking it or dropping inventory. Item Transfer rotates through all six output directions.","Crouch-use a machine to inspect its stored energy. Miner ownership still applies. The wrench does not dismantle or move machines."),4),
+  new Page("Machine ports",List.of("All faces can currently receive permitted inputs and power. Automatic extraction is restricted to outputs. Core inventories accept and export ordinary items.","Per-face configuration and machine upgrades remain future work; the visible sockets establish the art direction but do not represent configurable side modes yet."),4),
+  new Page("No power",List.of("Check generator fuel or solar daylight, conduit continuity and consumer energy. A cell cannot charge another cell. Conduit routes never force-load chunks.","A supplier shares 200 FE/t across all consumers. A large factory needs multiple suppliers, sensible branches and buffering."),5),
+  new Page("No production",List.of("Check the machine type, recipe ingredients and quantities. Alloys need both ingredients. Output or byproduct space must be available.","Processing resets when the recipe or input identity changes. Adding more of the same input does not erase progress. Datapack reloads can change recipes."),5),
+  new Page("Transfer trouble",List.of("Check the Item Transfer arrow and adjacent inventories. Redstone pauses it. The ghost filter matches item components, including custom names.","This version supports vanilla Container and sided-container inventories. Capability-only third-party inventories need a future adapter. Existing recipe viewers also need explicit integration."),5),
+  new Page("Balance configuration",List.of("Server settings live in config/technologia.json and require restart. Invalid files are preserved and defaults are used. /technologia status requires operator permission.","The generator and vanilla furnace use these settings. New processing recipes define their own duration and FE per tick through datapacks."),6),
+  new Page("Processing datapacks",List.of("Use type technologia:processing, a machine ID, one or two counted ingredients, a result, optional byproduct, time in ticks and energy per tick.","Ingredients accept item or tag matching. See data/technologia/recipe in the jar for working examples. Reload with the normal server datapack workflow."),6),
+  new Page("What alpha.3 includes",List.of("Seventeen machine types, two transport families, filtered item transfer, four-core Nexus terminals, alloys, plates, material processing, factory building blocks and workshop advancements.","This is still an alpha. Fabric and Forge build coverage does not certify live modpack behavior. Advanced equipment, bosses, fluids, gases and autocrafting remain ahead."),7),
+  new Page("Compatibility and saves",List.of("Power adapters use FE on NeoForge/Forge and Team Reborn Energy on Fabric. Conduits can deliver to those energy endpoints. Create kinetic integration is not included.","Existing machine inventories and registry IDs are retained. Back up worlds before alpha upgrades. Broken machine blocks drop inventory but do not preserve stored energy."),7),
+  new Page("Beyond the workshop",List.of("Future branches include configurable ports, fluids and gases, server racks and autocrafting, factory upgrades, chemistry, reactors, nature systems, dimensions and the draconic/chaotic endgame.","The long progression is expandable. Color describes function; materials, machinery and capabilities define advancement. Planned systems are not playable content yet."),8)
+ );
+ public static List<Page> pages(){return PAGES;}
+ public static List<Chapter> chapters(){return List.of(
+  new Chapter("Workshop","Build the production loop","alloy_smelter",0,11,false),
+  new Chapter("Nexus","Connected storage","storage_terminal",11,14,false),
+  new Chapter("Automation","Move power and items","energy_conduit",14,18,false),
+  new Chapter("Mining","Selective extraction","digital_miner",18,21,false),
+  new Chapter("Controls","Configure your equipment","wrench",21,24,false),
+  new Chapter("Diagnostics","Recover a stopped line","basic_circuit",24,27,false),
+  new Chapter("Settings","Balance and datapacks","advanced_circuit",27,29,false),
+  new Chapter("Alpha status","Capabilities and limits","field_guide",29,31,false),
+  new Chapter("Future","The longer journey","chaotic_core",31,32,true)
+ );}
+ public static WrittenBookContent content(){
+  List<Filterable<Component>> result=new ArrayList<>();
+  result.add(Filterable.passThrough(Component.literal("Technologia Workshop Atlas\nUse the native guide to browse chapters.")));
+  for(Page page:PAGES) result.add(Filterable.passThrough(Component.literal(page.title()+"\n\n"+String.join("\n\n",page.paragraphs()))));
+  return new WrittenBookContent(Filterable.passThrough("Technologia Field Guide"),"Technologia",0,List.copyOf(result),true);
+ }
 }

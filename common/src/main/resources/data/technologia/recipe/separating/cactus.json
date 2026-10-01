@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "centrifuge",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:cactus"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "minecraft:slime_ball",
+    "count": 1
+  },
+  "time": 160,
+  "energy": 30
+}

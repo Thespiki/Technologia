@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IPI",
+    "PGP",
+    "IPI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_nugget"
+    },
+    "P": {
+      "tag": "c:plates/iron"
+    },
+    "G": {
+      "item": "minecraft:stone"
+    }
+  },
+  "result": {
+    "id": "technologia:steel_pillar",
+    "count": 8
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IPI",
+    "PGP",
+    "IPI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:ingots/bronze"
+    },
+    "P": {
+      "tag": "c:plates/iron"
+    },
+    "G": {
+      "item": "minecraft:stone"
+    }
+  },
+  "result": {
+    "id": "technologia:bronze_casing",
+    "count": 8
+  }
+}

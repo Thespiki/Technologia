@@ -1,0 +1,22 @@
+{
+  "type": "technologia:processing",
+  "machine": "sawmill",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "minecraft:warped_stems"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:warped_planks",
+    "count": 6
+  },
+  "time": 80,
+  "energy": 15,
+  "byproduct": {
+    "id": "technologia:sawdust",
+    "count": 1
+  }
+}

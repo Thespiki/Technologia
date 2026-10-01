@@ -1,0 +1,31 @@
+{
+  "parent": "technologia:workshop/root",
+  "display": {
+    "icon": {
+      "id": "technologia:coal_generator"
+    },
+    "title": "First spark",
+    "description": "Build a combustion generator.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:coal_generator"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

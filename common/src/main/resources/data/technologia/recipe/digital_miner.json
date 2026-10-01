@@ -8,7 +8,7 @@
   ],
   "key": {
     "D": {
-      "item": "minecraft:diamond"
+      "tag": "c:plates/steel"
     },
     "A": {
       "item": "technologia:advanced_circuit"
@@ -20,7 +20,7 @@
       "item": "technologia:machine_frame"
     },
     "P": {
-      "item": "minecraft:iron_pickaxe"
+      "item": "minecraft:diamond_pickaxe"
     },
     "C": {
       "item": "technologia:basic_circuit"

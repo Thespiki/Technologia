@@ -1,0 +1,31 @@
+{
+  "parent": "technologia:workshop/crushing",
+  "display": {
+    "icon": {
+      "id": "technologia:electric_furnace"
+    },
+    "title": "Close the loop",
+    "description": "Smelt dust into useful ingots.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:electric_furnace"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

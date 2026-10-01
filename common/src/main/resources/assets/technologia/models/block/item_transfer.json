@@ -1,0 +1,112 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "technologia:block/casing",
+    "casing": "technologia:block/casing",
+    "detail": "technologia:block/item_transfer"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        3,
+        3
+      ],
+      "to": [
+        13,
+        13,
+        13
+      ],
+      "faces": {
+        "down": {
+          "texture": "#casing"
+        },
+        "up": {
+          "texture": "#casing"
+        },
+        "north": {
+          "texture": "#casing"
+        },
+        "south": {
+          "texture": "#casing"
+        },
+        "west": {
+          "texture": "#casing"
+        },
+        "east": {
+          "texture": "#casing"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        5,
+        13
+      ],
+      "to": [
+        11,
+        11,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#casing"
+        },
+        "up": {
+          "texture": "#casing"
+        },
+        "north": {
+          "texture": "#casing"
+        },
+        "south": {
+          "texture": "#casing"
+        },
+        "west": {
+          "texture": "#casing"
+        },
+        "east": {
+          "texture": "#casing"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        0
+      ],
+      "to": [
+        12,
+        12,
+        3
+      ],
+      "faces": {
+        "down": {
+          "texture": "#casing"
+        },
+        "up": {
+          "texture": "#casing"
+        },
+        "north": {
+          "texture": "#detail",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#casing"
+        },
+        "west": {
+          "texture": "#casing"
+        },
+        "east": {
+          "texture": "#casing"
+        }
+      }
+    }
+  ]
+}

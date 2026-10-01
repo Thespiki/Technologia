@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "technologia:sawdust"
+    },
+    {
+      "item": "technologia:sawdust"
+    },
+    {
+      "item": "technologia:sawdust"
+    },
+    {
+      "item": "technologia:sawdust"
+    },
+    {
+      "item": "technologia:sawdust"
+    },
+    {
+      "item": "technologia:sawdust"
+    },
+    {
+      "item": "technologia:sawdust"
+    },
+    {
+      "item": "technologia:sawdust"
+    },
+    {
+      "item": "technologia:sawdust"
+    }
+  ],
+  "result": {
+    "id": "minecraft:charcoal",
+    "count": 1
+  }
+}

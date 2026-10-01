@@ -143,7 +143,7 @@ public final class StorageScreen extends AbstractContainerScreen<StorageMenu> {
         g.drawString(font, text("title", "Nexus storage"), 14, 12, 0xffedf4fc, false);
         Component pageLabel = text("page", "%s / %s", page + 1, pageCount());
         g.drawCenteredString(font, pageLabel, 64, 120, 0xffedf4fc);
-        Component status = text("status", "%s/%s types | %s items | %s/54 slots", filtered.size(), totalTypes, menu.totalItems(), menu.occupiedSlots());
+        Component status = text("status", "%s/%s types | %s items | %s/%s slots", filtered.size(), totalTypes, menu.totalItems(), menu.occupiedSlots(), menu.capacity());
         g.drawString(font, status, 14, 138, 0xffaebed1, false);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xffaebed1, false);
         if (filtered.isEmpty()) {

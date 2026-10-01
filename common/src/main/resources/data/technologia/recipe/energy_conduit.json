@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " G ",
+    "PRP",
+    " G "
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "P": {
+      "tag": "c:plates/copper"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "technologia:energy_conduit",
+    "count": 8
+  }
+}

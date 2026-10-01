@@ -58,7 +58,7 @@ public final class InterfaceGameTests {
         h.assertTrue(menu.getCarried().isEmpty() && menu.totalItems() == 80, "Deposit returns all carried items");
         menu.clickMenuButton(player, button(menu, StorageMenu.Action.TO_INVENTORY));
         h.assertTrue(player.getInventory().countItem(Items.COAL) == 64 && menu.totalItems() == 16, "Shift withdrawal moves one stack into inventory");
-        for (int i = 54; i < menu.slots.size(); i++) if (menu.slots.get(i).hasItem()) menu.quickMoveStack(player, i);
+        for (int i = StorageMenu.STORAGE_SLOTS; i < menu.slots.size(); i++) if (menu.slots.get(i).hasItem()) menu.quickMoveStack(player, i);
         h.assertTrue(menu.totalItems() == 80 && player.getInventory().countItem(Items.COAL) == 0, "Shift deposit conserves items");
         h.succeed();
     }
@@ -95,8 +95,8 @@ public final class InterfaceGameTests {
         storage.setItem(0, new ItemStack(Items.DIAMOND, 4));
         h.assertTrue(!menu.clickMenuButton(player, stale), "A stale coal click must never take replacement diamonds");
         int current = button(menu, StorageMenu.Action.STACK);
-        h.assertTrue(!menu.clickMenuButton(player, (current & ~63) | 63), "Invalid backing slot rejected");
-        h.assertTrue(!menu.clickMenuButton(player, current | 192), "Unknown action rejected");
+        h.assertTrue(!menu.clickMenuButton(player, (current & ~255) | 255), "Invalid backing slot rejected");
+        h.assertTrue(!menu.clickMenuButton(player, current | (3 << 8)), "Unknown action rejected");
         menu.clicked(0, 0, ClickType.PICKUP, player);
         h.assertTrue(menu.quickMoveStack(player, 0).isEmpty() && menu.getCarried().isEmpty() && menu.totalItems() == 4, "Raw slot packets cannot bypass catalogue actions");
         h.succeed();
@@ -155,10 +155,10 @@ public final class InterfaceGameTests {
     @GameTest(template = "empty")
     public static void guideIsCraftableAndPublic(GameTestHelper h) {
         var stack = new ItemStack(Technologia.ITEMS.get("field_guide"));
-        h.assertTrue(stack.getItem() instanceof GuideItem && stack.get(DataComponents.WRITTEN_BOOK_CONTENT).pages().size() == 18, "Guide has readable book pages");
+        h.assertTrue(stack.getItem() instanceof GuideItem && stack.get(DataComponents.WRITTEN_BOOK_CONTENT).pages().size() == dev.technologia.guide.FieldGuide.pages().size() + 1, "Guide has readable book pages");
         var articles = dev.technologia.guide.FieldGuide.pages();
         var chapters = dev.technologia.guide.FieldGuide.chapters();
-        h.assertTrue(articles.size() == 17 && chapters.size() == 9, "Native atlas exposes all articles and chapters");
+        h.assertTrue(articles.size() == 32 && chapters.size() == 9, "Native atlas exposes all articles and chapters");
         for (int i = 0; i < articles.size(); i++) {
             var article = articles.get(i); var chapter = chapters.get(article.chapter());
             h.assertTrue(!article.title().isBlank() && !article.paragraphs().isEmpty() && i >= chapter.firstPage() && i < chapter.lastPage(), "Every article belongs to its visible chapter");

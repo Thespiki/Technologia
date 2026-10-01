@@ -5,6 +5,8 @@
     "#forge:dusts/gold",
     "#forge:dusts/copper",
     "#forge:dusts/tin",
-    "#forge:dusts/lead"
+    "#forge:dusts/lead",
+    "#forge:dusts/coal",
+    "#forge:dusts/wood"
   ]
 }

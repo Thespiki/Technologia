@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "centrifuge",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:clay"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:clay_ball",
+    "count": 4
+  },
+  "time": 80,
+  "energy": 15
+}

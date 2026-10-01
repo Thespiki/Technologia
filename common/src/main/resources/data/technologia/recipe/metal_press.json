@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BPB",
+    "CFC",
+    "BIB"
+  ],
+  "key": {
+    "B": {
+      "tag": "c:ingots/bronze"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    }
+  },
+  "result": {
+    "id": "technologia:metal_press",
+    "count": 1
+  }
+}

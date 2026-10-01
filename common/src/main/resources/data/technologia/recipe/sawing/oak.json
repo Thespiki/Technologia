@@ -1,0 +1,22 @@
+{
+  "type": "technologia:processing",
+  "machine": "sawmill",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "minecraft:oak_logs"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:oak_planks",
+    "count": 6
+  },
+  "time": 80,
+  "energy": 15,
+  "byproduct": {
+    "id": "technologia:sawdust",
+    "count": 1
+  }
+}

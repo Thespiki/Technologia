@@ -6,22 +6,22 @@ An original Minecraft technology mod inspired by the automation and enormous fac
 
 The first development/playtest target is **Minecraft 1.21.1 + NeoForge**. The requested long-term target is **1.21.1 and later stable releases**, across the three loaders where available. Newer versions require tested ports, not just a wider version range in metadata.
 
-## What is implemented in 0.1.0-alpha.2
+## What is implemented in 0.1.0-alpha.3
 
-- Combustion generator: coal/charcoal → power; pauses when full.
-- Energy cell: one million energy units; adjacent transfer and loader energy adapters.
-- Ore crusher: raw iron, gold, copper, tin or lead → two dust.
-- Electric furnace: reads the game's smelting recipes, including datapacks.
-- Survey miner: selective ore mining in a bounded region, one filter slot, start/pause/rescan, permission callbacks and an owner-online requirement. Starts paused.
-- Nexus storage core: 54 backing slots with a searchable item catalogue, combined counts, name/count sorting and cursor/shift-click transfers. Each terminal accesses one connected core through a network of up to 128 blocks. Multiple-core aggregation and autocrafting are still planned.
-- Tin, lead and resonite generation, drops, common material tags and survival crafting/smelting recipes.
-- Machine screens with separate input/output areas, status messages, energy/progress indicators and help tooltips. A native Field Guide has a nine-chapter atlas, 17 articles, scrolling and keyboard navigation; craft it or use `/technologia guide` without operator permissions.
-- Original 32px art, machine fronts facing the placing player, active processing indicators, recessed storage bays/screens and cable geometry that follows its connections.
-- Server balance config, operator diagnostics, automated resource checks, unit tests and NeoForge game tests.
+The workshop now contains **17 machine types, 10 factory building blocks, 32 guide articles and 20 advancement milestones**, with separate Fabric, NeoForge and Forge builds. See the [alpha.3 release notes](docs/releases/0.1.0-alpha.3.md) for the additions and upgrade details.
+
+- Production: Ore Crusher, Electric Furnace, Alloy Smelter, Metal Press, Sawmill, Compactor, Centrifuge and Recycler. Bronze, steel, five metal plates, coal dust and sawdust connect the recipes into a longer workshop progression.
+- Power: coal/charcoal and biomass generators, 16 FE/t and 64 FE/t solar generators, and cells storing one million or five million FE. Energy Conduits route power from Technologia generators and cells through loaded connections.
+- Logistics: directional Item Transfers move up to eight items every eight ticks, with a component-aware ghost filter, redstone pause and sided inventory rules. A wrench rotates machines and transfer arrows without breaking them.
+- Nexus: searchable combined item counts, name/count sorting, pages and cursor/shift-click transfers. Terminals combine up to four connected cores, giving 54–216 backing slots. Opening a core directly still shows that core's 54 slots.
+- Survey Miner: bounded selective ore mining, an optional retained filter, start/pause/rescan, permission callbacks and an owner-online requirement. Starts paused.
+- Resources and building: tin, lead and resonite ores; shared material tags; survival recipes; steel/bronze casings, industrial bricks, grates, hazard blocks, lamps, pillars, grilles, control panels and reinforced glass. Engineering lamps emit level-15 light; the other building-kit blocks are decorative.
+- Presentation: original 32px textures and distinct three-dimensional models across all machine types, including open press frames, saw housings, solar panels, exposed coils, storage racks and a freestanding terminal. Machine and decoration collision/selection shapes follow their model geometry. Connected cables and conduits follow their routes. Active fronts change appearance; moving mechanical animations remain future work.
+- Guidance and management: a native nine-chapter Field Guide with 32 articles, scrolling and keyboard navigation; 20 persistent vanilla advancements; reloadable processing recipes; restart-required server balance config and operator diagnostics.
 
 Draconic and chaotic cores are **creative-only concept items**. Equipment, bosses, fusion, reactors, RFTools-style building and full AE2/Mekanism-scale systems are planned. This project is not an unofficial port of those mods.
 
-Initial NeoForge singleplayer playtesting covered storage connectivity, energy transfer, processing and miner filters. Client checks at small and maximized window sizes covered the Field Guide, combined storage counts, empty search results and the corrected furnace layout. Broader interface, multiplayer, Fabric/Forge runtime and modpack checks remain; see the [verification record](docs/VALIDATION.md).
+All three loader builds passed, and the local NeoForge server suite passed all **38 required GameTests**. Targeted NeoForge client checks passed for the models, alloy UI, conduit power, item transfer, combined storage and wrench; see the [verification record](docs/VALIDATION.md). Earlier NeoForge playtesting covered the original workshop; it does not certify the new systems. Multiplayer, Fabric/Forge runtime and representative modpack checks remain required.
 
 ## Try the workshop
 
@@ -31,19 +31,40 @@ Download builds from [GitHub Releases](https://github.com/Thespiki/Technologia/r
 
 1. Craft a Field Guide from a book and copper ingot, or use `/technologia guide`. Mine tin and smelt it. Craft a machine frame, basic circuits and a combustion generator.
 2. Place an ore crusher directly beside the generator. Put coal or charcoal in the generator's upper-left slot. Put raw iron in the crusher's upper-left slot. The other slots receive output.
-3. Smelt the dust in a vanilla furnace or powered electric furnace. Hoppers can feed input and collect output.
-4. Place a storage core and terminal connected by network cable. Both access the same stored items. Search by item name or registry ID; left-click a result for a stack, right-click for one item, or shift-click to withdraw into your inventory. Shift-click your inventory to deposit, or use **Deposit held** for the cursor stack. Network cable carries storage connectivity, not power.
-5. Place a Survey Miner above ore and supply power. Its first slot is an optional ore/raw-material filter; leave it empty for all tagged ores. Press Start. Default area: 9×9 horizontally, up to 32 blocks below the machine. Only its owner can start/pause/rescan it, and that owner must be online in the same dimension.
+3. Smelt the dust in a vanilla furnace or powered Electric Furnace. Craft an Alloy Smelter: three copper ingots plus one tin ingot make four bronze ingots. Either input order works. Crush coal into coal dust; one iron ingot plus two coal dust make steel.
+4. Use bronze to craft a Metal Press. Press ingots into plates, then build conduits, solar generation and more production machines. A Sawmill makes six planks and one sawdust per log; sawdust can fuel the Biomass Generator or be crafted into charcoal in batches of nine.
+5. Place Energy Conduits between a generator/cell and consumers. Each supplier shares a 200 FE/t budget across direct neighbors and conduit routes. Generators can charge cells; cells do not charge each other. Solar generation requires clear daytime, a skylit dimension and open sky above the panel.
+6. Place an Item Transfer between two inventories, with its arrow pointing toward the destination. Right-click with a sample item to filter it, or empty-handed to clear the filter. The sample is retained. Use the wrench to cycle all six directions; redstone pauses transfer. Hoppers also feed machine inputs and collect outputs.
+7. Connect one to four Storage Cores and a terminal using Network Cable or direct contact. Search by item name or registry ID; left-click a result for a stack, right-click for one item, or shift-click to withdraw into your inventory. Shift-click your inventory to deposit, or use **Deposit held** for the cursor stack. Reopen the terminal after changing its connected cores. Network Cable carries storage connectivity; use Energy Conduits for power.
+8. Place a Survey Miner above ore and supply power. Its first slot is an optional ore/raw-material filter; leave it empty for all tagged ores. Press Start. Default area: 9×9 horizontally, up to 32 blocks below the machine. Only its owner can start/pause/rescan it, and that owner must be online in the same dimension.
 
-Ore generation affects newly generated chunks. Machine inventories persist across saves and drop when machines are broken. Energy is not retained in a broken machine item in this prototype. The electric furnace does not award smelting XP yet. Active fronts change appearance during operation; moving mechanical animations remain future work.
+Ore generation affects newly generated chunks. Machine inventories persist across saves and drop when machines are broken. Energy is not retained in a broken machine item in this prototype. The Electric Furnace does not award smelting XP yet. Recycling consumes the entire input item, including its enchantments and components. Advancements record obtaining equipment; they neither gate recipes nor give repeatable item rewards.
 
 ## Manage it
 
-`config/technologia.json` is created at startup. Restart the server after changing it. It controls generator output, processing duration/cost, miner energy/radius/depth and whether mining is enabled. Values are clamped to safe implementation limits. Invalid JSON is logged and defaults are used without overwriting your file.
+`config/technologia.json` is created at startup. Restart the server after changing it. It controls combustion-generator output, biomass output at half that value, Electric Furnace duration/cost, miner energy/radius/depth and whether mining is enabled. Values are clamped to implementation limits. Invalid JSON is logged and defaults are used without overwriting your file.
+
+The Crusher and new processing machines use datapack recipes of type `technologia:processing`, with counted item/tag ingredients, a result, an optional byproduct, cycle time in ticks and energy per tick. This replaces the old crusher mapping: its cost and duration now come from recipes, rather than the furnace settings. For example, `data/technologia/recipe/alloying/bronze.json` contains:
+
+```json
+{
+  "type": "technologia:processing",
+  "machine": "alloy_smelter",
+  "ingredients": [
+    {"ingredient": {"tag": "c:ingots/copper"}, "count": 3},
+    {"ingredient": {"tag": "c:ingots/tin"}, "count": 1}
+  ],
+  "result": {"id": "technologia:bronze_ingot", "count": 4},
+  "time": 160,
+  "energy": 30
+}
+```
+
+Recipes reload through the standard datapack workflow. All ingredients and space for both output and byproduct are checked before energy is spent. Changing a recipe or input identity resets progress; adding more of the same input preserves it. Pause stops production while stored power may still be exported.
 
 Operators can run `/technologia status` for the active settings. A graphical control dashboard and configuration UI are planned.
 
-Forge/NeoForge expose energy and sided item capabilities; Fabric exposes transactional Team Reborn Energy and uses vanilla sided inventories. These are interoperability surfaces, not evidence that every cable, claim or automation mod has been tested. Create-specific recipes and kinetic conversion are not implemented yet. See the [compatibility plan](docs/ROADMAP.md).
+Forge/NeoForge expose energy and sided item capabilities; Fabric exposes transactional Team Reborn Energy and uses vanilla sided inventories. Conduits can route Technologia suppliers to external energy endpoints through these adapters. Conduits do not expose a general input buffer for another mod's power cable. Item Transfers currently support vanilla `Container` and sided-container inventories; capability-only external inventories need an adapter. Create-specific recipes, kinetic conversion and JEI/EMI/REI recipe displays are not implemented yet. See the [compatibility plan](docs/ROADMAP.md) for remaining pack tests.
 
 ## Build and test
 

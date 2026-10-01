@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BIB",
+    "CFC",
+    "BHB"
+  ],
+  "key": {
+    "B": {
+      "tag": "c:plates/bronze"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    }
+  },
+  "result": {
+    "id": "technologia:recycler",
+    "count": 1
+  }
+}

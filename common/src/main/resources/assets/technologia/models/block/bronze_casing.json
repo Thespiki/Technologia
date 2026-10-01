@@ -1,0 +1,50 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "metal": "technologia:block/factory_metal",
+    "dark": "technologia:block/factory_dark",
+    "copper": "technologia:block/factory_copper",
+    "bolt": "technologia:block/factory_bolt",
+    "vent": "technologia:block/factory_vent",
+    "hazard": "technologia:block/factory_hazard",
+    "panel": "technologia:block/solar_top",
+    "particle": "technologia:block/factory_metal",
+    "signal": "technologia:block/factory_glow",
+    "screen": "technologia:block/terminal_screen_active",
+    "glass": "technologia:block/factory_glass"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "north": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        }
+      }
+    }
+  ]
+}

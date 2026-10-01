@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "crusher",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:raw_materials/iron"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:iron_dust",
+    "count": 2
+  },
+  "time": 100,
+  "energy": 20
+}

@@ -1,0 +1,31 @@
+{
+  "parent": "technologia:workshop/advanced_power",
+  "display": {
+    "icon": {
+      "id": "technologia:advanced_solar_generator"
+    },
+    "title": "Solar field",
+    "description": "Build a 64-FE/t solar array.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:advanced_solar_generator"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

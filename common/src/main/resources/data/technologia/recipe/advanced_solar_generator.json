@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "ACA",
+    "PFP"
+  ],
+  "key": {
+    "S": {
+      "item": "technologia:solar_generator"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    },
+    "C": {
+      "item": "technologia:resonite"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    }
+  },
+  "result": {
+    "id": "technologia:advanced_solar_generator",
+    "count": 1
+  }
+}

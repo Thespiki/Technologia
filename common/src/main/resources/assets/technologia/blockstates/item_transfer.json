@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "technologia:block/item_transfer"
+    },
+    "facing=east": {
+      "model": "technologia:block/item_transfer",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "technologia:block/item_transfer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "technologia:block/item_transfer",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "technologia:block/item_transfer",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "technologia:block/item_transfer",
+      "x": 90
+    }
+  }
+}

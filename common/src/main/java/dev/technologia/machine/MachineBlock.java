@@ -48,6 +48,10 @@ public final class MachineBlock extends BaseEntityBlock {
     }
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return MapCodec.unit(this); }
     @Override protected RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
+    @Override protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state,
+            net.minecraft.world.level.BlockGetter level, BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) {
+        return FactoryShapes.get(kind.id, state.getValue(FACING));
+    }
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) { return new MachineBlockEntity(pos, state); }
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return level.isClientSide ? null : createTickerHelper(type, Technologia.MACHINE_TYPE, MachineBlockEntity::tick);
@@ -61,6 +65,11 @@ public final class MachineBlock extends BaseEntityBlock {
             } else player.openMenu(machine);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+    @Override protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+            Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
+        return stack.getItem() instanceof WrenchItem ? net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION
+                : net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     @Override public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);

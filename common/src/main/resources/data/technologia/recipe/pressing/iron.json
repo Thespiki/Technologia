@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "metal_press",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:iron_plate",
+    "count": 1
+  },
+  "time": 60,
+  "energy": 15
+}

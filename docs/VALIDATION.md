@@ -1,37 +1,39 @@
-# Verification record — 0.1.0-alpha.2
+# Verification record — 0.1.0-alpha.3
 
-This record distinguishes compilation, automated behavior checks and hands-on playtesting. Passing a build is not a guarantee of compatibility or a finished game experience.
+Checks run on 2026-09-30 and 2026-10-01 with Minecraft 1.21.1 and Java 21. Build coverage, server behavior and client review are recorded separately.
 
 | Check | Result |
 | --- | --- |
-| Shared Java compilation | Passed with Java 21 |
-| Energy core unit tests | 2 passed; includes 20,000 simulated/committed transfer cycles and integer boundary tests |
-| Resource structural validation | Passed: 181 shared JSON files, model/texture references, translations, local common tag references and loader metadata |
-| Fabric 1.21.1 build | Final alpha.2 build passed as part of local release packaging |
-| NeoForge 1.21.1 build | Final alpha.2 build passed as part of local release packaging |
-| Forge 1.21.1 build | Final alpha.2 build passed as part of local release packaging |
-| NeoForge game tests | All 18 required server tests passed on 2026-09-30, including native guide content and read-only menu checks |
-| GitHub CI | [All three loader builds and server tests passed](https://github.com/Thespiki/Technologia/actions/runs/36703809541) for release source `24bec56018b62dc656ce2e63766223d14080b1b2`; [release workflow passed](https://github.com/Thespiki/Technologia/actions/runs/36703826971) and published all three jars |
-| Versioned packaging | Local packageRelease succeeded on 2026-09-30 and produced the three alpha.2 loader jars; overwrite protection added |
-| Presentation site | Static build and JavaScript syntax passed; search, status filters, empty results and combined filtering checked in browser; mobile and desktop layouts reviewed; added guide screenshot checked at a 1265px viewport |
-| Minecraft client visual review | Initial NeoForge checks at 854×480 and 1920×1009 client sizes covered the guide, storage catalogue/empty search and furnace layout; details below |
-| Field Guide content | Native nine-chapter atlas derives 17 articles from shared content; archival book metadata retained. Responsive screen uses wrapped, scrollable text |
-| Fabric / Forge in-game tests | Not performed |
-| Create, external cables, claim mods and modpacks | Not tested in a running pack |
-| Later Minecraft releases | Ports not started |
+| Shared energy unit tests | 2 passed, including 20,000 simulation/commit cycles and integer boundaries |
+| Resource structure | 415 shared JSON files passed translation, texture/model, tag and loader metadata checks |
+| Fabric / NeoForge / Forge | All three loader builds passed; final release packaging pending |
+| NeoForge server GameTests | All 38 required tests passed locally |
+| Recipe / advancement loading | 1,404 recipes and 1,420 server advancements loaded without a Technologia decoding error |
+| Machine shapes | Cached collision and selection profiles generated from original model elements; open press and solar profile tested |
+| Client review | NeoForge: new models, alloy UI and processing, conduit charge, transfer destination, multi-core capacity and wrench rotation checked |
+| Presentation site | Static build, JavaScript syntax, local HTML and model screenshot HTTP 200 passed; fresh browser preview could not attach |
+| Publication | GitHub CI, release assets and Pages verification pending |
+| Fabric / Forge client playtests | Not performed |
+| External mods / multiplayer stress | Not performed |
 
-Published on 2026-09-30: [alpha.2 release](https://github.com/Thespiki/Technologia/releases/tag/v0.1.0-alpha.2). The [Pages deployment](https://github.com/Thespiki/Technologia/actions/runs/36703809538) passed, and the live presentation and guide screenshot returned HTTP 200. Local alpha.1 jar checksums and its source tag were verified unchanged; its three GitHub release assets remain available.
+The 38 server tests include the previous 18 generator, processing, mining, energy, storage, menu and guide checks, plus 20 checks for counted/swapped alloy inputs, insufficient quantity, blocked outputs and byproducts, process save/load and input changes, new processors, solar obstruction and advanced cell capacity, biomass, conduit loops and energy conservation, cell feedback prevention, filtered/full/sided item transfer, filter persistence, actual direction/redstone behavior, multi-core aggregation and topology changes, slot 215 and padded storage safety, five-core rejection, machine menu mapping, loaded advancements and physical model profiles.
 
-The original eight GameTests cover generator-to-crusher processing, full-output backpressure, data-driven smelting, block-entity save/load, network disconnection, a paused miner, FE simulation and sided inventory access. Ten new tests cover aggregation of 1,000 identical items while separating named/component variants; stack/one/shift withdrawals and cursor/shift deposits; full inventories and partial space; stale/invalid catalogue requests and hidden-slot packets; disconnected open menus; inventory preservation across facing/activity changes; actual processing indicators; cable arm updates; and guide content, recipes and command permissions.
+The first expanded run caught solar generation immediately after a roof was placed, before Minecraft's skylight update had caught up. Generation now checks the synchronous obstruction heightmap as well as sky light. The regression passes. Builds and CI require an explicit `All N required tests passed` summary, not just a zero Gradle exit code.
 
-Reproduce with the commands in README. The test report is generated under `common/build/reports/tests/test`; server-run diagnostics are in the NeoForge run directory. See PLAYTEST.md for remaining acceptance checks.
+New processing recipes use datapack-defined costs. The furnace still reads vanilla smelting recipes and config costs. External energy adapters and sided inventory surfaces are implemented, but this does not establish compatibility with an untested cable, claim mod, recipe viewer or modpack.
 
-An earlier alpha.1 server startup failure returned a successful Gradle exit despite a registry error; CI therefore requires an explicit successful GameTest summary in addition to the process exit code. Javadoc warnings about missing API comments remain.
+Current limits: four cores/216 slots per terminal; no disks or autocrafting; 128 loaded blocks per storage traversal and 128 conduits per power route; one miner filter; adjacent Item Transfer supports vanilla containers rather than capability-only inventories; no furnace XP; broken machines lose stored energy; no fluids/gases, machine upgrades, moving mechanisms, Create kinetic bridge, advanced equipment or bosses. See PLAYTEST.md for remaining acceptance work.
 
-Remaining limits: one core per terminal and no autocrafting, adjacent power transfer without a built-in energy cable network, a single miner filter with configured radius/depth, hardcoded crusher material families, no furnace XP, no energy retained in broken machine items, no final equipment/boss systems and no Create kinetic bridge. Multiplayer stress, existing-world upgrades, other loaders' runtime behavior and external compatibility still need playtests.
+## Alpha.3 client checks
 
-User playtest on NeoForge 1.21.1: reported working core/terminal synchronization via both cable and direct contact, energy-cell transfer, generator, furnace, crusher and miner filters for iron, coal and unfiltered ores. Their screenshots exposed a progress-bar overlap and an empty-storage grid/text overlap; both layouts have been corrected in source. This is a first singleplayer playtest, not multiplayer or modpack certification.
+The existing NeoForge test world loaded successfully. The two-input Alloy Smelter displayed separate inputs and outputs, a clear progress bar and working Start/Pause controls. A conduit charged its buffer from 40,000 to 80,000 FE. Six copper and two tin produced eight bronze ingots, which Item Transfer moved into the destination chest; the chest contents were checked in-game. A terminal combined two cores containing 32 diamonds each into a count of 64 and correctly displayed 108 backing slots. Wrench use rotated the terminal through its real geometry without opening the menu.
 
-Client checks on 2026-09-30 confirmed all nine atlas cards fit in the maximized guide, the Nexus sidebar chapter opens, and Next advances to its next article. In the small window, clicking the scrollbar exposed the final “One core per terminal” text without overlapping the footer. Automated mouse-wheel and Page Down inputs were inconclusive, so those navigation paths are not recorded as verified.
+The model gallery showed presses, saw housing, centrifuge, alloy smelter, solar panels, cells, miner, storage and terminal geometry with no missing textures observed. The screenshot at `site/media/factory-alpha3.png` is an unedited Minecraft capture. These are targeted singleplayer checks, not a full GUI-scale, multiplayer or performance certification. The development PC logged startup/reload lag; no factory throughput benchmark has been established.
 
-The live storage catalogue showed 13 item types and 2,033 items, including a combined count of 1,000 coal. A search with no match displayed the corrected empty-results panel. The furnace showed 64 output ingots, with its progress bar below the output grid and clear of the controls. The world saved and exited normally. These checks supplement the server tests; they do not cover every interface action or GUI scale.
+A normal `/reload` completed and loaded processing recipes and advancements without a Technologia decoding error. A mid-cycle recipe edit and every guide navigation path still need dedicated client testing.
+
+## Earlier playtest evidence
+
+For alpha.2, the user reported working core/terminal synchronization through cable or direct contact, energy-cell transfer, generator, furnace, crusher and miner filters. Screenshots led to corrections for overlapping output progress and empty-storage text. Initial NeoForge client checks covered the native guide at small/maximized sizes, chapter/next navigation, storage aggregation of 1,000 coal, empty search, and separated furnace progress. These are historical alpha.2 observations, not a substitute for testing alpha.3 changes.
+
+Alpha.2 remains available at https://github.com/Thespiki/Technologia/releases/tag/v0.1.0-alpha.2, with its earlier validation recorded in that source tag. Alpha.1 remains preserved as well.

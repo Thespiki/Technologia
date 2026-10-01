@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "crusher",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:coal"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:coal_dust",
+    "count": 1
+  },
+  "time": 60,
+  "energy": 20
+}

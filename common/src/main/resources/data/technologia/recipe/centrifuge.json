@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BIB",
+    "CFC",
+    "BRB"
+  ],
+  "key": {
+    "B": {
+      "tag": "c:plates/bronze"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "R": {
+      "item": "technologia:resonite"
+    }
+  },
+  "result": {
+    "id": "technologia:centrifuge",
+    "count": 1
+  }
+}

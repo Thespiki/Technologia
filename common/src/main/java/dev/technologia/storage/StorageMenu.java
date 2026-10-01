@@ -15,17 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A view of a real core inventory: the 54 backing slots use vanilla synchronization,
+ * A view of real core inventories: fixed backing slots use vanilla synchronization,
  * and aggregation never owns or copies stored items. Only the server moves items.
  */
 public final class StorageMenu extends AbstractContainerMenu {
-    public static final int STORAGE_SLOTS = 54;
+    public static final int STORAGE_SLOTS = 216;
     public static final int DEPOSIT_BUTTON = -1;
-    private static final int REVISION_MASK = 0x7fffff;
+    private static final int REVISION_MASK = 0x1fffff;
     private final Container storage;
     private final boolean clientSide;
     private final List<ItemStack> identities = new ArrayList<>(STORAGE_SLOTS);
     private int revision = 1;
+    private int capacity;
 
     public enum Action { STACK, ONE, TO_INVENTORY }
 
@@ -38,15 +39,17 @@ public final class StorageMenu extends AbstractContainerMenu {
 
     public StorageMenu(int id, Inventory player, Container storage) {
         super(Technologia.STORAGE_MENU, id);
-        checkContainerSize(storage, STORAGE_SLOTS);
-        this.storage = storage;
+        if (storage.getContainerSize() < 1 || storage.getContainerSize() > STORAGE_SLOTS)
+            throw new IllegalArgumentException("Unsupported Nexus capacity");
+        capacity = storage.getContainerSize();
+        this.storage = padded(storage);
         this.clientSide = player.player.level().isClientSide;
         for (int i = 0; i < STORAGE_SLOTS; i++) {
-            identities.add(identity(storage.getItem(i)));
+            identities.add(identity(this.storage.getItem(i)));
             final int index = i;
-            addSlot(new Slot(storage, index, -10000, -10000) {
+            addSlot(new Slot(this.storage, index, -10000, -10000) {
                 @Override public boolean isActive() { return false; }
-                @Override public boolean mayPlace(ItemStack stack) { return storage.canPlaceItem(index, stack); }
+                @Override public boolean mayPlace(ItemStack stack) { return StorageMenu.this.storage.canPlaceItem(index, stack); }
                 @Override public boolean mayPickup(Player player) { return false; }
             });
         }
@@ -56,13 +59,19 @@ public final class StorageMenu extends AbstractContainerMenu {
         // Vanilla container data packets carry signed shorts. Split the token explicitly.
         addDataSlot(new DataSlot() {
             @Override public int get() { return revision & 0xffff; }
-            @Override public void set(int value) { revision = (revision & 0x7f0000) | (value & 0xffff); }
+            @Override public void set(int value) { revision = (revision & 0x1f0000) | (value & 0xffff); }
         });
         addDataSlot(new DataSlot() {
-            @Override public int get() { return (revision >>> 16) & 0x7f; }
-            @Override public void set(int value) { revision = (revision & 0xffff) | ((value & 0x7f) << 16); }
+            @Override public int get() { return (revision >>> 16) & 0x1f; }
+            @Override public void set(int value) { revision = (revision & 0xffff) | ((value & 0x1f) << 16); }
+        });
+        addDataSlot(new DataSlot() {
+            @Override public int get() { return capacity; }
+            @Override public void set(int value) { capacity = Math.clamp(value, 0, STORAGE_SLOTS); }
         });
     }
+
+    public int capacity() { return capacity; }
 
     public List<Entry> entries() {
         refreshRevision();
@@ -98,7 +107,7 @@ public final class StorageMenu extends AbstractContainerMenu {
     /** Button IDs are VAR_INT in Minecraft 1.21.1. No client supplied item or count is trusted. */
     public static int actionButton(Entry entry, Action action) {
         if (entry.sourceSlot() < 0 || entry.sourceSlot() >= STORAGE_SLOTS) throw new IllegalArgumentException("Invalid storage slot");
-        return ((entry.revision() & REVISION_MASK) << 8) | (action.ordinal() << 6) | entry.sourceSlot();
+        return ((entry.revision() & REVISION_MASK) << 10) | (action.ordinal() << 8) | entry.sourceSlot();
     }
 
     @Override public boolean stillValid(Player player) { return storage.stillValid(player); }
@@ -119,10 +128,10 @@ public final class StorageMenu extends AbstractContainerMenu {
             broadcastChanges();
             return true;
         }
-        if (button < 0 || (button >>> 8) != revision) return false;
-        int sourceSlot = button & 63;
-        int actionId = (button >>> 6) & 3;
-        if (sourceSlot >= STORAGE_SLOTS || actionId >= Action.values().length) return false;
+        if (button < 0 || (button >>> 10) != revision) return false;
+        int sourceSlot = button & 255;
+        int actionId = (button >>> 8) & 3;
+        if (sourceSlot >= capacity || actionId >= Action.values().length) return false;
         ItemStack source = storage.getItem(sourceSlot);
         if (source.isEmpty()) return false;
         ItemStack expected = identity(source);
@@ -195,4 +204,22 @@ public final class StorageMenu extends AbstractContainerMenu {
     }
 
     private static ItemStack identity(ItemStack stack) { return stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1); }
+
+    /** Empty, non-insertable padding keeps the client/server slot protocol identical for 1-4 cores. */
+    private static Container padded(Container source) {
+        return new Container() {
+            private boolean present(int slot) { return slot >= 0 && slot < source.getContainerSize(); }
+            public int getContainerSize() { return STORAGE_SLOTS; }
+            public boolean isEmpty() { return source.isEmpty(); }
+            public ItemStack getItem(int slot) { return present(slot) ? source.getItem(slot) : ItemStack.EMPTY; }
+            public ItemStack removeItem(int slot, int count) { return present(slot) ? source.removeItem(slot, count) : ItemStack.EMPTY; }
+            public ItemStack removeItemNoUpdate(int slot) { return present(slot) ? source.removeItemNoUpdate(slot) : ItemStack.EMPTY; }
+            public void setItem(int slot, ItemStack stack) { if (present(slot)) source.setItem(slot, stack); }
+            public boolean canPlaceItem(int slot, ItemStack stack) { return present(slot) && source.canPlaceItem(slot, stack); }
+            public int getMaxStackSize() { return source.getMaxStackSize(); }
+            public void setChanged() { source.setChanged(); }
+            public void clearContent() { source.clearContent(); }
+            public boolean stillValid(Player player) { return source.stillValid(player); }
+        };
+    }
 }

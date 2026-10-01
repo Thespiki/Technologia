@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "centrifuge",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:gravel"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:flint",
+    "count": 1
+  },
+  "time": 100,
+  "energy": 25
+}

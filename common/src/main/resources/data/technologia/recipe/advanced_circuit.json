@@ -11,7 +11,7 @@
       "item": "technologia:resonite"
     },
     "G": {
-      "item": "minecraft:gold_ingot"
+      "tag": "c:plates/gold"
     },
     "C": {
       "item": "technologia:basic_circuit"

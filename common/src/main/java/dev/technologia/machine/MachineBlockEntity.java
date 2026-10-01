@@ -2,6 +2,8 @@ package dev.technologia.machine;
 
 import dev.technologia.Technologia;
 import dev.technologia.storage.StorageMenu;
+import dev.technologia.recipe.MachineRecipe;
+import dev.technologia.recipe.MachineRecipeInput;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -27,6 +29,12 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
     public Object platformEnergy;
     private final NonNullList<ItemStack> items;
     private int progress, fuelTicks, cursor, status;
+    private int recipeDuration = 1, recipeEnergy;
+    private ResourceLocation activeRecipe;
+    private Recipe<?> liveRecipe;
+    private final NonNullList<ItemStack> processingInputs = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> processingOutputs = NonNullList.withSize(2, ItemStack.EMPTY);
+    private int[] processingConsumption = new int[0];
     private boolean enabled = true;
     private UUID owner;
     private static final TagKey<Block> ORES = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("c", "ores"));
@@ -40,7 +48,7 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
                 case 3 -> progress;
                 case 4 -> status;
                 case 5 -> enabled ? 1 : 0;
-                case 6 -> Technologia.BALANCE.processingTicks();
+                case 6 -> recipeDuration;
                 default -> 0;
             };
         }
@@ -65,7 +73,7 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
     }
     public void rescan(Player player) { if (mayConfigure(player)) { cursor = 0; status = 0; setChanged(); } }
     public int receiveEnergy(int amount, boolean simulate) {
-        if (kind.capacity == 0 || kind == MachineKind.GENERATOR) return 0;
+        if (!kind.acceptsEnergy()) return 0;
         int received = energy.receive(amount, simulate);
         if (!simulate && received > 0) setChanged();
         return received;
@@ -82,23 +90,14 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         int previousEnergy = machine.energy.stored();
         if (machine.enabled) {
             switch (machine.kind) {
-                case GENERATOR -> machine.generate();
-                case CRUSHER, FURNACE -> machine.process();
+                case GENERATOR, BIOMASS_GENERATOR -> machine.generate();
+                case SOLAR_GENERATOR, ADVANCED_SOLAR -> machine.generateSolar();
+                case CRUSHER, FURNACE, ALLOY_SMELTER, METAL_PRESS, SAWMILL, COMPACTOR, CENTRIFUGE, RECYCLER -> machine.process();
                 case MINER -> { if (level.getGameTime() % 10 == 0) machine.mine((ServerLevel) level); }
                 default -> machine.status = 0;
             }
         } else if (machine.status != 7) machine.status = 5;
-        if (machine.kind.suppliesEnergy()) {
-            for (Direction direction : Direction.values()) {
-                BlockPos next = pos.relative(direction);
-                if (!level.hasChunkAt(next)) continue;
-                if (level.getBlockEntity(next) instanceof MachineBlockEntity target &&
-                        (!target.kind.suppliesEnergy() || (machine.kind == MachineKind.GENERATOR && target.kind == MachineKind.CELL))) {
-                    int moved = target.receiveEnergy(Math.min(200, machine.energy.stored()), false);
-                    machine.energy.extract(moved, false);
-                } else if (!(level.getBlockEntity(next) instanceof MachineBlockEntity)) Technologia.ENERGY_EXPORT.accept(machine, direction);
-            }
-        }
+        if (machine.kind.suppliesEnergy()) dev.technologia.logistics.EnergyTransport.transfer(machine);
         if (previousEnergy != machine.energy.stored()) machine.setChanged();
         boolean active = machine.enabled && machine.status == 1;
         if (state.getValue(MachineBlock.ACTIVE) != active) {
@@ -108,36 +107,81 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
     private void generate() {
         if (energy.stored() == energy.capacity()) { status = 0; return; }
         if (fuelTicks == 0) {
-            if (!items.getFirst().is(Items.COAL) && !items.getFirst().is(Items.CHARCOAL)) { status = 4; return; }
-            items.getFirst().shrink(1); fuelTicks = 1600; setChanged();
+            int burn = fuelDuration(items.getFirst());
+            if (burn == 0) { status = 4; return; }
+            items.getFirst().shrink(1); fuelTicks = burn; setChanged();
         }
-        energy.receive(Technologia.BALANCE.generatorPerTick(), false);
+        energy.receive(kind == MachineKind.BIOMASS_GENERATOR ? Math.max(1, Technologia.BALANCE.generatorPerTick() / 2) : Technologia.BALANCE.generatorPerTick(), false);
         fuelTicks--; status = 1; setChanged();
     }
-    private ItemStack result() {
-        ItemStack input = items.getFirst();
-        if (input.isEmpty()) return ItemStack.EMPTY;
+    private void generateSolar() {
+        if (energy.stored() == energy.capacity()) { status = 0; return; }
+        if (!level.dimensionType().hasSkyLight() || !level.isDay() || level.isRaining()
+                || level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
+                        worldPosition.getX(), worldPosition.getZ()) > worldPosition.getY() + 1
+                || !level.canSeeSky(worldPosition.above())) { status = 10; return; }
+        energy.receive(kind == MachineKind.ADVANCED_SOLAR ? 64 : 16, false); status = 1; setChanged();
+    }
+    public int fuelDuration(ItemStack stack) {
+        if (kind == MachineKind.GENERATOR) return stack.is(Items.COAL) || stack.is(Items.CHARCOAL) ? 1600 : 0;
+        if (kind != MachineKind.BIOMASS_GENERATOR) return 0;
+        if (stack.is(Technologia.ITEMS.get("sawdust"))) return 200;
+        if (stack.is(net.minecraft.tags.ItemTags.SAPLINGS)) return 100;
+        if (stack.is(Items.WHEAT) || stack.is(Items.SUGAR_CANE) || stack.is(Items.KELP)) return 80;
+        return 0;
+    }
+    private record ProcessPlan(ResourceLocation id, Recipe<?> recipe, int[] consumption, List<ItemStack> outputs, int time, int energy) {}
+    private ProcessPlan findProcess() {
+        if (items.getFirst().isEmpty()) return null;
         if (kind == MachineKind.FURNACE) {
-            return level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(input), level)
-                    .map(recipe -> recipe.value().assemble(new SingleRecipeInput(input), level.registryAccess())).orElse(ItemStack.EMPTY);
+            var input = new SingleRecipeInput(items.getFirst());
+            return level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, input, level)
+                    .map(holder -> new ProcessPlan(holder.id(), holder.value(), new int[]{1},
+                            List.of(holder.value().assemble(input, level.registryAccess())),
+                            Technologia.BALANCE.processingTicks(), Technologia.BALANCE.machineEnergyPerTick())).orElse(null);
         }
-        for (String material : List.of("iron", "gold", "copper", "tin", "lead")) {
-            if (input.is(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "raw_materials/" + material)))
-                    || input.is(TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("forge", "raw_materials/" + material)))) {
-                return new ItemStack(Technologia.ITEMS.get(material + "_dust"), 2);
-            }
+        var input = new MachineRecipeInput(kind, items.subList(0, kind.inputCount()));
+        return level.getRecipeManager().getRecipeFor(MachineRecipe.TYPE, input, level)
+                .map(holder -> new ProcessPlan(holder.id(), holder.value(), holder.value().consumption(input),
+                        holder.value().outputs(), holder.value().time(), holder.value().energy())).orElse(null);
+    }
+    private boolean sameProcess(ProcessPlan plan) {
+        if (!plan.id().equals(activeRecipe) || (liveRecipe != null && liveRecipe != plan.recipe())
+                || recipeDuration != plan.time() || recipeEnergy != plan.energy()
+                || !Arrays.equals(processingConsumption, plan.consumption())) return false;
+        for (int i = 0; i < kind.inputCount(); i++) if (!ItemStack.isSameItemSameComponents(items.get(i), processingInputs.get(i))) return false;
+        for (int i = 0; i < 2; i++) {
+            ItemStack expected = i < plan.outputs().size() ? plan.outputs().get(i) : ItemStack.EMPTY;
+            if (!ItemStack.matches(expected, processingOutputs.get(i))) return false;
         }
-        return ItemStack.EMPTY;
+        return true;
+    }
+    private void selectProcess(ProcessPlan plan) {
+        if (!sameProcess(plan)) { progress = 0; setChanged(); }
+        activeRecipe = plan.id(); liveRecipe = plan.recipe(); recipeDuration = plan.time(); recipeEnergy = plan.energy();
+        processingConsumption = plan.consumption().clone();
+        for (int i = 0; i < 2; i++) {
+            processingInputs.set(i, i < kind.inputCount() ? items.get(i).copyWithCount(1) : ItemStack.EMPTY);
+            processingOutputs.set(i, i < plan.outputs().size() ? plan.outputs().get(i).copy() : ItemStack.EMPTY);
+        }
+    }
+    private void resetProcess() {
+        if (progress != 0 || activeRecipe != null) setChanged();
+        progress = 0; activeRecipe = null; liveRecipe = null;
+        processingInputs.clear(); processingOutputs.clear(); processingConsumption = new int[0];
     }
     private void process() {
-        ItemStack output = result();
-        if (output.isEmpty()) { status = 4; progress = 0; return; }
-        if (!fits(List.of(output))) { status = 3; return; }
-        int cost = Technologia.BALANCE.machineEnergyPerTick();
-        if (energy.stored() < cost) { status = 2; return; }
-        energy.extract(cost, false); progress++; status = 1;
-        if (progress >= Technologia.BALANCE.processingTicks()) {
-            insert(output); items.getFirst().shrink(1); progress = 0;
+        ProcessPlan plan = findProcess();
+        if (plan == null || plan.outputs().stream().anyMatch(ItemStack::isEmpty)) { status = 4; resetProcess(); return; }
+        selectProcess(plan);
+        // Check the complete result and byproduct together before spending any resource.
+        if (!fits(plan.outputs())) { status = 3; return; }
+        if (energy.stored() < plan.energy()) { status = 2; return; }
+        energy.extract(plan.energy(), false); progress++; status = 1;
+        if (progress >= plan.time()) {
+            plan.outputs().forEach(this::insert);
+            for (int i = 0; i < plan.consumption().length; i++) items.get(i).shrink(plan.consumption()[i]);
+            resetProcess();
         }
         setChanged();
     }
@@ -176,12 +220,12 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         List<ItemStack> trial = items.stream().map(ItemStack::copy).toList();
         // ArrayList is required: adding to an empty slot must replace the entry.
         var mutable = new ArrayList<>(trial);
-        for (ItemStack drop : drops) if (!merge(mutable, drop.copy())) return false;
+        for (ItemStack drop : drops) if (!merge(mutable, drop.copy(), kind.inputCount())) return false;
         return true;
     }
-    private void insert(ItemStack stack) { merge(items, stack.copy()); setChanged(); }
-    private static boolean merge(List<ItemStack> slots, ItemStack remaining) {
-        for (int i = 1; i < slots.size() && !remaining.isEmpty(); i++) {
+    private void insert(ItemStack stack) { merge(items, stack.copy(), kind.inputCount()); setChanged(); }
+    private static boolean merge(List<ItemStack> slots, ItemStack remaining, int firstOutput) {
+        for (int i = firstOutput; i < slots.size() && !remaining.isEmpty(); i++) {
             ItemStack slot = slots.get(i);
             if (slot.isEmpty()) {
                 int count = Math.min(remaining.getCount(), remaining.getMaxStackSize());
@@ -198,6 +242,14 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         ContainerHelper.saveAllItems(tag, items, registries);
         tag.putInt("Energy", energy.stored()); tag.putInt("Progress", progress);
         tag.putInt("Fuel", fuelTicks); tag.putInt("Cursor", cursor); tag.putBoolean("Enabled", enabled);
+        if (activeRecipe != null) {
+            CompoundTag processing = new CompoundTag();
+            processing.putString("Recipe", activeRecipe.toString()); processing.putInt("Time", recipeDuration); processing.putInt("Cost", recipeEnergy);
+            processing.putIntArray("Consumption", processingConsumption);
+            CompoundTag inputs = new CompoundTag(), outputs = new CompoundTag();
+            ContainerHelper.saveAllItems(inputs, processingInputs, registries); ContainerHelper.saveAllItems(outputs, processingOutputs, registries);
+            processing.put("Inputs", inputs); processing.put("Outputs", outputs); tag.put("Processing", processing);
+        }
         if (owner != null) tag.putUUID("Owner", owner);
     }
     @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
@@ -206,31 +258,40 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         energy.restore(tag.getInt("Energy")); progress = Math.clamp(tag.getInt("Progress"), 0, 12000);
         fuelTicks = Math.clamp(tag.getInt("Fuel"), 0, 1600); cursor = Math.max(0, tag.getInt("Cursor"));
         enabled = tag.getBoolean("Enabled"); owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
+        CompoundTag processing = tag.getCompound("Processing"); liveRecipe = null;
+        activeRecipe = ResourceLocation.tryParse(processing.getString("Recipe"));
+        recipeDuration = Math.clamp(processing.getInt("Time"), 1, 12000); recipeEnergy = Math.clamp(processing.getInt("Cost"), 1, 100000);
+        processingConsumption = processing.getIntArray("Consumption"); processingInputs.clear(); processingOutputs.clear();
+        ContainerHelper.loadAllItems(processing.getCompound("Inputs"), processingInputs, registries);
+        ContainerHelper.loadAllItems(processing.getCompound("Outputs"), processingOutputs, registries);
     }
     public int getContainerSize() { return items.size(); }
     public boolean isEmpty() { return items.stream().allMatch(ItemStack::isEmpty); }
     public ItemStack getItem(int slot) { return items.get(slot); }
     public ItemStack removeItem(int slot, int amount) {
         ItemStack removed = ContainerHelper.removeItem(items, slot, amount);
-        if (!removed.isEmpty()) { if (slot == 0) progress = 0; setChanged(); }
+        if (!removed.isEmpty()) { if (slot < kind.inputCount() && items.get(slot).isEmpty()) resetProcess(); setChanged(); }
         return removed;
     }
-    public ItemStack removeItemNoUpdate(int slot) { return ContainerHelper.takeItem(items, slot); }
-    public void setItem(int slot, ItemStack stack) { items.set(slot, stack); if (slot == 0) progress = 0; setChanged(); }
+    public ItemStack removeItemNoUpdate(int slot) { ItemStack removed = ContainerHelper.takeItem(items, slot); if (slot < kind.inputCount()) resetProcess(); return removed; }
+    public void setItem(int slot, ItemStack stack) {
+        if (slot < kind.inputCount() && !ItemStack.isSameItemSameComponents(items.get(slot), stack)) resetProcess();
+        items.set(slot, stack); setChanged();
+    }
     public boolean stillValid(Player player) { return Container.stillValidBlockEntity(this, player); }
-    public void clearContent() { items.clear(); progress = 0; setChanged(); }
+    public void clearContent() { items.clear(); resetProcess(); setChanged(); }
     public boolean canPlaceItem(int slot, ItemStack stack) {
         if (kind == MachineKind.CORE) return true;
-        if (slot != 0) return false;
+        if (slot < 0 || slot >= kind.inputCount()) return false;
         return switch (kind) {
-            case GENERATOR -> stack.is(Items.COAL) || stack.is(Items.CHARCOAL);
-            case CRUSHER, FURNACE, MINER -> true;
+            case GENERATOR, BIOMASS_GENERATOR -> fuelDuration(stack) > 0;
+            case CRUSHER, FURNACE, MINER, ALLOY_SMELTER, METAL_PRESS, SAWMILL, COMPACTOR, CENTRIFUGE, RECYCLER -> true;
             default -> false;
         };
     }
     public int[] getSlotsForFace(Direction side) { return IntStream.range(0, items.size()).toArray(); }
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction side) { return canPlaceItem(slot, stack); }
-    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) { return kind == MachineKind.CORE || slot > 0; }
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) { return kind == MachineKind.CORE || kind.hasOutput() && slot >= kind.inputCount(); }
     public Component getDisplayName() { return Component.translatable("block.technologia." + kind.id); }
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return kind == MachineKind.CORE ? new StorageMenu(id, inventory, this) : new MachineMenu(id, inventory, this, data);

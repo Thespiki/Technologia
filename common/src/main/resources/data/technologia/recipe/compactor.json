@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SPS",
+    "CFC",
+    "SPS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    }
+  },
+  "result": {
+    "id": "technologia:compactor",
+    "count": 1
+  }
+}

@@ -24,7 +24,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private void send(int id) { if (minecraft != null && minecraft.gameMode != null) minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id); }
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         toggle.setMessage(Component.translatable(menu.enabled() ? "ui.technologia.pause" : "ui.technologia.start"));
-        toggle.visible = menu.hasInput();
+        toggle.visible = menu.kind().capacity > 0 && !menu.kind().isCell();
         rescan.visible = menu.kind() == MachineKind.MINER;
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
@@ -44,7 +44,7 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         for (var slot : menu.slots) {
             if (!slot.isActive()) continue;
             int sx = x + slot.x - 1, sy = y + slot.y - 1;
-            g.fill(sx, sy, sx + 18, sy + 18, slot.index == 0 && slot.container == menu.slots.getFirst().container ? 0xffe8b46a : 0xff415267);
+            g.fill(sx, sy, sx + 18, sy + 18, slot.index < 2 && slot.container == menu.slots.getFirst().container ? 0xffe8b46a : 0xff415267);
             g.fill(sx + 1, sy + 1, sx + 17, sy + 17, 0xff101923);
         }
         if (menu.hasOutput()) {
@@ -57,8 +57,8 @@ public final class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         g.drawString(font, Component.translatable("status.technologia." + menu.status()), 16, 44, 0xffaebed1, false);
         if (menu.hasInput()) g.drawString(font, Component.translatable(menu.kind() == MachineKind.MINER ? "ui.technologia.filter" : "ui.technologia.input"), 17, 52, 0xffe8b46a, false);
         if (menu.hasOutput()) g.drawString(font, Component.translatable("ui.technologia.output"), 65, 52, 0xffaebed1, false);
-        if (menu.kind() == MachineKind.CELL || menu.kind() == MachineKind.GENERATOR) {
-            int tx = menu.kind() == MachineKind.CELL ? 16 : 54;
+        if (menu.kind().isCell() || menu.kind().isGenerator()) {
+            int tx = menu.hasInput() ? 54 : 16;
             g.drawWordWrap(font, Component.translatable("hint.technologia." + menu.kind().id), tx, 67, 230 - tx, 0xffaebed1);
         }
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xffaebed1, false);

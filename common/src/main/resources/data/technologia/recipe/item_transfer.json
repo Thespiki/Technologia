@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " B ",
+    "PHP",
+    " R "
+  ],
+  "key": {
+    "B": {
+      "tag": "c:plates/bronze"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "technologia:item_transfer",
+    "count": 2
+  }
+}

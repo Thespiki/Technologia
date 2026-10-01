@@ -13,7 +13,7 @@ final class FabricEnergy extends SnapshotParticipant<Integer> implements EnergyS
     protected Integer createSnapshot() { return machine.energy.stored(); }
     protected void readSnapshot(Integer value) { machine.energy.restore(value); }
     protected void onFinalCommit() { machine.setChanged(); }
-    public boolean supportsInsertion() { return machine.kind.capacity > 0 && machine.kind != MachineKind.GENERATOR; }
+    public boolean supportsInsertion() { return machine.kind.acceptsEnergy(); }
     public boolean supportsExtraction() { return machine.kind.suppliesEnergy(); }
     public long insert(long amount, TransactionContext transaction) {
         StoragePreconditions.notNegative(amount);

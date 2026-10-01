@@ -1,0 +1,31 @@
+{
+  "parent": "technologia:workshop/press",
+  "display": {
+    "icon": {
+      "id": "technologia:item_transfer"
+    },
+    "title": "Keep it moving",
+    "description": "Transfer and filter adjacent inventories.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:item_transfer"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

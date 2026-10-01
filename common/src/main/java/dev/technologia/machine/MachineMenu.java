@@ -14,11 +14,33 @@ public final class MachineMenu extends AbstractContainerMenu {
         super(Technologia.MACHINE_MENU, id);
         checkContainerSize(machine, 27); checkContainerDataCount(data, 7);
         this.machine = machine; this.data = data;
-        for (int i = 0; i < 27; i++) {
-            final int slotIndex = i;
-            addSlot(new Slot(machine, slotIndex, i == 0 ? 18 : 66 + (i - 1) % 9 * 18, i == 0 ? 64 : 64 + (i - 1) / 9 * 18) {
-                @Override public boolean isActive() { return slotIndex == 0 ? hasInput() : hasOutput(); }
-                @Override public boolean mayPlace(ItemStack stack) { return isActive() && slotIndex == 0 && machine.canPlaceItem(slotIndex, stack); }
+        for (int i = 0; i < 2; i++) {
+            final int input = i;
+            addSlot(new Slot(machine, i, 18, 64 + i * 24) {
+                @Override public boolean isActive() { return input < kind().inputCount(); }
+                @Override public boolean mayPlace(ItemStack stack) { return isActive() && machine.canPlaceItem(input, stack); }
+                @Override public boolean mayPickup(Player player) { return isActive(); }
+            });
+        }
+        Container outputView = player.player.level().isClientSide ? new SimpleContainer(26) : new Container() {
+            private int index(int slot) { return slot + kind().inputCount(); }
+            private boolean present(int slot) { return kind().hasOutput() && index(slot) < 27; }
+            public int getContainerSize() { return 26; }
+            public boolean isEmpty() { for(int i=0;i<26;i++) if(!getItem(i).isEmpty()) return false; return true; }
+            public ItemStack getItem(int slot) { return present(slot) ? machine.getItem(index(slot)) : ItemStack.EMPTY; }
+            public ItemStack removeItem(int slot,int count) { return present(slot) ? machine.removeItem(index(slot),count) : ItemStack.EMPTY; }
+            public ItemStack removeItemNoUpdate(int slot) { return present(slot) ? machine.removeItemNoUpdate(index(slot)) : ItemStack.EMPTY; }
+            public void setItem(int slot,ItemStack stack) { if(present(slot)) machine.setItem(index(slot),stack); }
+            public boolean canPlaceItem(int slot,ItemStack stack) { return false; }
+            public void setChanged() { machine.setChanged(); }
+            public void clearContent() { for(int i=0;i<26;i++) if(present(i)) machine.setItem(index(i),ItemStack.EMPTY); }
+            public boolean stillValid(Player viewer) { return machine.stillValid(viewer); }
+        };
+        for (int i = 0; i < 26; i++) {
+            final int output = i;
+            addSlot(new Slot(outputView, i, 66 + i % 9 * 18, 64 + i / 9 * 18) {
+                @Override public boolean isActive() { return hasOutput() && output < 27 - kind().inputCount(); }
+                @Override public boolean mayPlace(ItemStack stack) { return false; }
                 @Override public boolean mayPickup(Player player) { return isActive(); }
             });
         }
@@ -32,8 +54,8 @@ public final class MachineMenu extends AbstractContainerMenu {
     public int duration() { return Math.max(1, data.get(6)); }
     public int status() { return data.get(4); }
     public boolean enabled() { return data.get(5) != 0; }
-    public boolean hasInput() { return kind() != MachineKind.CELL && kind() != MachineKind.CORE && kind() != MachineKind.TERMINAL; }
-    public boolean hasOutput() { return kind() == MachineKind.CRUSHER || kind() == MachineKind.FURNACE || kind() == MachineKind.MINER; }
+    public boolean hasInput() { return kind().inputCount() > 0; }
+    public boolean hasOutput() { return kind().hasOutput(); }
     @Override public boolean stillValid(Player player) { return machine.stillValid(player); }
     @Override public boolean clickMenuButton(Player player, int button) {
         if (!stillValid(player) || !(machine instanceof MachineBlockEntity be) || !be.mayConfigure(player)) return false;
@@ -47,15 +69,15 @@ public final class MachineMenu extends AbstractContainerMenu {
         Slot slot = slots.get(index);
         if (!slot.isActive() || !slot.mayPickup(player) || !slot.hasItem()) return ItemStack.EMPTY;
         ItemStack current = slot.getItem(), original = current.copy();
-        if (index < 27) {
-            if (!moveItemStackTo(current, 27, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (!moveItemStackTo(current, 0, 1, false)) return ItemStack.EMPTY;
+        if (index < 28) {
+            if (!moveItemStackTo(current, 28, slots.size(), true)) return ItemStack.EMPTY;
+        } else if (!moveItemStackTo(current, 0, kind().inputCount(), false)) return ItemStack.EMPTY;
         if (current.isEmpty()) slot.setByPlayer(ItemStack.EMPTY); else slot.setChanged();
         slot.onTake(player, current);
         return original;
     }
     @Override public void clicked(int slotId, int button, ClickType type, Player player) {
-        if (!stillValid(player) || (slotId >= 0 && slotId < 27 && !slots.get(slotId).isActive())) return;
+        if (!stillValid(player) || (slotId >= 0 && slotId < 28 && !slots.get(slotId).isActive())) return;
         super.clicked(slotId, button, type, player);
     }
 }

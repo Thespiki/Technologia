@@ -25,6 +25,11 @@ public final class TechnologiaForge {
         context.getModEventBus().addListener(this::register);
         MinecraftForge.EVENT_BUS.addGenericListener(BlockEntity.class, this::attach);
         Technologia.BREAK_PERMISSION = (player, pos) -> !MinecraftForge.EVENT_BUS.post(new BlockEvent.BreakEvent(player.level(), pos, player.level().getBlockState(pos), player));
+        dev.technologia.logistics.EnergyTransport.EXTERNAL_RECEIVER = (level, pos, side, amount, simulate) -> {
+            var block = level.getBlockEntity(pos);
+            if (block == null) return 0;
+            return block.getCapability(ForgeCapabilities.ENERGY, side).map(storage -> storage.receiveEnergy(amount, simulate)).orElse(0);
+        };
         Technologia.ENERGY_EXPORT = (machine, side) -> {
             var target = machine.getLevel().getBlockEntity(machine.getBlockPos().relative(side));
             if (target != null) target.getCapability(ForgeCapabilities.ENERGY, side.getOpposite()).ifPresent(storage ->
@@ -37,7 +42,11 @@ public final class TechnologiaForge {
         event.register(Registries.BLOCK_ENTITY_TYPE, helper -> {
             Technologia.MACHINE_TYPE = net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(MachineBlockEntity::new, Technologia.machineBlocks()).build(null);
             helper.register(Technologia.id("machine"), Technologia.MACHINE_TYPE);
+            Technologia.ITEM_TRANSFER_TYPE = net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(dev.technologia.logistics.ItemTransferBlockEntity::new, Technologia.BLOCKS.get("item_transfer")).build(null);
+            helper.register(Technologia.id("item_transfer"), Technologia.ITEM_TRANSFER_TYPE);
         });
+        event.register(Registries.RECIPE_TYPE, helper -> helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.TYPE));
+        event.register(Registries.RECIPE_SERIALIZER, helper -> helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.SERIALIZER));
         event.register(Registries.MENU, helper -> {
             Technologia.MACHINE_MENU = new net.minecraft.world.inventory.MenuType<>(MachineMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
             helper.register(Technologia.id("machine"), Technologia.MACHINE_MENU);
@@ -56,7 +65,7 @@ public final class TechnologiaForge {
             public int getEnergyStored() { return machine.energy.stored(); }
             public int getMaxEnergyStored() { return machine.kind.capacity; }
             public boolean canExtract() { return machine.kind.suppliesEnergy(); }
-            public boolean canReceive() { return machine.kind.capacity > 0 && machine.kind != MachineKind.GENERATOR; }
+            public boolean canReceive() { return machine.kind.acceptsEnergy(); }
         });
         var items = LazyOptional.of(() -> new SidedInvWrapper(machine, Direction.DOWN));
         event.addCapability(Technologia.id("machine"), new ICapabilityProvider() {

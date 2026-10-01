@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "centrifuge",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:moss_block"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "minecraft:bone_meal",
+    "count": 1
+  },
+  "time": 120,
+  "energy": 25
+}

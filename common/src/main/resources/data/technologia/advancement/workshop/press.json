@@ -1,0 +1,31 @@
+{
+  "parent": "technologia:workshop/bronze",
+  "display": {
+    "icon": {
+      "id": "technologia:metal_press"
+    },
+    "title": "Under pressure",
+    "description": "Form metal plates.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:metal_press"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

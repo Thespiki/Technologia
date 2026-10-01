@@ -1,0 +1,31 @@
+{
+  "parent": "technologia:workshop/alloys",
+  "display": {
+    "icon": {
+      "id": "technologia:steel_ingot"
+    },
+    "title": "Steelworks",
+    "description": "Alloy iron and coal dust.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:steel_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

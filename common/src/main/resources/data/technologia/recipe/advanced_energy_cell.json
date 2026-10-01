@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SAS",
+    "ECE",
+    "SAS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    },
+    "E": {
+      "item": "technologia:energy_cell"
+    },
+    "C": {
+      "item": "technologia:resonite"
+    }
+  },
+  "result": {
+    "id": "technologia:advanced_energy_cell",
+    "count": 1
+  }
+}

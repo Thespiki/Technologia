@@ -25,6 +25,10 @@ public final class TechnologiaFabric implements ModInitializer {
         Technologia.MACHINE_MENU = new net.minecraft.world.inventory.MenuType<>(MachineMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
         Technologia.STORAGE_MENU = new net.minecraft.world.inventory.MenuType<>(dev.technologia.storage.StorageMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
         Technologia.GUIDE_MENU = new net.minecraft.world.inventory.MenuType<>(dev.technologia.guide.GuideMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
+        Technologia.ITEM_TRANSFER_TYPE = net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder.create(dev.technologia.logistics.ItemTransferBlockEntity::new, Technologia.BLOCKS.get("item_transfer")).build();
+        Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Technologia.id("item_transfer"), Technologia.ITEM_TRANSFER_TYPE);
+        Registry.register(BuiltInRegistries.RECIPE_TYPE, Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.TYPE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.SERIALIZER);
         Technologia.createTab();
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Technologia.id("machine"), Technologia.MACHINE_TYPE);
         Registry.register(BuiltInRegistries.MENU, Technologia.id("machine"), Technologia.MACHINE_MENU);
@@ -38,6 +42,15 @@ public final class TechnologiaFabric implements ModInitializer {
         Technologia.BREAK_PERMISSION = (player, pos) -> PlayerBlockBreakEvents.BEFORE.invoker().beforeBlockBreak(
                 player.level(), player, pos, player.level().getBlockState(pos), player.level().getBlockEntity(pos));
         EnergyStorage.SIDED.registerForBlockEntity((machine, side) -> machine.kind.capacity == 0 ? null : energy(machine), Technologia.MACHINE_TYPE);
+        dev.technologia.logistics.EnergyTransport.EXTERNAL_RECEIVER = (level, pos, side, amount, simulate) -> {
+            var target = EnergyStorage.SIDED.find(level, pos, side);
+            if (target == null) return 0;
+            try (var transaction = net.fabricmc.fabric.api.transfer.v1.transaction.Transaction.openOuter()) {
+                int accepted = (int) target.insert(amount, transaction);
+                if (!simulate) transaction.commit();
+                return accepted;
+            }
+        };
         Technologia.ENERGY_EXPORT = (machine, side) -> {
             var target = EnergyStorage.SIDED.find(machine.getLevel(), machine.getBlockPos().relative(side), side.getOpposite());
             if (target != null) EnergyStorageUtil.move(energy(machine), target, 200, null);

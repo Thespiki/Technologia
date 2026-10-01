@@ -5,6 +5,8 @@
     "#forge:ingots/gold",
     "#forge:ingots/copper",
     "#forge:ingots/tin",
-    "#forge:ingots/lead"
+    "#forge:ingots/lead",
+    "#forge:ingots/bronze",
+    "#forge:ingots/steel"
   ]
 }
