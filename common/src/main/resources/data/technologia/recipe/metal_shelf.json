@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SPS",
+    "S S",
+    "SPS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "P": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "result": {
+    "id": "technologia:metal_shelf",
+    "count": 4
+  }
+}

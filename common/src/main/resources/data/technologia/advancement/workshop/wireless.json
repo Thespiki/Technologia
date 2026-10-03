@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/reinforced",
+  "display": {
+    "icon": {
+      "id": "technologia:wireless_sender"
+    },
+    "title": {
+      "translate": "advancement.technologia.wireless.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.wireless.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:wireless_sender"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

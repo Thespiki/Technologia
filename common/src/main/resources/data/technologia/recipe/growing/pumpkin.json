@@ -1,0 +1,22 @@
+{
+  "type": "technologia:processing",
+  "machine": "phyto_chamber",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:pumpkin_seeds"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:pumpkin",
+    "count": 1
+  },
+  "time": 400,
+  "energy": 20,
+  "byproduct": {
+    "id": "minecraft:pumpkin_seeds",
+    "count": 1
+  }
+}

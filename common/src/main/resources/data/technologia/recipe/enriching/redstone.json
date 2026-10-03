@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "enrichment_chamber",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:redstone"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "technologia:enriched_redstone",
+    "count": 1
+  },
+  "time": 100,
+  "energy": 20
+}

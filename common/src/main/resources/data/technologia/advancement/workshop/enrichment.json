@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/alloys",
+  "display": {
+    "icon": {
+      "id": "technologia:enrichment_chamber"
+    },
+    "title": {
+      "translate": "advancement.technologia.enrichment.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.enrichment.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:enrichment_chamber"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

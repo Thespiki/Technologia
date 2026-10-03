@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DSD",
+    "SMS",
+    "DSD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "S": {
+      "item": "minecraft:string"
+    },
+    "M": {
+      "item": "technologia:iron_mesh"
+    }
+  },
+  "result": {
+    "id": "technologia:diamond_mesh",
+    "count": 1
+  }
+}

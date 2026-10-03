@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " I ",
+    "ERE",
+    " I "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:blue_ice"
+    },
+    "E": {
+      "tag": "c:plates/electrum"
+    },
+    "R": {
+      "item": "technologia:resonant_alloy"
+    }
+  },
+  "result": {
+    "id": "technologia:superconducting_energy_conduit",
+    "count": 8
+  }
+}

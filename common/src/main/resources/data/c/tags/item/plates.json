@@ -5,6 +5,8 @@
     "#c:plates/gold",
     "#c:plates/copper",
     "#c:plates/bronze",
-    "#c:plates/steel"
+    "#c:plates/steel",
+    "#c:plates/invar",
+    "#c:plates/electrum"
   ]
 }

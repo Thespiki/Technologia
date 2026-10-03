@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "R R",
+    "RMR",
+    " A "
+  ],
+  "key": {
+    "R": {
+      "item": "technologia:resonant_alloy"
+    },
+    "M": {
+      "item": "technologia:reinforced_magnet"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    }
+  },
+  "result": {
+    "id": "technologia:resonant_magnet",
+    "count": 1
+  }
+}

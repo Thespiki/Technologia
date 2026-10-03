@@ -3,12 +3,17 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-export function buildFactoryShapes({write,base,machines,decor}) {
- const entries=[...machines,...decor].map(name=>{
+// 'devices' are blocks with several models (bonsai pot, hand sieve): their shape is the base model, whatever their state.
+export function buildFactoryShapes({write,base,machines,decor,devices}) {
+ // A Java method may not exceed 64 KB and every box costs about 45 bytes of it, so the table is filled in parts.
+ const parts=[[]];let boxesInPart=0;
+ for(const name of [...machines,...decor,...devices]){
   const model=JSON.parse(fs.readFileSync(path.join(root,base,`assets/technologia/models/block/${name}.json`),'utf8'));
   const boxes=model.elements.map(e=>[...e.from,...e.to].map(v=>Math.max(0,Math.min(16,v))));
-  return `        shapes.put("${name}", bake(new double[][] {${boxes.map(b=>'{'+b.join(',')+'}').join(',')}}));`;
- });
+  if(boxesInPart+boxes.length>300){parts.push([]);boxesInPart=0;}
+  boxesInPart+=boxes.length;
+  parts.at(-1).push(`        shapes.put("${name}", bake(new double[][] {${boxes.map(b=>'{'+b.join(',')+'}').join(',')}}));`);
+ }
  write('common/src/main/java/dev/technologia/machine/FactoryShapes.java',`package dev.technologia.machine;
 
 import java.util.*;
@@ -21,9 +26,10 @@ public final class FactoryShapes {
     private static final Map<String, VoxelShape[]> SHAPES = create();
     private static Map<String, VoxelShape[]> create() {
         Map<String, VoxelShape[]> shapes = new HashMap<>();
-${entries.join('\n')}
+${parts.map((part,index)=>`        part${index}(shapes);`).join('\n')}
         return Map.copyOf(shapes);
     }
+${parts.map((part,index)=>`    private static void part${index}(Map<String, VoxelShape[]> shapes) {\n${part.join('\n')}\n    }`).join('\n')}
     private static VoxelShape[] bake(double[][] boxes) {
         VoxelShape[] result = new VoxelShape[4];
         for (int turn=0; turn<4; turn++) {

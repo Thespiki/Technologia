@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "technologia:block/metal_shelf"
+    },
+    "facing=east": {
+      "model": "technologia:block/metal_shelf",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "technologia:block/metal_shelf",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "technologia:block/metal_shelf",
+      "y": 270
+    }
+  }
+}

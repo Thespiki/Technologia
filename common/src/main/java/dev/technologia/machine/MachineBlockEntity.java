@@ -2,6 +2,7 @@ package dev.technologia.machine;
 
 import dev.technologia.Technologia;
 import dev.technologia.logistics.EnergyTransport;
+import dev.technologia.logistics.ItemTransferBlockEntity;
 import dev.technologia.nature.ResonanceBloomBlock;
 import dev.technologia.recipe.MachineRecipe;
 import dev.technologia.recipe.MachineRecipeInput;
@@ -42,7 +43,15 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
     public static final int FORMAT = 2;
     public static final int INPUT_SLOTS = 16, OUTPUT_SLOTS = 27, FIRST_OUTPUT = INPUT_SLOTS, SLOTS = INPUT_SLOTS + OUTPUT_SLOTS;
     public static final int CORE_SLOTS = 54;
-    public static final int DATA_COUNT = 7 + MachineTier.MAX_LANES;
+    /** Synced values: 0-6 energy, kind, status, switch, tier, blooms; 7.. lane progress; then the settings below. */
+    public static final int DATA_COUNT = 14 + MachineTier.MAX_LANES;
+    public static final int DATA_REDSTONE = 7 + MachineTier.MAX_LANES, DATA_EJECT = DATA_REDSTONE + 1, DATA_CHANNEL = DATA_REDSTONE + 2,
+            DATA_RATE = DATA_REDSTONE + 3, DATA_MESH = DATA_REDSTONE + 4, DATA_LIMIT = DATA_REDSTONE + 5, DATA_RATE_HIGH = DATA_REDSTONE + 6;
+    /** Redstone control: ignore the signal, run only with one, or run only without one. */
+    public static final int REDSTONE_MODES = 3;
+    public static final int MAX_CHANNEL = 255;
+    /** Throughput steps a wireless sender can be limited to, in FE per tick. */
+    public static final int[] WIRELESS_LIMITS = {100, 500, 2000, 10000, 50000};
     /** Energy a first-tier machine may move per tick; tiers multiply it. */
     public static final int BASE_TRANSFER = 200;
     public static final int MAX_BLOOMS = 5, BLOOM_BONUS_PERCENT = 8;
@@ -68,8 +77,25 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
     private final Lane[] lanes = new Lane[MachineTier.MAX_LANES];
     private final int phase;
     private MachineTier tier = MachineTier.get(0);
-    private int fuelTicks, cursor, status, boost, activeHold;
-    private boolean enabled = true;
+    private int fuelTicks, status, boost, activeHold;
+    /** Scan position of the miner and of the area machines. */
+    int cursor;
+    private boolean enabled = true, eject;
+    private int redstoneMode, channel, mesh, limit = WIRELESS_LIMITS.length - 1;
+    /** Energy produced or relayed this tick, shown on the screen; not saved. */
+    int rate;
+    private int surroundingsRate = -1;
+    /** Game time of the last wireless delivery to this receiver; none yet when it is Long.MIN_VALUE. */
+    long lastWireless = Long.MIN_VALUE;
+    /** Wireless receiver: channel it announced itself on, and energy received since its last tick. */
+    int joinedChannel = -1, wirelessIn;
+    /** Chunk loader: radius of the area it holds (-1 when none; saved), and whether it claimed it since the world loaded. */
+    int loadedRadius = -1;
+    boolean claimed;
+    /** Chunk loader: running ticks left before it may take an area again after giving one back; not saved. */
+    int restartWait;
+    /** Chunk loader: the chunks it forced itself (saved). A chunk someone else forced is never released by it. */
+    final it.unimi.dsi.fastutil.longs.LongSet forcedChunks = new it.unimi.dsi.fastutil.longs.LongOpenHashSet();
     private UUID owner;
     private Object recipeToken;
     private int[] faceSlots;
@@ -86,7 +112,17 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
                 case 4 -> enabled ? 1 : 0;
                 case 5 -> tier.index();
                 case 6 -> boost;
-                default -> index < DATA_COUNT ? laneProgress(index - 7) : 0;
+                default -> {
+                    if (index >= 7 && index < DATA_REDSTONE) yield laneProgress(index - 7);
+                    if (index == DATA_REDSTONE) yield redstoneMode;
+                    if (index == DATA_EJECT) yield eject ? 1 : 0;
+                    if (index == DATA_CHANNEL) yield channel;
+                    // Synced values are 16 bits wide, so the rate travels in two halves like the energy.
+                    if (index == DATA_RATE) yield rate & 65535;
+                    if (index == DATA_RATE_HIGH) yield rate >>> 16;
+                    if (index == DATA_MESH) yield mesh;
+                    yield index == DATA_LIMIT ? limit : 0;
+                }
             };
         }
         public void set(int index, int value) {}
@@ -111,17 +147,40 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         return (int) Math.max(1, Math.min(Integer.MAX_VALUE, Math.round(kind.capacity * tier.capacity())));
     }
     /** Energy this machine may send or accept through cables in one tick. */
-    public int transferRate() { return scaledTransfer(tier); }
+    public int transferRate() { return transferRate(kind, tier); }
+    /** Untiered power blocks have a fixed rate; everything else follows its tier. */
+    public static int transferRate(MachineKind kind, MachineTier tier) {
+        if (kind == MachineKind.CREATIVE_SOURCE) return 1000000;
+        if (kind.isWireless()) return WIRELESS_LIMITS[WIRELESS_LIMITS.length - 1];
+        return scaledTransfer(tier);
+    }
     public static int scaledTransfer(MachineTier tier) { return (int) Math.max(1, Math.min(Integer.MAX_VALUE, Math.round(BASE_TRANSFER * tier.transfer()))); }
     public int inputCount() { return kind.inputCount(tier); }
+    /** Blocks an area machine reaches in each horizontal direction. */
+    public int reach() { return kind == MachineKind.VACUUM ? 3 + tier.index() : 2 + tier.index() / 2; }
 
     /** Installs the next tier in place. Inventory, energy and settings are untouched. */
     public boolean upgradeTo(int index) {
         if (!kind.isTierable() || index != tier.index() + 1 || index >= MachineTier.count()) return false;
         applyTier(MachineTier.get(index));
-        setChanged();
-        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        afterTierChange();
         return true;
+    }
+    /** Creative tools set any tier at once, up or down. */
+    public boolean setTier(int index) {
+        if (!kind.isTierable() || index < 0 || index >= MachineTier.count() || index == tier.index()) return false;
+        applyTier(MachineTier.get(index));
+        afterTierChange();
+        return true;
+    }
+    private void afterTierChange() {
+        setChanged();
+        if (level == null) return;
+        // A running chunk loader notices its new area on its next tick and swaps the old one for it.
+        BlockState state = getBlockState();
+        if (state.hasProperty(MachineBlock.TIER) && state.getValue(MachineBlock.TIER) != tier.index())
+            level.setBlock(worldPosition, state.setValue(MachineBlock.TIER, tier.index()), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
     private void applyTier(MachineTier value) {
         tier = value;
@@ -143,6 +202,8 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
     // ---- Ownership and controls ----------------------------------------------------------------
 
     public void setOwner(UUID id) { owner = id; setChanged(); }
+    UUID owner() { return owner; }
+    void status(int value) { status = value; }
     public boolean mayConfigure(Player player) { return kind != MachineKind.MINER || owner == null || player.getUUID().equals(owner); }
     public boolean isEnabled() { return enabled; }
     public int status() { return status; }
@@ -157,6 +218,60 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         setChanged();
     }
     public void rescan(Player player) { if (mayConfigure(player)) { cursor = 0; status = enabled ? 0 : 5; setChanged(); } }
+
+    // ---- Settings ------------------------------------------------------------------------------
+
+    public int redstoneMode() { return redstoneMode; }
+    public void cycleRedstone() { redstoneMode = (redstoneMode + 1) % REDSTONE_MODES; setChanged(); }
+    private boolean redstoneAllows() { return redstoneMode == 0 || level.hasNeighborSignal(worldPosition) == (redstoneMode == 1); }
+    /** Switched on and not held back by redstone. */
+    public boolean isRunning() { return enabled && level != null && redstoneAllows(); }
+    public boolean ejects() { return eject; }
+    public void toggleEject() { if (kind.hasOutput()) { eject = !eject; setChanged(); } }
+    public int channel() { return channel; }
+    public void changeChannel(int delta) {
+        if (!kind.isWireless()) return;
+        channel = Math.floorMod(channel + delta, MAX_CHANNEL + 1);
+        setChanged();
+    }
+    /** The sender's own throughput cap in FE per tick. */
+    public int wirelessLimit() { return WIRELESS_LIMITS[limit]; }
+    public void cycleLimit() { if (kind == MachineKind.WIRELESS_SENDER) { limit = (limit + 1) % WIRELESS_LIMITS.length; setChanged(); } }
+    public int mesh() { return mesh; }
+    /** Installs a sieve mesh and returns the level it replaces. */
+    public int installMesh(int level) {
+        int previous = mesh;
+        mesh = Math.clamp(level, 0, MachineRecipe.MAX_MESH);
+        for (int i = 0; i < lanes.length; i++) resetLane(i);
+        setChanged();
+        return previous;
+    }
+
+    /** Comparator reading: stored energy for power blocks, result-slot fullness for everything with results. */
+    public int comparatorSignal() {
+        if (kind == MachineKind.CORE) return AbstractContainerMenu.getRedstoneSignalFromContainer(this);
+        if (kind.hasOutput()) {
+            float filled = 0;
+            boolean any = false;
+            for (int slot = FIRST_OUTPUT; slot < SLOTS; slot++) {
+                ItemStack stack = items.get(slot);
+                if (stack.isEmpty()) continue;
+                filled += (float) stack.getCount() / stack.getMaxStackSize(); any = true;
+            }
+            return any ? 1 + (int) Math.floor(filled / OUTPUT_SLOTS * 14) : 0;
+        }
+        if (kind.capacity == 0 || energy.stored() == 0) return 0;
+        return 1 + (int) (14L * energy.stored() / energy.capacity());
+    }
+
+    /** Pushes results into the inventory behind the machine, a few stacks at a time. */
+    private void ejectResults() {
+        Direction back = getBlockState().getValue(MachineBlock.FACING).getOpposite();
+        Container target = ItemTransferBlockEntity.containerAt(level, worldPosition.relative(back));
+        if (target == null || target == this) return;
+        for (int round = 0; round < Math.max(1, tier.lanes()); round++)
+            if (ItemTransferBlockEntity.move(this, Direction.DOWN, target, back.getOpposite(), ItemStack.EMPTY, ItemTransferBlockEntity.ITEMS_PER_OPERATION) == 0) break;
+    }
 
     // ---- Energy --------------------------------------------------------------------------------
 
@@ -207,10 +322,25 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         if (machine.kind.capacity == 0) return;
         int previousEnergy = machine.energy.stored();
         long time = level.getGameTime() + machine.phase;
-        if (machine.enabled) {
+        machine.rate = 0;
+        boolean allowed = machine.enabled && machine.redstoneAllows();
+        if (allowed) {
             switch (machine.kind) {
                 case GENERATOR, BIOMASS_GENERATOR -> machine.generate();
                 case SOLAR_GENERATOR, ADVANCED_SOLAR -> machine.generateSolar();
+                case WATER_WHEEL, WINDMILL, THERMO_GENERATOR -> machine.generateFromSurroundings(time);
+                case CREATIVE_SOURCE -> { machine.energy.restore(machine.energy.capacity()); machine.status = 0; }
+                case WIRELESS_SENDER -> WirelessGrid.send(machine, (ServerLevel) level);
+                case WIRELESS_RECEIVER -> {
+                    if (machine.joinedChannel != machine.channel || time % 20 == 0) WirelessGrid.join(machine, (ServerLevel) level);
+                    machine.rate = machine.wirelessIn; machine.wirelessIn = 0;
+                    // Compared this way round, the "never" value cannot overflow.
+                    machine.status = machine.lastWireless >= level.getGameTime() - 1 ? 1 : 0;
+                }
+                case HARVESTER -> { if (time % 10 == 0) FarmWork.harvest(machine, (ServerLevel) level); }
+                case ACCELERATOR -> { if (time % 5 == 0) FarmWork.accelerate(machine, (ServerLevel) level); }
+                case VACUUM -> { if (time % 10 == 0) FarmWork.collect(machine, (ServerLevel) level); }
+                case CHUNK_LOADER -> ChunkLoading.keep(machine, (ServerLevel) level, time);
                 case MINER -> { if (level.getGameTime() % 10 == 0) machine.mine((ServerLevel) level); }
                 default -> {
                     if (machine.kind.isProcessor()) {
@@ -220,18 +350,26 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
                     } else machine.status = 0;
                 }
             }
-        } else machine.status = machine.kind == MachineKind.MINER && machine.cursor > 0 && machine.cursor >= machine.scanTotal() ? 7 : 5;
-        boolean working = machine.enabled && machine.status == 1;
+        } else {
+            machine.status = machine.enabled ? 13
+                    : machine.kind == MachineKind.MINER && machine.cursor > 0 && machine.cursor >= machine.scanTotal() ? 7 : 5;
+            if (machine.kind == MachineKind.CHUNK_LOADER) ChunkLoading.release(machine, (ServerLevel) level);
+        }
+        if (machine.eject && machine.kind.hasOutput() && time % 10 == 0) machine.ejectResults();
+        boolean working = allowed && machine.status == 1;
         if (machine.kind.suppliesEnergy()) {
             EnergyTransport.transfer(machine);
-            if (machine.enabled && machine.route != null && machine.route.truncated()) machine.status = 11;
+            if (allowed && machine.route != null && machine.route.truncated()) machine.status = 11;
         }
         if (previousEnergy != machine.energy.stored()) machine.setChanged();
         // A short hold keeps the lit front steady when power arrives slower than it is spent.
-        if (working) machine.activeHold = 10; else if (machine.activeHold > 0) machine.activeHold--;
-        boolean active = machine.enabled && machine.activeHold > 0;
-        // KNOWN_SHAPE: a lit front never changes a neighbour, so neighbours are not asked to re-check.
-        if (state.getValue(MachineBlock.ACTIVE) != active) level.setBlock(pos, state.setValue(MachineBlock.ACTIVE, active), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+        // Area machines only act every few ticks, so their hold spans two passes.
+        if (working) machine.activeHold = machine.kind.isAreaMachine() ? 21 : 10; else if (machine.activeHold > 0) machine.activeHold--;
+        boolean active = allowed && machine.activeHold > 0;
+        // The lit front and the tier band are both blockstate. KNOWN_SHAPE: neither changes a
+        // neighbour, so neighbours are not asked to re-check.
+        BlockState wanted = state.setValue(MachineBlock.ACTIVE, active).setValue(MachineBlock.TIER, machine.tier.index());
+        if (wanted != state) level.setBlock(pos, wanted, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
         if (working && time % 80 == 0 && Technologia.BALANCE.machineSounds()) {
             SoundEvent sound = machine.workSound();
             if (sound != null) level.playSound(null, pos, sound, SoundSource.BLOCKS, 0.2F, 0.9F + level.random.nextFloat() * 0.2F);
@@ -248,6 +386,10 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
             case SAWMILL -> SoundEvents.UI_STONECUTTER_TAKE_RESULT;
             case CENTRIFUGE -> SoundEvents.BEACON_AMBIENT;
             case SIEVE -> SoundEvents.SAND_BREAK;
+            case ENRICHMENT_CHAMBER -> SoundEvents.PISTON_CONTRACT;
+            case INFUSER -> SoundEvents.BLASTFURNACE_FIRE_CRACKLE;
+            case PHYTO_CHAMBER -> SoundEvents.CROP_BREAK;
+            case WATER_WHEEL -> SoundEvents.WATER_AMBIENT;
             default -> null;
         };
     }
@@ -271,7 +413,16 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
             items.getFirst().shrink(1); fuelTicks = burn;
         }
         energy.receive(output, false);
-        fuelTicks--; status = 1; setChanged();
+        fuelTicks--; status = 1; rate = output; setChanged();
+    }
+    /** Water wheels, windmills and thermoelectric generators re-read their surroundings once a second. */
+    private void generateFromSurroundings(long time) {
+        if (surroundingsRate < 0 || time % 20 == 0) surroundingsRate = EnvironmentPower.rate(level, worldPosition, kind);
+        if (surroundingsRate <= 0) { status = kind == MachineKind.WATER_WHEEL ? 15 : kind == MachineKind.WINDMILL ? 16 : 17; return; }
+        int output = (int) Math.max(1, Math.round(surroundingsRate * tier.generation()));
+        rate = output;
+        if (energy.stored() == energy.capacity()) { status = 0; return; }
+        energy.receive(output, false); status = 1; setChanged();
     }
     private void generateSolar() {
         if (energy.stored() == energy.capacity()) { status = 0; return; }
@@ -279,7 +430,8 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
                 || level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
                         worldPosition.getX(), worldPosition.getZ()) > worldPosition.getY() + 1
                 || !level.canSeeSky(worldPosition.above())) { status = 10; return; }
-        energy.receive(generationPerTick(), false); status = 1; setChanged();
+        rate = generationPerTick();
+        energy.receive(rate, false); status = 1; setChanged();
     }
     public int fuelDuration(ItemStack stack) {
         if (kind == MachineKind.GENERATOR) return stack.is(Items.COAL) || stack.is(Items.CHARCOAL) ? 1600 : 0;
@@ -375,8 +527,9 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
             int time = Technologia.BALANCE.processingTicks(), cost = Technologia.BALANCE.machineEnergyPerTick();
             return new Plan(found.get().id(), found.get(), ONE, List.of(result), 1, time, cost, signature(time, cost, ONE, List.of(result), 1));
         }
-        var input = new MachineRecipeInput(kind, items.subList(first, first + perLane));
-        var found = manager.getRecipeFor(MachineRecipe.TYPE, input, level,
+        var input = new MachineRecipeInput(kind, items.subList(first, first + perLane), mesh);
+        // A sieve may match several recipes for one block; the one for its best mesh wins.
+        var found = kind == MachineKind.SIEVE ? RecipeIndex.best(level, input) : manager.getRecipeFor(MachineRecipe.TYPE, input, level,
                 hint != null && hint.value() instanceof MachineRecipe ? (RecipeHolder<MachineRecipe>) hint : null);
         if (found.isEmpty()) return null;
         MachineRecipe recipe = found.get().value();
@@ -515,7 +668,7 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
     // ---- Output space --------------------------------------------------------------------------
 
     /** Simulates {@link #insert} for every stack at once without copying the inventory. */
-    private boolean fits(List<ItemStack> stacks) {
+    boolean fits(List<ItemStack> stacks) {
         ItemStack[] held = new ItemStack[OUTPUT_SLOTS];
         int[] counts = new int[OUTPUT_SLOTS];
         for (int i = 0; i < OUTPUT_SLOTS; i++) { held[i] = items.get(FIRST_OUTPUT + i); counts[i] = held[i].getCount(); }
@@ -534,7 +687,14 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         }
         return true;
     }
-    private void insert(ItemStack stack) { merge(items, stack.copy(), FIRST_OUTPUT, SLOTS); setChanged(); }
+    void insert(ItemStack stack) { merge(items, stack.copy(), FIRST_OUTPUT, SLOTS); setChanged(); }
+    /** Stores as much of the stack as fits in the results and returns the rest. */
+    ItemStack insertPartly(ItemStack stack) {
+        ItemStack remaining = stack.copy();
+        merge(items, remaining, FIRST_OUTPUT, SLOTS);
+        if (remaining.getCount() != stack.getCount()) setChanged();
+        return remaining;
+    }
     /** Fills slots in order; whatever does not fit is left in {@code remaining}. */
     private static void merge(List<ItemStack> slots, ItemStack remaining, int from, int to) {
         for (int i = from; i < to && !remaining.isEmpty(); i++) {
@@ -558,6 +718,13 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         tag.putInt("Tier", tier.index());
         tag.putInt("Energy", energy.stored());
         tag.putInt("Fuel", fuelTicks); tag.putInt("Cursor", cursor); tag.putBoolean("Enabled", enabled);
+        if (redstoneMode != 0) tag.putInt("Redstone", redstoneMode);
+        if (eject) tag.putBoolean("Eject", true);
+        if (channel != 0) tag.putInt("Channel", channel);
+        if (mesh != 0) tag.putInt("Mesh", mesh);
+        if (kind == MachineKind.WIRELESS_SENDER) tag.putInt("Limit", limit);
+        if (loadedRadius >= 0) tag.putInt("Loaded", loadedRadius);
+        if (!forcedChunks.isEmpty()) tag.putLongArray("Forced", forcedChunks.toLongArray());
         ListTag saved = new ListTag();
         for (int i = 0; i < lanes.length; i++) {
             if (lanes[i].recipe == null) continue;
@@ -577,6 +744,25 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         fuelTicks = Math.clamp(tag.getInt("Fuel"), 0, 100000); cursor = Math.max(0, tag.getInt("Cursor"));
         enabled = tag.contains("Enabled") ? tag.getBoolean("Enabled") : kind != MachineKind.MINER;
         owner = tag.hasUUID("Owner") ? tag.getUUID("Owner") : null;
+        redstoneMode = Math.clamp(tag.getInt("Redstone"), 0, REDSTONE_MODES - 1);
+        eject = tag.getBoolean("Eject") && kind.hasOutput();
+        channel = kind.isWireless() ? Math.clamp(tag.getInt("Channel"), 0, MAX_CHANNEL) : 0;
+        mesh = kind == MachineKind.SIEVE ? Math.clamp(tag.getInt("Mesh"), 0, MachineRecipe.MAX_MESH) : 0;
+        limit = tag.contains("Limit") ? Math.clamp(tag.getInt("Limit"), 0, WIRELESS_LIMITS.length - 1) : WIRELESS_LIMITS.length - 1;
+        surroundingsRate = -1;
+        claimed = false; joinedChannel = -1;
+        // A chunk loader's area is only read when the block entity is loaded with its chunk. Data put on a loader that
+        // is already in the world (a command, a cloned or pasted block) says nothing about chunks this block forced.
+        if (level == null) {
+            loadedRadius = kind == MachineKind.CHUNK_LOADER && tag.contains("Loaded") ? Math.clamp(tag.getInt("Loaded"), 0, 2) : -1;
+            forcedChunks.clear();
+            if (kind == MachineKind.CHUNK_LOADER) {
+                net.minecraft.world.level.ChunkPos own = new net.minecraft.world.level.ChunkPos(worldPosition);
+                // A loader never holds a chunk more than two away from its own.
+                for (long chunk : tag.getLongArray("Forced"))
+                    if (Math.abs(net.minecraft.world.level.ChunkPos.getX(chunk) - own.x) <= 2 && Math.abs(net.minecraft.world.level.ChunkPos.getZ(chunk) - own.z) <= 2) forcedChunks.add(chunk);
+            }
+        }
         for (Lane lane : lanes) { lane.progress = 0; lane.recipe = null; lane.signature = 0; lane.hint = null; lane.duration = 1; }
         if (tag.getInt("Format") < FORMAT) { migrateAlpha3(); return; }
         ListTag saved = tag.getList("Lanes", Tag.TAG_COMPOUND);
@@ -605,11 +791,13 @@ public final class MachineBlockEntity extends BlockEntity implements WorldlyCont
         for (int i = 0; i < results.size(); i++) items.set(FIRST_OUTPUT + i, results.get(i));
     }
 
-    /** Tier and stored energy travel with the dropped block. */
+    /** Tier, stored energy, the wireless channel and an installed mesh travel with the dropped block. */
     public void saveToItem(ItemStack stack) {
         CompoundTag tag = new CompoundTag();
         if (!tier.isBase()) tag.putInt("Tier", tier.index());
-        if (energy.stored() > 0 && kind.capacity > 0) tag.putInt("Energy", energy.stored());
+        if (energy.stored() > 0 && kind.capacity > 0 && kind != MachineKind.CREATIVE_SOURCE) tag.putInt("Energy", energy.stored());
+        if (channel != 0) tag.putInt("Channel", channel);
+        if (mesh != 0) tag.putInt("Mesh", mesh);
         BlockItem.setBlockEntityData(stack, Technologia.MACHINE_TYPE, tag);
     }
 

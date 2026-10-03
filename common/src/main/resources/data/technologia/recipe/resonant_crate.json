@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RSR",
+    "SCS",
+    "RSR"
+  ],
+  "key": {
+    "R": {
+      "item": "technologia:resonant_alloy"
+    },
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "C": {
+      "item": "technologia:steel_crate"
+    }
+  },
+  "result": {
+    "id": "technologia:resonant_crate",
+    "count": 1
+  }
+}

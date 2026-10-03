@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "S S",
+    "SMS",
+    " I "
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "M": {
+      "item": "technologia:magnet"
+    },
+    "I": {
+      "item": "technologia:infused_alloy"
+    }
+  },
+  "result": {
+    "id": "technologia:reinforced_magnet",
+    "count": 1
+  }
+}

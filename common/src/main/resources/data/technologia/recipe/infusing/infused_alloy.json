@@ -1,0 +1,24 @@
+{
+  "type": "technologia:processing",
+  "machine": "metallurgic_infuser",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "technologia:enriched_redstone"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:infused_alloy",
+    "count": 1
+  },
+  "time": 160,
+  "energy": 30
+}

@@ -1,0 +1,22 @@
+{
+  "type": "technologia:processing",
+  "machine": "phyto_chamber",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:dark_oak_sapling"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:dark_oak_log",
+    "count": 4
+  },
+  "time": 400,
+  "energy": 20,
+  "byproduct": {
+    "id": "minecraft:dark_oak_sapling",
+    "count": 1
+  }
+}

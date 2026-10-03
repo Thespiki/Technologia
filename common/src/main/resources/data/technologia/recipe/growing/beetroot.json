@@ -1,0 +1,22 @@
+{
+  "type": "technologia:processing",
+  "machine": "phyto_chamber",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:beetroot_seeds"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:beetroot",
+    "count": 2
+  },
+  "time": 400,
+  "energy": 20,
+  "byproduct": {
+    "id": "minecraft:beetroot_seeds",
+    "count": 1
+  }
+}

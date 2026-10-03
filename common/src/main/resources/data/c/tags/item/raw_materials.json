@@ -5,6 +5,8 @@
     "#c:raw_materials/gold",
     "#c:raw_materials/copper",
     "#c:raw_materials/tin",
-    "#c:raw_materials/lead"
+    "#c:raw_materials/lead",
+    "#c:raw_materials/silver",
+    "#c:raw_materials/nickel"
   ]
 }

@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "crusher",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "technologia:lapis_fragment"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "minecraft:lapis_lazuli",
+    "count": 2
+  },
+  "time": 60,
+  "energy": 20
+}

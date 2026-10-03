@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NSN",
+    "SMS",
+    "NSN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:iron_nugget"
+    },
+    "S": {
+      "item": "minecraft:string"
+    },
+    "M": {
+      "item": "technologia:flint_mesh"
+    }
+  },
+  "result": {
+    "id": "technologia:iron_mesh",
+    "count": 1
+  }
+}

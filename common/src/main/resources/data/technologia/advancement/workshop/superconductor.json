@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/wireless",
+  "display": {
+    "icon": {
+      "id": "technologia:superconducting_energy_conduit"
+    },
+    "title": {
+      "translate": "advancement.technologia.superconductor.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.superconductor.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:superconducting_energy_conduit"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

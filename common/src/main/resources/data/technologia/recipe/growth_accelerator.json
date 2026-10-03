@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IBI",
+    "CFC",
+    "IRI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/invar"
+    },
+    "B": {
+      "item": "technologia:resonance_bloom"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "R": {
+      "item": "technologia:resonite"
+    }
+  },
+  "result": {
+    "id": "technologia:growth_accelerator",
+    "count": 1
+  }
+}

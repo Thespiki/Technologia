@@ -1,6 +1,8 @@
 package dev.technologia.test;
 
 import dev.technologia.Technologia;
+import dev.technologia.device.*;
+import dev.technologia.logistics.EnergyTransport;
 import dev.technologia.machine.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -84,6 +86,27 @@ public final class ForgeSmokeTests {
         var player = h.makeMockServerPlayerInLevel();
         h.assertTrue(Technologia.BREAK_PERMISSION.test(player, press.getBlockPos()), "The Forge break-permission hook is installed and allows an unprotected block");
         h.getLevel().getServer().getPlayerList().remove(player);
+        h.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void alpha5DevicesAndPowerAreRegistered(GameTestHelper h) {
+        String[] devices = {"wooden_crate", "bonsai_pot", "hand_sieve"};
+        Class<?>[] types = {CrateBlockEntity.class, BonsaiPotBlockEntity.class, HandSieveBlockEntity.class};
+        for (int i = 0; i < devices.length; i++) {
+            var pos = new BlockPos(1 + 2 * i, 2, 6);
+            h.setBlock(pos, Technologia.BLOCKS.get(devices[i]));
+            h.assertTrue(types[i].isInstance(h.getLevel().getBlockEntity(h.absolutePos(pos))), "Placing a " + devices[i] + " creates its block entity");
+        }
+        var source = place(h, "creative_energy_source", 1, 1); var cell = place(h, "energy_cell", 2, 1);
+        source.energy.restore(source.capacity());
+        h.assertTrue(EnergyTransport.transfer(source) == 1000000 && cell.energy.stored() == 1000000, "A creative source fills the cell beside it in one tick");
+        // A channel of its own: the wireless grid is shared by every test on the server.
+        var sender = place(h, "wireless_sender", 5, 1); var receiver = place(h, "wireless_receiver", 5, 4);
+        sender.changeChannel(7); receiver.changeChannel(7); sender.receiveEnergy(1000, false);
+        MachineBlockEntity.tick(h.getLevel(), receiver.getBlockPos(), receiver.getBlockState(), receiver);
+        MachineBlockEntity.tick(h.getLevel(), sender.getBlockPos(), sender.getBlockState(), sender);
+        h.assertTrue(receiver.energy.stored() == 1000 && sender.energy.stored() == 0, "A wireless sender reaches a receiver on its channel");
         h.succeed();
     }
 }

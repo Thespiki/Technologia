@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "technologia:block/wooden_crate_top",
+    "side": "technologia:block/wooden_crate"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "technologia:processing",
+  "machine": "auto_sieve",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "technologia:compressed_sand"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:copper_fragment",
+    "count": 9
+  },
+  "time": 480,
+  "energy": 15,
+  "byproduct": {
+    "id": "technologia:gold_fragment",
+    "count": 1
+  }
+}

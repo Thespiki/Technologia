@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/infusion",
+  "display": {
+    "icon": {
+      "id": "technologia:reinforced_alloy"
+    },
+    "title": {
+      "translate": "advancement.technologia.reinforced.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.reinforced.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:reinforced_alloy"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

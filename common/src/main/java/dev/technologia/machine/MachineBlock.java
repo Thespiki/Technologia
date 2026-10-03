@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -38,17 +39,24 @@ import dev.technologia.Technologia;
 public final class MachineBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
+    /** Mirrors the machine tier so the model can show a tier band without a block entity renderer. */
+    public static final IntegerProperty TIER = IntegerProperty.create("tier", 0, MachineTier.count() - 1);
     public final MachineKind kind;
     public MachineBlock(MachineKind kind, Properties properties) {
         super(properties);
         this.kind = kind;
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false).setValue(TIER, 0));
     }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, ACTIVE);
+        builder.add(FACING, ACTIVE, TIER);
     }
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        int tier = kind.isTierable() ? MachineBlockItem.tier(context.getItemInHand()).index() : 0;
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(TIER, tier);
+    }
+    @Override protected boolean hasAnalogOutputSignal(BlockState state) { return true; }
+    @Override protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof MachineBlockEntity machine ? machine.comparatorSignal() : 0;
     }
     @Override protected BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
@@ -78,11 +86,18 @@ public final class MachineBlock extends BaseEntityBlock {
     }
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
-        if (stack.getItem() instanceof WrenchItem) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-        if (!(stack.getItem() instanceof TierKitItem kit)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        // The wrench and the creative kit also act while crouching, which only an item's own use can do.
+        if (stack.getItem() instanceof WrenchItem || stack.getItem() instanceof CreativeKitItem) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        boolean mesh = stack.getItem() instanceof MeshItem && kind == MachineKind.SIEVE;
+        if (!(stack.getItem() instanceof TierKitItem) && !mesh) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (level.isClientSide) return ItemInteractionResult.SUCCESS;
         if (!(level.getBlockEntity(pos) instanceof MachineBlockEntity machine) || !player.mayBuild() || !machine.mayConfigure(player))
             return ItemInteractionResult.FAIL;
+        if (mesh) {
+            MeshItem.install(stack, machine.mesh(), machine::installMesh, player, level, pos);
+            return ItemInteractionResult.CONSUME;
+        }
+        TierKitItem kit = (TierKitItem) stack.getItem();
         if (!kind.isTierable()) {
             player.displayClientMessage(Component.translatable("message.technologia.kit_no_tier"), true);
         } else if (machine.tier().index() >= kit.tier) {
@@ -113,7 +128,11 @@ public final class MachineBlock extends BaseEntityBlock {
     @Override protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moving) {
         if (!state.is(newState.getBlock())) {
             Technologia.topologyChanged();
-            if (level.getBlockEntity(pos) instanceof MachineBlockEntity machine) Containers.dropContents(level, pos, machine);
+            if (level.getBlockEntity(pos) instanceof MachineBlockEntity machine) {
+                if (kind == MachineKind.CHUNK_LOADER && level instanceof net.minecraft.server.level.ServerLevel server) ChunkLoading.release(machine, server);
+                Containers.dropContents(level, pos, machine);
+                level.updateNeighbourForOutputSignal(pos, this);
+            }
             super.onRemove(state, level, pos, newState, moving);
         }
     }
@@ -143,11 +162,17 @@ public final class MachineBlock extends BaseEntityBlock {
         double fx = x + facing.getStepX() * 0.55 + (facing.getAxis() == Direction.Axis.Z ? spread : 0);
         double fz = z + facing.getStepZ() * 0.55 + (facing.getAxis() == Direction.Axis.X ? spread : 0);
         switch (kind) {
-            case GENERATOR, BIOMASS_GENERATOR, FURNACE, ALLOY_SMELTER -> {
+            case GENERATOR, BIOMASS_GENERATOR, FURNACE, ALLOY_SMELTER, INFUSER -> {
                 level.addParticle(ParticleTypes.SMOKE, fx, y + 0.45, fz, 0, 0.02, 0);
                 if (kind != MachineKind.BIOMASS_GENERATOR) level.addParticle(ParticleTypes.FLAME, fx, y + 0.4, fz, 0, 0, 0);
             }
-            case CRUSHER, RECYCLER, SIEVE -> level.addParticle(ParticleTypes.CRIT, fx, y + 0.5, fz, 0, -0.05, 0);
+            case CRUSHER, RECYCLER, SIEVE, ENRICHMENT_CHAMBER -> level.addParticle(ParticleTypes.CRIT, fx, y + 0.5, fz, 0, -0.05, 0);
+            case PHYTO_CHAMBER, ACCELERATOR, HARVESTER -> top(level, ParticleTypes.HAPPY_VILLAGER, x, y, z, random, 0.02);
+            case WATER_WHEEL -> level.addParticle(ParticleTypes.SPLASH, fx, y + 0.3, fz, 0, 0.05, 0);
+            case WINDMILL -> top(level, ParticleTypes.CLOUD, x, y, z, random, 0.03);
+            case THERMO_GENERATOR -> top(level, ParticleTypes.SMOKE, x, y, z, random, 0.02);
+            case WIRELESS_SENDER, WIRELESS_RECEIVER, CHUNK_LOADER -> top(level, ParticleTypes.PORTAL, x, y, z, random, 0.05);
+            case VACUUM -> top(level, ParticleTypes.POOF, x, y, z, random, -0.02);
             case SAWMILL, METAL_PRESS, COMPACTOR -> top(level, ParticleTypes.CLOUD, x, y, z, random, 0.01);
             case CENTRIFUGE -> top(level, ParticleTypes.EFFECT, x, y, z, random, 0.02);
             case MINER -> level.addParticle(ParticleTypes.ELECTRIC_SPARK, x + spread, y - 0.05, z + spread, 0, -0.1, 0);

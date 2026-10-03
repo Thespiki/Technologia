@@ -5,6 +5,8 @@
     "#forge:plates/gold",
     "#forge:plates/copper",
     "#forge:plates/bronze",
-    "#forge:plates/steel"
+    "#forge:plates/steel",
+    "#forge:plates/invar",
+    "#forge:plates/electrum"
   ]
 }

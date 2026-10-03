@@ -5,6 +5,8 @@
     "#forge:raw_materials/gold",
     "#forge:raw_materials/copper",
     "#forge:raw_materials/tin",
-    "#forge:raw_materials/lead"
+    "#forge:raw_materials/lead",
+    "#forge:raw_materials/silver",
+    "#forge:raw_materials/nickel"
   ]
 }

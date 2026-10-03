@@ -24,7 +24,8 @@ public final class WrenchItem extends Item {
         if (player == null || !player.mayBuild() || !level.mayInteract(player, pos)) return InteractionResult.FAIL;
         var state = level.getBlockState(pos);
         boolean machineBlock = state.getBlock() instanceof MachineBlock;
-        if (!machineBlock && !(state.getBlock() instanceof ItemTransferBlock) && !(state.getBlock() instanceof DirectionalFactoryBlock)) return InteractionResult.PASS;
+        if (!machineBlock && !(state.getBlock() instanceof ItemTransferBlock) && !(state.getBlock() instanceof DirectionalFactoryBlock)
+                && !(state.getBlock() instanceof dev.technologia.device.VectorPlateBlock)) return InteractionResult.PASS;
         if (level.isClientSide) return InteractionResult.SUCCESS;
         if (level.getBlockEntity(pos) instanceof MachineBlockEntity machine) {
             if (!machine.mayConfigure(player)) return InteractionResult.FAIL;
@@ -35,10 +36,7 @@ public final class WrenchItem extends Item {
                 machine.saveToItem(item);
                 // Removing the block drops the inventory through MachineBlock.onRemove.
                 if (!level.removeBlock(pos, false)) return InteractionResult.FAIL;
-                // In creative mode Inventory.add reports success for a full inventory and discards the item.
-                var inventory = player.getInventory();
-                boolean fits = inventory.getFreeSlot() >= 0 || inventory.getSlotWithRemainingSpace(item) >= 0;
-                if (!fits || !inventory.add(item)) Block.popResource(level, pos, item);
+                Technologia.giveOrDrop(player, item, pos);
                 level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.3F, 1.4F);
                 player.displayClientMessage(Component.translatable("message.technologia.dismantled"), true);
                 return InteractionResult.CONSUME;

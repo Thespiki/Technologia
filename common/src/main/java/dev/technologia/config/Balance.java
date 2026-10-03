@@ -10,12 +10,14 @@ import org.slf4j.LoggerFactory;
 
 /** Restart-required, server-side balance. Invalid files are preserved for repair. */
 public record Balance(int generatorPerTick, int machineEnergyPerTick, int processingTicks,
-                      int minerEnergyPerBlock, int minerRadius, int minerDepth, boolean minerEnabled, boolean machineSounds) {
-    public static Balance defaults() { return new Balance(40, 20, 100, 1000, 4, 32, true, true); }
+                      int minerEnergyPerBlock, int minerRadius, int minerDepth, boolean minerEnabled, boolean machineSounds,
+                      boolean chunkLoading, int chunkLoaderRadius) {
+    public static Balance defaults() { return new Balance(40, 20, 100, 1000, 4, 32, true, true, true, 2); }
     public Balance bounded() {
         return new Balance(clamp(generatorPerTick, 1, 10000), clamp(machineEnergyPerTick, 1, 10000),
                 clamp(processingTicks, 1, 12000), clamp(minerEnergyPerBlock, 1, 100000),
-                clamp(minerRadius, 1, 16), clamp(minerDepth, 1, 128), minerEnabled, machineSounds);
+                clamp(minerRadius, 1, 16), clamp(minerDepth, 1, 128), minerEnabled, machineSounds,
+                chunkLoading, clamp(chunkLoaderRadius, 0, 2));
     }
     private static int clamp(int n, int min, int max) { return Math.max(min, Math.min(max, n)); }
 
@@ -30,7 +32,8 @@ public record Balance(int generatorPerTick, int machineEnergyPerTick, int proces
                 number(values, "processingTicks", base.processingTicks),
                 number(values, "minerEnergyPerBlock", base.minerEnergyPerBlock),
                 number(values, "minerRadius", base.minerRadius), number(values, "minerDepth", base.minerDepth),
-                flag(values, "minerEnabled", base.minerEnabled), flag(values, "machineSounds", base.machineSounds)).bounded();
+                flag(values, "minerEnabled", base.minerEnabled), flag(values, "machineSounds", base.machineSounds),
+                flag(values, "chunkLoading", base.chunkLoading), number(values, "chunkLoaderRadius", base.chunkLoaderRadius)).bounded();
     }
     private static int number(JsonObject values, String key, int fallback) {
         return values.has(key) && values.get(key).isJsonPrimitive() ? values.get(key).getAsInt() : fallback;

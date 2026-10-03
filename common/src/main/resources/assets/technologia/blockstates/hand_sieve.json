@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "fill=0": {
+      "model": "technologia:block/hand_sieve"
+    },
+    "fill=1": {
+      "model": "technologia:block/hand_sieve_1"
+    },
+    "fill=2": {
+      "model": "technologia:block/hand_sieve_2"
+    },
+    "fill=3": {
+      "model": "technologia:block/hand_sieve_3"
+    },
+    "fill=4": {
+      "model": "technologia:block/hand_sieve_4"
+    }
+  }
+}

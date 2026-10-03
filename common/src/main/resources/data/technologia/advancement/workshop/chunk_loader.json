@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/reinforced",
+  "display": {
+    "icon": {
+      "id": "technologia:chunk_loader"
+    },
+    "title": {
+      "translate": "advancement.technologia.chunk_loader.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.chunk_loader.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:chunk_loader"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

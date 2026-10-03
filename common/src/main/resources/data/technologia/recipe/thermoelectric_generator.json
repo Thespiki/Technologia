@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "KPK",
+    "PFP",
+    "KBK"
+  ],
+  "key": {
+    "K": {
+      "tag": "c:ingots/constantan"
+    },
+    "P": {
+      "tag": "c:plates/copper"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "B": {
+      "item": "technologia:basic_circuit"
+    }
+  },
+  "result": {
+    "id": "technologia:thermoelectric_generator",
+    "count": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BPB",
+    "PCP",
+    "BPB"
+  ],
+  "key": {
+    "B": {
+      "tag": "c:plates/bronze"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "C": {
+      "item": "technologia:wooden_crate"
+    }
+  },
+  "result": {
+    "id": "technologia:bronze_crate",
+    "count": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "technologia:processing",
+  "machine": "auto_sieve",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:gravel"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:iron_fragment",
+    "count": 2
+  },
+  "time": 80,
+  "energy": 15,
+  "byproduct": {
+    "id": "technologia:redstone_fragment",
+    "count": 1
+  },
+  "byproduct_chance": 0.35,
+  "mesh": 2
+}

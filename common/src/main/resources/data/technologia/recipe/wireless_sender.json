@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "EAE",
+    "PFP",
+    "ERE"
+  ],
+  "key": {
+    "E": {
+      "tag": "c:plates/electrum"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    },
+    "P": {
+      "item": "minecraft:ender_pearl"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "R": {
+      "item": "technologia:resonant_alloy"
+    }
+  },
+  "result": {
+    "id": "technologia:wireless_sender",
+    "count": 1
+  }
+}

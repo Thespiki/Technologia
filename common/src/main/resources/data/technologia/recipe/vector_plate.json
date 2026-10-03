@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ISI",
+    "RGR"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "S": {
+      "item": "minecraft:slime_ball"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "G": {
+      "tag": "c:plates/gold"
+    }
+  },
+  "result": {
+    "id": "technologia:vector_plate",
+    "count": 8
+  }
+}

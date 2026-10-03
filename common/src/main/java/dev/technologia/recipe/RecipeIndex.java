@@ -2,10 +2,12 @@ package dev.technologia.recipe;
 
 import dev.technologia.machine.MachineKind;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.WeakHashMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,13 +25,20 @@ public final class RecipeIndex {
     private static final Map<RecipeManager, RecipeIndex> CACHE = new WeakHashMap<>();
     private final Object token;
     private final Map<MachineKind, List<MachineRecipe>> byMachine = new EnumMap<>(MachineKind.class);
+    /** Per machine, recipes with the most demanding sieve mesh first. */
+    private final Map<MachineKind, List<RecipeHolder<MachineRecipe>>> ranked = new EnumMap<>(MachineKind.class);
     private final Map<Item, Boolean> smeltable = new HashMap<>();
     private final Map<MachineKind, Map<Item, Boolean>> plainAnswers = new EnumMap<>(MachineKind.class);
 
     private RecipeIndex(RecipeManager manager, Object token) {
         this.token = token;
-        for (RecipeHolder<MachineRecipe> holder : manager.getAllRecipesFor(MachineRecipe.TYPE))
+        for (RecipeHolder<MachineRecipe> holder : manager.getAllRecipesFor(MachineRecipe.TYPE)) {
             byMachine.computeIfAbsent(holder.value().machine(), kind -> new ArrayList<>()).add(holder.value());
+            ranked.computeIfAbsent(holder.value().machine(), kind -> new ArrayList<>()).add(holder);
+        }
+        // Ties keep a stable order, so the same input always gives the same recipe.
+        for (List<RecipeHolder<MachineRecipe>> list : ranked.values())
+            list.sort(Comparator.<RecipeHolder<MachineRecipe>>comparingInt(holder -> -holder.value().mesh()).thenComparing(holder -> holder.id().toString()));
     }
 
     /** Changes exactly when recipes are (re)loaded; holders cached against an older token are stale. */
@@ -67,6 +76,16 @@ public final class RecipeIndex {
     private boolean scan(MachineKind kind, ItemStack stack) {
         for (MachineRecipe recipe : byMachine.getOrDefault(kind, List.of())) if (recipe.usesItem(stack)) return true;
         return false;
+    }
+
+    /**
+     * The matching recipe that asks for the best mesh the input has. Used by sieves, where a finer
+     * mesh replaces the coarse recipe for the same block.
+     */
+    public static Optional<RecipeHolder<MachineRecipe>> best(Level level, MachineRecipeInput input) {
+        for (RecipeHolder<MachineRecipe> holder : of(level).ranked.getOrDefault(input.machine(), List.of()))
+            if (holder.value().matches(input, level)) return Optional.of(holder);
+        return Optional.empty();
     }
 
     /** True when some two-ingredient recipe of that machine uses both stacks together. */

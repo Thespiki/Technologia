@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IHI",
+    "CFC",
+    "ISI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/invar"
+    },
+    "H": {
+      "item": "minecraft:iron_hoe"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    }
+  },
+  "result": {
+    "id": "technologia:auto_harvester",
+    "count": 1
+  }
+}

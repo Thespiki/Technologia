@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/press",
+  "display": {
+    "icon": {
+      "id": "technologia:vacuum_collector"
+    },
+    "title": {
+      "translate": "advancement.technologia.vacuum.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.vacuum.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:vacuum_collector"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

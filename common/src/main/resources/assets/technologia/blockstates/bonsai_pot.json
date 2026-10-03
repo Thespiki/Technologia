@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "stage=0": {
+      "model": "technologia:block/bonsai_pot"
+    },
+    "stage=1": {
+      "model": "technologia:block/bonsai_pot_1"
+    },
+    "stage=2": {
+      "model": "technologia:block/bonsai_pot_2"
+    },
+    "stage=3": {
+      "model": "technologia:block/bonsai_pot_3"
+    }
+  }
+}

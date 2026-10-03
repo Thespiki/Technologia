@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/root",
+  "display": {
+    "icon": {
+      "id": "technologia:water_wheel"
+    },
+    "title": {
+      "translate": "advancement.technologia.early_power.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.early_power.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:water_wheel"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

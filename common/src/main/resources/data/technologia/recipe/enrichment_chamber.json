@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BRB",
+    "CFC",
+    "BRB"
+  ],
+  "key": {
+    "B": {
+      "tag": "c:plates/bronze"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    }
+  },
+  "result": {
+    "id": "technologia:enrichment_chamber",
+    "count": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "technologia:processing",
+  "machine": "auto_sieve",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:sand"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:gold_fragment",
+    "count": 2
+  },
+  "time": 80,
+  "energy": 15,
+  "byproduct": {
+    "id": "technologia:lapis_fragment",
+    "count": 1
+  },
+  "byproduct_chance": 0.5,
+  "mesh": 3
+}

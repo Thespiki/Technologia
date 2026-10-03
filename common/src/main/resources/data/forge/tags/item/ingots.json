@@ -6,7 +6,12 @@
     "#forge:ingots/copper",
     "#forge:ingots/tin",
     "#forge:ingots/lead",
+    "#forge:ingots/silver",
+    "#forge:ingots/nickel",
     "#forge:ingots/bronze",
-    "#forge:ingots/steel"
+    "#forge:ingots/steel",
+    "#forge:ingots/electrum",
+    "#forge:ingots/invar",
+    "#forge:ingots/constantan"
   ]
 }

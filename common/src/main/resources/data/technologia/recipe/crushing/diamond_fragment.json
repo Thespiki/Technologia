@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "crusher",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "technologia:diamond_fragment"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "minecraft:diamond",
+    "count": 1
+  },
+  "time": 120,
+  "energy": 30
+}

@@ -5,6 +5,10 @@
     "technologia:deepslate_tin_ore",
     "technologia:lead_ore",
     "technologia:deepslate_lead_ore",
-    "technologia:resonite_ore"
+    "technologia:resonite_ore",
+    "technologia:silver_ore",
+    "technologia:deepslate_silver_ore",
+    "technologia:nickel_ore",
+    "technologia:deepslate_nickel_ore"
   ]
 }

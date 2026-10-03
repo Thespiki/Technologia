@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "technologia:block/steel_crate_top",
+    "side": "technologia:block/steel_crate"
+  }
+}

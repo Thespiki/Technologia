@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/mesh",
+  "display": {
+    "icon": {
+      "id": "technologia:diamond_mesh"
+    },
+    "title": {
+      "translate": "advancement.technologia.diamond_mesh.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.diamond_mesh.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:diamond_mesh"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

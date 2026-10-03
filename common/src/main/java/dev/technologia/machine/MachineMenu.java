@@ -12,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class MachineMenu extends AbstractContainerMenu {
     public static final int INPUT_X = 13, OUTPUT_X = 100, GRID_Y = 62, INVENTORY_X = 59;
+    public static final int BUTTON_TOGGLE = 0, BUTTON_RESCAN = 1, BUTTON_REDSTONE = 2, BUTTON_EJECT = 3, BUTTON_CHANNEL_DOWN = 4,
+            BUTTON_CHANNEL_UP = 5, BUTTON_CHANNEL_DOWN_10 = 6, BUTTON_CHANNEL_UP_10 = 7, BUTTON_LIMIT = 8;
     private static final int MACHINE_SLOTS = MachineBlockEntity.SLOTS;
     private final Container machine;
     private final ContainerData data;
@@ -55,6 +57,13 @@ public final class MachineMenu extends AbstractContainerMenu {
     public int capacity() { return MachineBlockEntity.scaledCapacity(kind(), tier()); }
     public int lanes() { return kind().lanes(tier()); }
     public int inputCount() { return kind().inputCount(tier()); }
+    public int redstoneMode() { return Math.clamp(data.get(MachineBlockEntity.DATA_REDSTONE), 0, MachineBlockEntity.REDSTONE_MODES - 1); }
+    public boolean ejects() { return data.get(MachineBlockEntity.DATA_EJECT) != 0; }
+    public int channel() { return Math.clamp(data.get(MachineBlockEntity.DATA_CHANNEL), 0, MachineBlockEntity.MAX_CHANNEL); }
+    /** Energy made or relayed during the last tick. */
+    public int rate() { return (data.get(MachineBlockEntity.DATA_RATE) & 65535) | (data.get(MachineBlockEntity.DATA_RATE_HIGH) << 16); }
+    public int mesh() { return Math.clamp(data.get(MachineBlockEntity.DATA_MESH), 0, dev.technologia.recipe.MachineRecipe.MAX_MESH); }
+    public int wirelessLimit() { return MachineBlockEntity.WIRELESS_LIMITS[Math.clamp(data.get(MachineBlockEntity.DATA_LIMIT), 0, MachineBlockEntity.WIRELESS_LIMITS.length - 1)]; }
     public boolean hasInput() { return inputCount() > 0; }
     public boolean hasOutput() { return kind().hasOutput(); }
     @Override public boolean stillValid(Player player) { return machine.stillValid(player); }
@@ -66,9 +75,18 @@ public final class MachineMenu extends AbstractContainerMenu {
     private boolean mayUse(Player player) { return !(machine instanceof MachineBlockEntity be) || be.mayConfigure(player); }
     @Override public boolean clickMenuButton(Player player, int button) {
         if (!stillValid(player) || !(machine instanceof MachineBlockEntity be) || !be.mayConfigure(player)) return false;
-        if (button == 0) be.toggle(player);
-        else if (button == 1 && be.kind == MachineKind.MINER) be.rescan(player);
-        else return false;
+        switch (button) {
+            case BUTTON_TOGGLE -> { if (!be.kind.hasSwitch()) return false; be.toggle(player); }
+            case BUTTON_RESCAN -> { if (be.kind != MachineKind.MINER) return false; be.rescan(player); }
+            case BUTTON_REDSTONE -> { if (!be.kind.hasSwitch()) return false; be.cycleRedstone(); }
+            case BUTTON_EJECT -> { if (!be.kind.hasOutput()) return false; be.toggleEject(); }
+            case BUTTON_CHANNEL_DOWN, BUTTON_CHANNEL_UP, BUTTON_CHANNEL_DOWN_10, BUTTON_CHANNEL_UP_10 -> {
+                if (!be.kind.isWireless()) return false;
+                be.changeChannel(button == BUTTON_CHANNEL_DOWN ? -1 : button == BUTTON_CHANNEL_UP ? 1 : button == BUTTON_CHANNEL_DOWN_10 ? -10 : 10);
+            }
+            case BUTTON_LIMIT -> { if (be.kind != MachineKind.WIRELESS_SENDER) return false; be.cycleLimit(); }
+            default -> { return false; }
+        }
         return true;
     }
     @Override public ItemStack quickMoveStack(Player player, int index) {

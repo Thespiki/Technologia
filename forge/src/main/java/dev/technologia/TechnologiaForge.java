@@ -35,10 +35,7 @@ public final class TechnologiaForge {
         event.register(Registries.BLOCK, helper -> { Technologia.createBlocks(); Technologia.BLOCKS.forEach((id, block) -> helper.register(Technologia.id(id), block)); });
         event.register(Registries.ITEM, helper -> { Technologia.createItems(); Technologia.ITEMS.forEach((id, item) -> helper.register(Technologia.id(id), item)); });
         event.register(Registries.BLOCK_ENTITY_TYPE, helper -> {
-            Technologia.MACHINE_TYPE = net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(MachineBlockEntity::new, Technologia.machineBlocks()).build(null);
-            helper.register(Technologia.id("machine"), Technologia.MACHINE_TYPE);
-            Technologia.ITEM_TRANSFER_TYPE = net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(dev.technologia.logistics.ItemTransferBlockEntity::new, Technologia.BLOCKS.get("item_transfer")).build(null);
-            helper.register(Technologia.id("item_transfer"), Technologia.ITEM_TRANSFER_TYPE);
+            for (Technologia.BlockEntityEntry<?> entry : Technologia.blockEntities()) helper.register(Technologia.id(entry.id()), build(entry));
         });
         event.register(Registries.RECIPE_TYPE, helper -> helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.TYPE));
         event.register(Registries.RECIPE_SERIALIZER, helper -> {
@@ -55,7 +52,24 @@ public final class TechnologiaForge {
         });
         event.register(Registries.CREATIVE_MODE_TAB, helper -> { Technologia.createTab(); helper.register(Technologia.id("technologia"), Technologia.TAB); });
     }
+    private static <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityType<T> build(Technologia.BlockEntityEntry<T> entry) {
+        var type = net.minecraft.world.level.block.entity.BlockEntityType.Builder.<T>of(entry.factory()::apply, entry.blocks().get()).build(null);
+        entry.store().accept(type);
+        return type;
+    }
     private void attach(AttachCapabilitiesEvent<BlockEntity> event) {
+        // Crates extend the vanilla container base, which Forge already exposes; the bonsai pot is sided.
+        if (event.getObject() instanceof dev.technologia.device.BonsaiPotBlockEntity pot) {
+            java.util.Map<Direction, LazyOptional<SidedInvWrapper>> faces = new java.util.EnumMap<>(Direction.class);
+            for (Direction face : Direction.values()) faces.put(face, LazyOptional.of(() -> new SidedInvWrapper(pot, face)));
+            event.addCapability(Technologia.id("bonsai_pot"), new ICapabilityProvider() {
+                public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction side) {
+                    return capability == ForgeCapabilities.ITEM_HANDLER ? faces.get(side == null ? Direction.DOWN : side).cast() : LazyOptional.empty();
+                }
+            });
+            faces.values().forEach(handler -> event.addListener(handler::invalidate));
+            return;
+        }
         if (!(event.getObject() instanceof MachineBlockEntity machine)) return;
         LazyOptional<IEnergyStorage> energy = LazyOptional.of(() -> new IEnergyStorage() {
             public int receiveEnergy(int max, boolean simulate) { return machine.receiveExternal(max, simulate); }

@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/press",
+  "display": {
+    "icon": {
+      "id": "technologia:vector_plate"
+    },
+    "title": {
+      "translate": "advancement.technologia.vector_plate.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.vector_plate.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:vector_plate"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

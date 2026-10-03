@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/root",
+  "display": {
+    "icon": {
+      "id": "technologia:hand_sieve"
+    },
+    "title": {
+      "translate": "advancement.technologia.hand_sieve.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.hand_sieve.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:hand_sieve"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

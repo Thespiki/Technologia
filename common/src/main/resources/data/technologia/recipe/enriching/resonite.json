@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "enrichment_chamber",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "technologia:resonite"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:enriched_resonite",
+    "count": 1
+  },
+  "time": 100,
+  "energy": 20
+}

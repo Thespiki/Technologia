@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SPS",
+    "SPS",
+    "STS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "P": {
+      "tag": "c:plates/iron"
+    },
+    "T": {
+      "item": "minecraft:stone"
+    }
+  },
+  "result": {
+    "id": "technologia:tool_cabinet",
+    "count": 2
+  }
+}

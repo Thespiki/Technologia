@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SPS",
+    "PCP",
+    "SPS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "P": {
+      "tag": "c:plates/bronze"
+    },
+    "C": {
+      "item": "technologia:bronze_crate"
+    }
+  },
+  "result": {
+    "id": "technologia:steel_crate",
+    "count": 1
+  }
+}

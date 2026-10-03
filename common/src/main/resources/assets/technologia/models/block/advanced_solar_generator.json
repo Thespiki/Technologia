@@ -51,6 +51,39 @@
     },
     {
       "from": [
+        4,
+        0,
+        1
+      ],
+      "to": [
+        12,
+        2,
+        2
+      ],
+      "faces": {
+        "down": {
+          "texture": "#dark",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#dark"
+        },
+        "north": {
+          "texture": "#dark"
+        },
+        "south": {
+          "texture": "#dark"
+        },
+        "west": {
+          "texture": "#dark"
+        },
+        "east": {
+          "texture": "#dark"
+        }
+      }
+    },
+    {
+      "from": [
         5,
         5,
         5

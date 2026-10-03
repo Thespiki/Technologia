@@ -50,7 +50,7 @@ public final class EnergyTransport {
             if (amount <= 0 || !level.hasChunkAt(endpoint.pos)) continue;
             int accepted;
             if (level.getBlockEntity(endpoint.pos) instanceof MachineBlockEntity target) {
-                if (target.kind.suppliesEnergy() && !(source.kind.isGenerator() && target.kind.isCell())) continue;
+                if (!source.kind.feeds(target.kind)) continue;
                 accepted = target.receiveEnergy(amount, false);
             } else {
                 int offered = Math.clamp(EXTERNAL_RECEIVER.receive(level, endpoint.pos, endpoint.inputSide, amount, true), 0, amount);

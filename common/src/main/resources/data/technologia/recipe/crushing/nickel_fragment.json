@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "crusher",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "technologia:nickel_fragment"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "technologia:nickel_dust",
+    "count": 1
+  },
+  "time": 60,
+  "energy": 20
+}

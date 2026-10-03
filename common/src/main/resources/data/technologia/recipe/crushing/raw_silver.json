@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "crusher",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:raw_materials/silver"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:silver_dust",
+    "count": 2
+  },
+  "time": 100,
+  "energy": 20
+}

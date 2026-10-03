@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/root",
+  "display": {
+    "icon": {
+      "id": "technologia:magnet"
+    },
+    "title": {
+      "translate": "advancement.technologia.magnet.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.magnet.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:magnet"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

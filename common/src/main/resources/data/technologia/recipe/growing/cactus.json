@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "phyto_chamber",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:cactus"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:cactus",
+    "count": 3
+  },
+  "time": 400,
+  "energy": 20
+}

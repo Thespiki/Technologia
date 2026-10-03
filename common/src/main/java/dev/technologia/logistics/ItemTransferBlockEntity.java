@@ -80,7 +80,8 @@ public final class ItemTransferBlockEntity extends BlockEntity {
                 .filter(slot -> slot >= 0 && slot < container.getContainerSize()).distinct().toArray()
                 : IntStream.range(0, container.getContainerSize()).toArray();
     }
-    private static Container containerAt(Level level, BlockPos pos) {
+    /** The inventory at a position, joined for double chests; null when there is none or it is not loaded. */
+    public static Container containerAt(Level level, BlockPos pos) {
         if (!level.hasChunkAt(pos)) return null;
         BlockState state = level.getBlockState(pos);
         if (state.getBlock() instanceof WorldlyContainerHolder holder) return holder.getContainer(state, level, pos);

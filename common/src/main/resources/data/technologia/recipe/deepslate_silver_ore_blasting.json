@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "ingredient": {
+    "item": "technologia:deepslate_silver_ore"
+  },
+  "result": {
+    "id": "technologia:silver_ingot",
+    "count": 1
+  },
+  "experience": 0.5,
+  "cookingtime": 100
+}

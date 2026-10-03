@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RER",
+    "AFA",
+    "RNR"
+  ],
+  "key": {
+    "R": {
+      "item": "technologia:reinforced_alloy"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    },
+    "F": {
+      "item": "technologia:machine_frame"
+    },
+    "N": {
+      "item": "technologia:resonite"
+    }
+  },
+  "result": {
+    "id": "technologia:chunk_loader",
+    "count": 1
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/root",
+  "display": {
+    "icon": {
+      "id": "technologia:wooden_crate"
+    },
+    "title": {
+      "translate": "advancement.technologia.crate.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.crate.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:wooden_crate"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

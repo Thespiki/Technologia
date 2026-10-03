@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "VGV",
+    "VRV"
+  ],
+  "key": {
+    "V": {
+      "item": "technologia:vector_plate"
+    },
+    "G": {
+      "tag": "c:plates/gold"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "result": {
+    "id": "technologia:fast_vector_plate",
+    "count": 4
+  }
+}

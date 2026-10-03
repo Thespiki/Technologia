@@ -1,0 +1,355 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "active": "false"
+      },
+      "apply": {
+        "model": "technologia:block/phyto_chamber"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "active": "true"
+      },
+      "apply": {
+        "model": "technologia:block/phyto_chamber_active"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "active": "false"
+      },
+      "apply": {
+        "model": "technologia:block/phyto_chamber",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "active": "true"
+      },
+      "apply": {
+        "model": "technologia:block/phyto_chamber_active",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "active": "false"
+      },
+      "apply": {
+        "model": "technologia:block/phyto_chamber",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "active": "true"
+      },
+      "apply": {
+        "model": "technologia:block/phyto_chamber_active",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "active": "false"
+      },
+      "apply": {
+        "model": "technologia:block/phyto_chamber",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "active": "true"
+      },
+      "apply": {
+        "model": "technologia:block/phyto_chamber_active",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tier": "1",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_1"
+      }
+    },
+    {
+      "when": {
+        "tier": "1",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tier": "1",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tier": "1",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tier": "2",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_2"
+      }
+    },
+    {
+      "when": {
+        "tier": "2",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tier": "2",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tier": "2",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tier": "3",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_3"
+      }
+    },
+    {
+      "when": {
+        "tier": "3",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tier": "3",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tier": "3",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tier": "4",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_4"
+      }
+    },
+    {
+      "when": {
+        "tier": "4",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tier": "4",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tier": "4",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tier": "5",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_5"
+      }
+    },
+    {
+      "when": {
+        "tier": "5",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tier": "5",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_5",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tier": "5",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_5",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tier": "6",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_6"
+      }
+    },
+    {
+      "when": {
+        "tier": "6",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_6",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tier": "6",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_6",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tier": "6",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_6",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "tier": "7",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_7"
+      }
+    },
+    {
+      "when": {
+        "tier": "7",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_7",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "tier": "7",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_7",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "tier": "7",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "technologia:block/tier_band_7",
+        "y": 270
+      }
+    }
+  ]
+}

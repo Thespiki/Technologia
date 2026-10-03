@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "compactor",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:gravel"
+      },
+      "count": 9
+    }
+  ],
+  "result": {
+    "id": "technologia:compressed_gravel",
+    "count": 1
+  },
+  "time": 100,
+  "energy": 20
+}

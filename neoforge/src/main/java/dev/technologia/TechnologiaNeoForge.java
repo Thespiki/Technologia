@@ -31,10 +31,7 @@ public final class TechnologiaNeoForge {
         event.register(Registries.BLOCK, helper -> { Technologia.createBlocks(); Technologia.BLOCKS.forEach((id, block) -> helper.register(Technologia.id(id), block)); });
         event.register(Registries.ITEM, helper -> { Technologia.createItems(); Technologia.ITEMS.forEach((id, item) -> helper.register(Technologia.id(id), item)); });
         event.register(Registries.BLOCK_ENTITY_TYPE, helper -> {
-            Technologia.MACHINE_TYPE = net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(MachineBlockEntity::new, Technologia.machineBlocks()).build(null);
-            helper.register(Technologia.id("machine"), Technologia.MACHINE_TYPE);
-            Technologia.ITEM_TRANSFER_TYPE = net.minecraft.world.level.block.entity.BlockEntityType.Builder.of(dev.technologia.logistics.ItemTransferBlockEntity::new, Technologia.BLOCKS.get("item_transfer")).build(null);
-            helper.register(Technologia.id("item_transfer"), Technologia.ITEM_TRANSFER_TYPE);
+            for (Technologia.BlockEntityEntry<?> entry : Technologia.blockEntities()) helper.register(Technologia.id(entry.id()), build(entry));
         });
         event.register(Registries.RECIPE_TYPE, helper -> helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.TYPE));
         event.register(Registries.RECIPE_SERIALIZER, helper -> {
@@ -51,6 +48,11 @@ public final class TechnologiaNeoForge {
         });
         event.register(Registries.CREATIVE_MODE_TAB, helper -> { Technologia.createTab(); helper.register(Technologia.id("technologia"), Technologia.TAB); });
     }
+    private static <T extends net.minecraft.world.level.block.entity.BlockEntity> net.minecraft.world.level.block.entity.BlockEntityType<T> build(Technologia.BlockEntityEntry<T> entry) {
+        var type = net.minecraft.world.level.block.entity.BlockEntityType.Builder.<T>of(entry.factory()::apply, entry.blocks().get()).build(null);
+        entry.store().accept(type);
+        return type;
+    }
     private void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, Technologia.MACHINE_TYPE, (machine, side) -> machine.kind.capacity == 0 ? null : new IEnergyStorage() {
             public int receiveEnergy(int max, boolean simulate) { return machine.receiveExternal(max, simulate); }
@@ -61,5 +63,7 @@ public final class TechnologiaNeoForge {
             public boolean canReceive() { return machine.kind.acceptsEnergy(); }
         });
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, Technologia.MACHINE_TYPE, (machine, side) -> new SidedInvWrapper(machine, side == null ? Direction.DOWN : side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, Technologia.CRATE_TYPE, (crate, side) -> new net.neoforged.neoforge.items.wrapper.InvWrapper(crate));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, Technologia.BONSAI_TYPE, (pot, side) -> new SidedInvWrapper(pot, side == null ? Direction.DOWN : side));
     }
 }

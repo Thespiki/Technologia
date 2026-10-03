@@ -1,0 +1,24 @@
+{
+  "type": "technologia:processing",
+  "machine": "metallurgic_infuser",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/iron"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "technologia:enriched_carbon"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:steel_ingot",
+    "count": 2
+  },
+  "time": 160,
+  "energy": 30
+}

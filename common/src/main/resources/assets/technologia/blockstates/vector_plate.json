@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "technologia:block/vector_plate"
+    },
+    "facing=east": {
+      "model": "technologia:block/vector_plate",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "technologia:block/vector_plate",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "technologia:block/vector_plate",
+      "y": 270
+    }
+  }
+}

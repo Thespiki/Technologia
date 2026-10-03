@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "phyto_chamber",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:bamboo"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:bamboo",
+    "count": 4
+  },
+  "time": 400,
+  "energy": 20
+}
