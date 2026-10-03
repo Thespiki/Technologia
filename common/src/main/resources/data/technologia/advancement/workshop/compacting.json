@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:compactor"
     },
-    "title": "Less space, more material",
-    "description": "Compress bulk materials.",
+    "title": {
+      "translate": "advancement.technologia.compacting.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.compacting.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

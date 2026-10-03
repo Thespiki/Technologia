@@ -21,14 +21,28 @@ jobs:
           node-version: '22'
       - uses: gradle/actions/setup-gradle@v4
       - run: node tools/verify-resources.mjs
-      - run: chmod +x gradlew
-      - run: ./gradlew :common:test :${{ matrix.loader }}:build --console=plain
-      - name: Run server behavior tests
+      - name: Committed resources match the generator
         if: matrix.loader == 'neoforge'
         shell: bash
         run: |
+          node tools/generate-resources.mjs
+          # PNG and NBT bytes depend on the zlib build, so only text output is compared.
+          git diff --exit-code -- . ':(exclude)*.png' ':(exclude)*.nbt'
+          # git diff ignores untracked files: a generated file that was never committed must fail too.
+          untracked="$(git status --porcelain --untracked-files=all | grep '^??' || true)"
+          if [ -n "$untracked" ]; then echo "Generated files are missing from the commit:"; echo "$untracked"; exit 1; fi
+      - run: chmod +x gradlew
+      - run: ./gradlew :common:test :${{ matrix.loader }}:build --console=plain
+      - name: Run server behavior tests
+        shell: bash
+        run: |
           set -o pipefail
-          ./gradlew :neoforge:runGameTestServer --console=plain | tee gametest.log
+          # NeoForge runs the full suite; Fabric and Forge run loader smoke tests on a headless server.
+          case "${{ matrix.loader }}" in
+            fabric) task=':fabric:runGametest' ;;
+            *) task=':${{ matrix.loader }}:runGameTestServer' ;;
+          esac
+          ./gradlew "$task" --console=plain | tee gametest.log
           node -e "if (!/All [1-9][0-9]* required tests passed/.test(require('fs').readFileSync('gametest.log','utf8'))) process.exit(1)"
       - uses: actions/upload-artifact@v4
         with:

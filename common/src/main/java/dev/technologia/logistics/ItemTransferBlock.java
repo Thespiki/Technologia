@@ -25,6 +25,30 @@ public final class ItemTransferBlock extends BaseEntityBlock {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
+    private static final java.util.Map<Direction, net.minecraft.world.phys.shapes.VoxelShape> SHAPES = shapes();
+    /** Body plus an outlet and an intake nozzle along the facing axis, matching the model. */
+    private static java.util.Map<Direction, net.minecraft.world.phys.shapes.VoxelShape> shapes() {
+        var result = new java.util.EnumMap<Direction, net.minecraft.world.phys.shapes.VoxelShape>(Direction.class);
+        var body = Block.box(3, 3, 3, 13, 13, 13);
+        for (Direction facing : Direction.values())
+            result.put(facing, net.minecraft.world.phys.shapes.Shapes.or(body, nozzle(facing, 4), nozzle(facing.getOpposite(), 5)).optimize());
+        return result;
+    }
+    private static net.minecraft.world.phys.shapes.VoxelShape nozzle(Direction side, double inset) {
+        double low = inset, high = 16 - inset, depth = 3;
+        return switch (side) {
+            case NORTH -> Block.box(low, low, 0, high, high, depth);
+            case SOUTH -> Block.box(low, low, 16 - depth, high, high, 16);
+            case WEST -> Block.box(0, low, low, depth, high, high);
+            case EAST -> Block.box(16 - depth, low, low, 16, high, high);
+            case DOWN -> Block.box(low, 0, low, high, depth, high);
+            case UP -> Block.box(low, 16 - depth, low, high, 16, high);
+        };
+    }
+    @Override protected net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level,
+            BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) {
+        return SHAPES.get(state.getValue(FACING));
+    }
     @Override protected MapCodec<? extends BaseEntityBlock> codec() { return MapCodec.unit(this); }
     @Override protected RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING); }

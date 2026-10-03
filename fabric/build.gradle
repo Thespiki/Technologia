@@ -2,6 +2,15 @@ plugins {
     id 'multiloader-loader'
     id 'fabric-loom'
 }
+
+// Dev-only checks (src/gametest). remapJar packages sourceSets.main only, so they never ship.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered {
@@ -20,6 +29,14 @@ loom {
     mixin {
         defaultRefmapName.set("${mod_id}.refmap.json")
     }
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+        "${mod_id}_gametest" {
+            sourceSet sourceSets.gametest
+        }
+    }
     runs {
         client {
             client()
@@ -33,6 +50,18 @@ loom {
             ideConfigGenerated(true)
             runDir('runs/server')
         }
+        // Headless test server: starts the mod, runs the GameTests and exits with the failure count.
+        gametest {
+            server()
+            setConfigName('Fabric Game Test')
+            source sourceSets.gametest
+            vmArg '-Dfabric-api.gametest'
+            vmArg "-Dfabric-api.gametest.report-file=${layout.buildDirectory.get().asFile}/gametest/junit.xml"
+            runDir('runs/gametest')
+        }
     }
 }
  dependencies { include modApi('teamreborn:energy:4.1.0') }
+
+// `build` / `check` fail on test compile errors without starting the game.
+tasks.named('check') { dependsOn tasks.named('gametestClasses') }

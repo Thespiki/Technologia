@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "technologia:machine_crafting",
   "category": "misc",
   "pattern": [
     "SAS",

@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:centrifuge"
     },
-    "title": "Separate the useful",
-    "description": "Process mineral and biological inputs.",
+    "title": {
+      "translate": "advancement.technologia.centrifuge.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.centrifuge.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

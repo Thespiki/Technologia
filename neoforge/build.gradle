@@ -3,8 +3,27 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+// Dev-only source set (src/gametest/java, src/gametest/resources). The jar task archives
+// sourceSets.main.output only, so the GameTests and their template are never shipped.
+sourceSets {
+    gametest
+}
+
+configurations {
+    // Libraries later added to main are also visible to the tests.
+    gametestImplementation.extendsFrom implementation
+    gametestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+    // Tests call the mod and the common code; both are compiled into main's output.
+    gametestImplementation sourceSets.main.output
+}
+
 neoForge {
     version = neoforge_version
+    // Puts Minecraft + NeoForge on the gametest classpaths. Must come after `version`.
+    addModdingDependenciesTo sourceSets.gametest
     // Automatically enable neoforge AccessTransformers if the file exists
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
@@ -35,13 +54,20 @@ neoForge {
         }
         gameTestServer {
             type = 'gameTestServer'
+            // Launch from the gametest classpath (gametest output + main output + NeoForge).
+            sourceSet = sourceSets.gametest
         }
     }
     mods {
         "${mod_id}" {
             sourceSet sourceSets.main
+            // Same FML mod in dev runs: one fml.modFolders group holds main and gametest.
+            sourceSet sourceSets.gametest
         }
     }
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// `build` / `check` fail on test compile errors without starting the game.
+tasks.named('check') { dependsOn tasks.named('gametestClasses') }

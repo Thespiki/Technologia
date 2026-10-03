@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RPR",
+    "PAP",
+    "RPR"
+  ],
+  "key": {
+    "R": {
+      "item": "technologia:resonite"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    }
+  },
+  "result": {
+    "id": "technologia:tier_kit_resonant",
+    "count": 1
+  }
+}

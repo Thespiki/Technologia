@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:solar_generator"
     },
-    "title": "Clear skies",
-    "description": "Generate power without fuel.",
+    "title": {
+      "translate": "advancement.technologia.solar.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.solar.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

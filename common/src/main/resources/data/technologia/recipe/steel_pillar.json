@@ -2,19 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "IPI",
-    "PGP",
-    "IPI"
+    "PCP",
+    "PCP",
+    "PCP"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:iron_nugget"
-    },
     "P": {
-      "tag": "c:plates/iron"
+      "tag": "c:plates/steel"
     },
-    "G": {
-      "item": "minecraft:stone"
+    "C": {
+      "item": "minecraft:copper_ingot"
     }
   },
   "result": {

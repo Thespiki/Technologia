@@ -34,11 +34,30 @@ public final class MachineRecipe implements Recipe<MachineRecipeInput> {
     private final MachineKind machine;
     private final List<CountedIngredient> ingredients;
     private final ItemStack result, byproduct;
+    private final float byproductChance;
     private final int time, energy;
 
-    public MachineRecipe(MachineKind machine, List<CountedIngredient> ingredients, ItemStack result, ItemStack byproduct, int time, int energy) {
+    public MachineRecipe(MachineKind machine, List<CountedIngredient> ingredients, ItemStack result, ItemStack byproduct, float byproductChance, int time, int energy) {
         this.machine = machine; this.ingredients = List.copyOf(ingredients);
         this.result = result.copy(); this.byproduct = byproduct.copy(); this.time = time; this.energy = energy;
+        this.byproductChance = byproduct.isEmpty() ? 1 : byproductChance;
+    }
+    public MachineRecipe(MachineKind machine, List<CountedIngredient> ingredients, ItemStack result, ItemStack byproduct, int time, int energy) {
+        this(machine, ingredients, result, byproduct, 1, time, energy);
+    }
+    /** Probability that a finished cycle also yields the byproduct; space is always reserved for it. */
+    public float byproductChance() { return byproductChance; }
+    public List<CountedIngredient> ingredients() { return ingredients; }
+    /** Whether the stack could be an ingredient of this recipe, whatever its count. */
+    public boolean usesItem(ItemStack stack) {
+        for (CountedIngredient ingredient : ingredients) if (ingredient.ingredient().test(stack)) return true;
+        return false;
+    }
+    /** Whether two stacks form this recipe's ingredient pair in either order, ignoring counts. */
+    public boolean usesPair(ItemStack first, ItemStack second) {
+        if (ingredients.size() != 2) return false;
+        var a = ingredients.get(0).ingredient(); var b = ingredients.get(1).ingredient();
+        return a.test(first) && b.test(second) || b.test(first) && a.test(second);
     }
     public MachineKind machine() { return machine; }
     public int time() { return time; }
@@ -68,8 +87,8 @@ public final class MachineRecipe implements Recipe<MachineRecipeInput> {
         return DataResult.error(() -> "Unknown processing machine: " + id);
     }
     private static DataResult<MachineRecipe> validate(MachineRecipe recipe) {
-        return recipe.ingredients.size() == recipe.machine.inputCount() ? DataResult.success(recipe)
-                : DataResult.error(() -> recipe.machine.id + " requires exactly " + recipe.machine.inputCount() + " ingredients");
+        return recipe.ingredients.size() == recipe.machine.inputsPerLane() ? DataResult.success(recipe)
+                : DataResult.error(() -> recipe.machine.id + " requires exactly " + recipe.machine.inputsPerLane() + " ingredients");
     }
     private static final class Serializer implements RecipeSerializer<MachineRecipe> {
         private static final MapCodec<MachineRecipe> CODEC = RecordCodecBuilder.<MachineRecipe>mapCodec(instance -> instance.group(
@@ -77,6 +96,7 @@ public final class MachineRecipe implements Recipe<MachineRecipeInput> {
                 CountedIngredient.CODEC.listOf().fieldOf("ingredients").forGetter(recipe -> recipe.ingredients),
                 ItemStack.STRICT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
                 ItemStack.STRICT_CODEC.optionalFieldOf("byproduct", ItemStack.EMPTY).forGetter(recipe -> recipe.byproduct),
+                Codec.floatRange(0.0F, 1.0F).optionalFieldOf("byproduct_chance", 1.0F).forGetter(recipe -> recipe.byproductChance),
                 Codec.intRange(1, 12000).fieldOf("time").forGetter(recipe -> recipe.time),
                 Codec.intRange(1, 100000).fieldOf("energy").forGetter(recipe -> recipe.energy)
         ).apply(instance, MachineRecipe::new)).validate(MachineRecipe::validate);
@@ -84,7 +104,7 @@ public final class MachineRecipe implements Recipe<MachineRecipeInput> {
             @Override public MachineRecipe decode(RegistryFriendlyByteBuf buffer) {
                 MachineKind kind = machine(buffer.readUtf()).getOrThrow();
                 int size = buffer.readVarInt();
-                if (size != kind.inputCount()) throw new IllegalArgumentException("Invalid processing ingredient count");
+                if (size != kind.inputsPerLane()) throw new IllegalArgumentException("Invalid processing ingredient count");
                 List<CountedIngredient> ingredients = new ArrayList<>();
                 for (int i = 0; i < size; i++) {
                     Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
@@ -94,14 +114,17 @@ public final class MachineRecipe implements Recipe<MachineRecipeInput> {
                 }
                 ItemStack result = ItemStack.STREAM_CODEC.decode(buffer);
                 ItemStack byproduct = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
+                float chance = buffer.readFloat();
+                if (!(chance >= 0 && chance <= 1)) throw new IllegalArgumentException("Invalid byproduct chance");
                 int time = buffer.readVarInt(), energy = buffer.readVarInt();
                 if (time < 1 || time > 12000 || energy < 1 || energy > 100000) throw new IllegalArgumentException("Invalid processing cost");
-                return new MachineRecipe(kind, ingredients, result, byproduct, time, energy);
+                return new MachineRecipe(kind, ingredients, result, byproduct, chance, time, energy);
             }
             @Override public void encode(RegistryFriendlyByteBuf buffer, MachineRecipe recipe) {
                 buffer.writeUtf(recipe.machine.id); buffer.writeVarInt(recipe.ingredients.size());
                 for (var ingredient : recipe.ingredients) { Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, ingredient.ingredient()); buffer.writeVarInt(ingredient.count()); }
                 ItemStack.STREAM_CODEC.encode(buffer, recipe.result); ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, recipe.byproduct);
+                buffer.writeFloat(recipe.byproductChance);
                 buffer.writeVarInt(recipe.time); buffer.writeVarInt(recipe.energy);
             }
         };

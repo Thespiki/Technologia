@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:metal_press"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

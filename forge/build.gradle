@@ -2,9 +2,15 @@ plugins {
     id 'multiloader-loader'
     id 'net.minecraftforge.gradle' version '6.0.54'
 }
-base {
-    archivesName = "${mod_name}-forge-${minecraft_version}"
+
+// Dev-only checks (src/gametest). The jar task archives sourceSets.main only, so they never ship.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
 }
+
 minecraft {
     mappings channel: 'official', version: minecraft_version
 
@@ -40,6 +46,20 @@ minecraft {
             mods {
                 modServerRun {
                     source sourceSets.main
+                }
+            }
+        }
+
+        // Headless test server: starts the mod, runs the GameTests and exits with the failure count.
+        gameTestServer {
+            workingDirectory file('runs/gametest')
+            ideaModule "${rootProject.name}.${project.name}.gametest"
+            taskName 'runGameTestServer'
+            property 'forge.enabledGameTestNamespaces', mod_id
+            mods {
+                modGameTestRun {
+                    source sourceSets.main
+                    source sourceSets.gametest
                 }
             }
         }
@@ -81,3 +101,6 @@ sourceSets.each {
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
 }
+
+// `build` / `check` fail on test compile errors without starting the game.
+tasks.named('check') { dependsOn tasks.named('gametestClasses') }

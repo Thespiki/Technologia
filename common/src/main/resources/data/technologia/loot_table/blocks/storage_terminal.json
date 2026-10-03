@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:storage_terminal"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

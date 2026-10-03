@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:centrifuge"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

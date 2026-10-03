@@ -25,7 +25,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "cullface": "down"
         },
         "up": {
           "texture": "#jacket",

@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:electric_furnace"
     },
-    "title": "Close the loop",
-    "description": "Smelt dust into useful ingots.",
+    "title": {
+      "translate": "advancement.technologia.smelting.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.smelting.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

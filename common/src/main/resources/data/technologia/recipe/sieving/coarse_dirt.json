@@ -1,0 +1,23 @@
+{
+  "type": "technologia:processing",
+  "machine": "auto_sieve",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:coarse_dirt"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "technologia:lead_fragment",
+    "count": 1
+  },
+  "time": 80,
+  "energy": 15,
+  "byproduct": {
+    "id": "minecraft:flint",
+    "count": 1
+  },
+  "byproduct_chance": 0.2
+}

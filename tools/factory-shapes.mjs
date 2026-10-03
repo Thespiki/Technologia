@@ -1,7 +1,11 @@
 // Derive cached selection/collision boxes from the same geometry as the visual models.
-export function buildFactoryShapes({fs,write,base,machines,decor}) {
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+export function buildFactoryShapes({write,base,machines,decor}) {
  const entries=[...machines,...decor].map(name=>{
-  const model=JSON.parse(fs.readFileSync(`${base}/assets/technologia/models/block/${name}.json`));
+  const model=JSON.parse(fs.readFileSync(path.join(root,base,`assets/technologia/models/block/${name}.json`),'utf8'));
   const boxes=model.elements.map(e=>[...e.from,...e.to].map(v=>Math.max(0,Math.min(16,v))));
   return `        shapes.put("${name}", bake(new double[][] {${boxes.map(b=>'{'+b.join(',')+'}').join(',')}}));`;
  });

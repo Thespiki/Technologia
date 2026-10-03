@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:sawmill"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

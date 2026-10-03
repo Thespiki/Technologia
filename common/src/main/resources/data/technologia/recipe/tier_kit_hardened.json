@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "DPD",
+    "PAP",
+    "DPD"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    }
+  },
+  "result": {
+    "id": "technologia:tier_kit_hardened",
+    "count": 1
+  }
+}

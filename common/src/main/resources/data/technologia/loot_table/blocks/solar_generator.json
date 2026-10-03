@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:solar_generator"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

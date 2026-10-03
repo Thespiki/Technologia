@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:electric_furnace"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

@@ -92,6 +92,16 @@ public final class StorageMenu extends AbstractContainerMenu {
         return List.copyOf(result);
     }
 
+    /** Cheap change detector for the screen: differs whenever any slot's item or count changes. */
+    public long fingerprint() {
+        long hash = revision;
+        for (int slot = 0; slot < STORAGE_SLOTS; slot++) {
+            ItemStack stack = storage.getItem(slot);
+            hash = hash * 31 + (stack.isEmpty() ? 0 : ItemStack.hashItemAndComponents(stack) * 65L + stack.getCount());
+        }
+        return hash;
+    }
+
     public int occupiedSlots() {
         int result = 0;
         for (int slot = 0; slot < STORAGE_SLOTS; slot++) if (!storage.getItem(slot).isEmpty()) result++;
@@ -169,7 +179,8 @@ public final class StorageMenu extends AbstractContainerMenu {
 
     @Override public ItemStack quickMoveStack(Player player, int index) {
         // Core slots are intentionally only actionable through the revision-checked buttons.
-        if (!stillValid(player) || index < STORAGE_SLOTS || index >= slots.size()) return ItemStack.EMPTY;
+        // The client cannot know which padded slots are real, so only the server moves items.
+        if (clientSide || !stillValid(player) || index < STORAGE_SLOTS || index >= slots.size()) return ItemStack.EMPTY;
         Slot slot = slots.get(index);
         if (!slot.hasItem() || !slot.mayPickup(player)) return ItemStack.EMPTY;
         ItemStack current = slot.getItem();

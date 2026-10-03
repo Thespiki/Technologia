@@ -28,7 +28,8 @@ public final class ItemTransferBlockEntity extends BlockEntity {
     public void setFilter(ItemStack stack) { filter = stack.isEmpty() ? ItemStack.EMPTY : stack.copyWithCount(1); setChanged(); }
 
     public static void tick(Level level, BlockPos pos, BlockState state, ItemTransferBlockEntity transfer) {
-        if (!level.isClientSide && level.getGameTime() % INTERVAL_TICKS == 0) transfer.transfer();
+        // The position offsets each transfer so a large factory does not move everything on one tick.
+        if (!level.isClientSide && (level.getGameTime() + Math.floorMod(pos.hashCode(), INTERVAL_TICKS)) % INTERVAL_TICKS == 0) transfer.transfer();
     }
     public int transfer() {
         if (level == null || level.isClientSide || isRemoved() || level.hasNeighborSignal(worldPosition)) return 0;
@@ -36,7 +37,9 @@ public final class ItemTransferBlockEntity extends BlockEntity {
         Container source = containerAt(level, worldPosition.relative(facing.getOpposite()));
         Container target = containerAt(level, worldPosition.relative(facing));
         if (source == null || target == null || source == target) return 0;
-        return move(source, facing, target, facing.getOpposite(), filter, ITEMS_PER_OPERATION);
+        // Extraction follows hopper rules: vanilla sided blocks such as the furnace only describe what
+        // may leave them for the bottom face, so a transfer on any side takes results, not fuel.
+        return move(source, Direction.DOWN, target, facing.getOpposite(), filter, ITEMS_PER_OPERATION);
     }
 
     /** Public for deterministic tests and future devices; all transfers happen on the server thread. */
@@ -53,12 +56,14 @@ public final class ItemTransferBlockEntity extends BlockEntity {
             for (int targetSlot : destinationSlots) {
                 if (available.isEmpty() || moved >= Math.min(ITEMS_PER_OPERATION, limit)) break;
                 ItemStack existing = target.getItem(targetSlot);
-                if (!target.canPlaceItem(targetSlot, available)
-                        || target instanceof WorldlyContainer sided && !sided.canPlaceItemThroughFace(targetSlot, available, targetFace)
-                        || !existing.isEmpty() && !ItemStack.isSameItemSameComponents(existing, available)) continue;
+                if (!existing.isEmpty() && !ItemStack.isSameItemSameComponents(existing, available)) continue;
                 int room = Math.max(0, target.getMaxStackSize(available) - existing.getCount());
                 int count = Math.min(Math.min(ITEMS_PER_OPERATION, limit) - moved, Math.min(room, available.getCount()));
                 if (count == 0) continue;
+                // Ask about the stack that would really arrive: some blocks only accept one item at a time.
+                ItemStack offered = available.copyWithCount(count);
+                if (!target.canPlaceItem(targetSlot, offered)
+                        || target instanceof WorldlyContainer sided && !sided.canPlaceItemThroughFace(targetSlot, offered, targetFace)) continue;
                 ItemStack extracted = source.removeItem(sourceSlot, count);
                 if (extracted.isEmpty()) continue;
                 ItemStack result = existing.isEmpty() ? extracted.copy() : existing.copyWithCount(existing.getCount() + extracted.getCount());

@@ -2,7 +2,7 @@
 
 An original technology mod for Minecraft 1.21.1. The ambition is the satisfying scale of 1.12.2 automation, with one coherent visual language and understandable tools. Fabric, NeoForge and Forge receive separate jars built around shared gameplay. They are separate ecosystems; one world/server cannot run all three loaders simultaneously.
 
-This is a prototype and design proposal, not a complete replacement for AE2, Mekanism, RFTools or Draconic Evolution. Their code, branding and art are not being repackaged. Their current projects also continue to exist on newer versions. Here, “chaotic” means the requested top-tier endgame; a separate addon can be identified later.
+This is a prototype and design proposal, not a complete replacement for AE2, Mekanism, RFTools or Draconic Evolution. Their code, branding and art are not being repackaged. Their current projects also continue to exist on newer versions. Draconic Evolution and Chaotic Evolution are both named inspirations for the late game. Which mod or addon “Chaotic Evolution” refers to is still to be confirmed. Until then, the “Chaos” and “Chaotic” entries in this document are placeholders for that inspiration, not a definition of it.
 
 ## An expandable progression
 
@@ -17,6 +17,8 @@ The working proposal is **18 milestones, T00–T17**, detailed in [PROGRESSION.m
 | Chaos | Master unusual world rules | Rift stabilization, original bosses, exotic fabrication | Fractured geometry and controlled purple-white energy |
 
 Existing workshop prototype content is enumerated in the README. Everything else here is a proposed expansion.
+
+Machine tiers are a separate scale from these themes and from the 18 milestones. Alpha.4 has eight machine tiers, Mk I to Mk VIII, defined as data in `technologia/tiers.json`. Each tier sets a machine's lanes, speed, energy capacity, efficiency, generation and transfer rate.
 
 ## Art direction and interface rules
 
@@ -35,64 +37,68 @@ Existing workshop prototype content is enumerated in the README. Everything else
 
 Use 32 px textures, a consistent screw/vent grid, and recognizable silhouettes for each machine family. Inputs, outputs and status need shapes and words as well as color. The first textures are deterministic original prototype assets generated from this palette; production art requires another review for silhouette, orientation, animation and readability in-world.
 
-The storage core now has six physically recessed drive bays, and the terminal has a recessed screen and projecting control ledge, using static vanilla block-model cuboids. These are original geometry prototypes, pending client visual review. Larger framed multiblocks and moving components remain planned.
+Since alpha.3 every machine type has its own static model built from vanilla block-model cuboids; alpha.4 has 18 of them, including the Auto Sieve. Examples: six recessed drive bays on the storage core, a freestanding terminal with a recessed screen, open press frames, saw housings, raised solar panels and exposed cell coils. Collision and selection shapes follow the model geometry. In alpha.4 working processors and fuel generators also emit particles and play a quiet working sound, the Survey Miner emits particles, and blocks use metal or glass sounds. A machine's tier does not change its model yet. Larger framed multiblocks and moving components remain planned.
 
 Every final machine UI should answer: What goes in? What comes out? How much power does it need? Why has it stopped? Keep basic operation on the first screen. Put side routing, redstone rules and upgrades in consistent secondary panels. Show recipes, missing ingredients and costs before starting. Tooltips must describe actions in player language. Keyboard navigation, readable contrast, small GUI scales and localization are release requirements.
 
-Alpha.2 uses a common machine screen with separated inputs/outputs, a searchable storage catalogue with item totals and a native Field Guide with nine connected chapters and 17 articles. The guide takes inspiration from quest-book navigation while using original Technologia visuals; actual quest completion, rewards and progression tracking remain future work. Side configuration, a control dashboard and storage services spanning multiple cores are still planned.
+Alpha.4 uses one machine screen for every powered machine: a 4×4 grid of ingredient slots on the left, a 9×3 grid of result slots on the right, the tier name at the top right and one progress line per lane. Only the slots a tier uses are shown. The storage catalogue is searchable, shows item totals and, since alpha.3, combines up to four cores. The native Field Guide has ten chapters and 38 articles. The guide takes inspiration from quest-book navigation while using original Technologia visuals. Its Progress page shows the workshop advancements as a route with done, next and locked states, read from the advancements the server has revealed to the player. Quest rewards and team mechanics are not specified and not present. Side configuration, a control dashboard, a guide hotkey and storage disks are still planned.
 
 ## Main requested systems
 
-**Nexus storage:** Start with connected storage and terminals. Add searchable unified inventory, disks, bulk vaults, import/export buses, pattern autocrafting, machine scheduling, stock targets and wireless access. Simple networking should work without channel arithmetic; an expert mode can make bandwidth and routing into puzzles. Crafting failures must point to their cause, such as missing tin or an unpowered furnace.
+These paragraphs combine the request with design proposals. The requested scope itself is listed in [REQUIREMENTS.md](REQUIREMENTS.md); where a proposal here differs from it, the request applies.
 
-**Industrial processing:** Start with raw ore → two dust → smelting. Add an alloy furnace, metal press, washer, separator, electrolyzer, chemical reactor, crystallizer and multi-recipe factories. Later ore multiplication should reward infrastructure, with clear yields and reusable byproducts. Do not create new copies of every vanilla metal.
+**Nexus storage:** Start with connected storage and terminals; alpha.3 terminals already combine up to four cores. Add searchable unified inventory, disks, bulk vaults, import/export buses, pattern autocrafting, machine scheduling, stock targets and wireless access. Simple networking should work without channel arithmetic; an expert mode can make bandwidth and routing into puzzles. Crafting failures must point to their cause, such as missing tin or an unpowered furnace.
 
-**Survey Miner:** Preserve the old digital miner's selective excavation, radius/height settings, filters, replacement and silk-touch choices. The prototype has a bounded region below the miner, one inventory filter, pause/rescan, owner checks and permission callbacks. Later UI should preview matching blocks and total energy, offer named presets and explain protection failures. Chunk loading must be opt-in, quota-limited and compatible with server policy.
+**Industrial processing:** Start with raw ore → two dust → smelting. The Alloy Smelter, Metal Press, Sawmill, Compactor, Centrifuge and Recycler exist since alpha.3, and the Auto Sieve since alpha.4. Still to add: a washer, separator, electrolyzer, chemical reactor, crystallizer and multi-recipe factories. Later ore multiplication should reward infrastructure, with clear yields and reusable byproducts. Do not create new copies of every vanilla metal.
+
+**Survey Miner:** Preserve the old digital miner's selective excavation, radius/height settings, filters, replacement and silk-touch choices. The prototype has a bounded region below the miner, one filter slot that only a player can set, pause/rescan, owner checks and permission callbacks. In alpha.4 only the owner can take results or change the filter from the screen (automation and block breaking are not owner-checked), and higher machine tiers scan and mine faster. Later UI should preview matching blocks and total energy, offer named presets and explain protection failures. Chunk loading must be opt-in, quota-limited and compatible with server policy.
 
 **Architect utilities:** A preview-first builder for rooms, tunnels, spheres and roads; saved blueprints; named teleport pads; factory monitors; and readable automation rules. Start with presets before introducing a full logic editor. A build preview should show exact material and energy requirements and make its operation cancellable.
 
-**Ascendant / Chaos:** Original fusion assembly, a visible multiblock energy reservoir, modular shields/flight/mining equipment and repeatable boss encounters. Chaos should unlock new capabilities, not only multiply damage. Draconic and chaotic cores in the prototype are creative inventory concepts, without survival recipes or powers.
+**Ascendant / Chaos:** Original fusion assembly, a visible multiblock energy reservoir, modular shields/flight/mining equipment and repeatable boss encounters. These are proposals; what the Chaotic Evolution inspiration should bring is still to be confirmed. Draconic and chaotic cores in the prototype are creative inventory concepts, without survival recipes or powers.
 
 ## More content to consider
 
-| Proposal | Why it belongs |
-| --- | --- |
-| Compact item/fluid/power conduits | Dense, tidy factories with inspectable routes |
-| Parallel factory upgrades | Expand throughput while retaining configuration |
-| Alloy furnace and forming press | Make useful conductors, plates and structural alloys |
-| Brine wells and salt flats | Give chemistry its own exploration loop |
-| Sulfur vents and geothermal taps | Turn location into a power/processing choice |
-| Resin trees and rubber processing | Link farming to insulation and flexible components |
-| Oil seeps and fractionation | Fuels, polymers and reusable chemical byproducts |
-| Bauxite deposits and alumina refining | Lightweight machinery through a distinctive processing chain |
-| Biomass digesters | A reason to reuse farm waste |
-| Hydroponics and tree farms | Renewable food, wood and industrial crops |
-| Livestock collection and controlled spawning | An automation branch beyond mining |
-| Resource cultivators | Optional skyblock-friendly deterministic materials |
-| Recycling and salvage | Recover value from obsolete equipment |
-| Prospecting scanner | Explore resource regions before automated mining |
-| Blueprint library | Reuse favorite factory layouts with a material bill |
-| Building wand and exchange tool | Reduce repetitive base construction |
-| Elevators, travel anchors and teleport pads | Make large bases pleasant to navigate |
-| Named wireless power links | Connect remote outposts with visible throughput limits |
-| Multiblock turbines and reactors | Give large builds functional purpose |
-| Energy reservoir with projected runtime | A visible base centerpiece and useful diagnostic |
-| Modular tools and equipment | Choose flight, shields, magnetism and area mining |
-| Keep-in-stock crafting | Maintain reserves with one understandable rule |
-| Factory dashboard | One place for power trends, blocked machines and tasks |
-| Factory black box | Explain what caused a production line to stop |
-| Network route overlay | Highlight disconnected or overloaded components |
-| Production contracts | Optional goals for sustained output and efficiency |
-| Closed-loop challenges | Reward reuse and self-sustaining factories |
-| Ancient industrial ruins | Find blueprints, damaged machinery and salvage |
-| Rift stabilizer | Control anomalies to obtain exotic resources |
-| Modular pocket workshops | Compact automation spaces with explicit performance limits |
-| Custom industrial dimensions | Much later: curated resource worlds with clear costs |
-| Classic and Expert profiles | Open-ended building or more demanding production chains |
-| Creative-item milestones | Optional long-term goals after the main progression |
-| Shared guide and quest chapters | Teach systems through usable mini-factories |
-| Computer control API | Allow advanced players to script diagnostics and requests |
-| Cosmetic factory kit | Matching catwalks, windows, lamps, tanks and control panels |
+The Status column separates what a released version already contains from what is still a proposal. A "partly delivered" row lists what exists; the rest of that row is still a proposal.
+
+| Proposal | Why it belongs | Status |
+| --- | --- | --- |
+| Compact item/fluid/power conduits | Dense, tidy factories with inspectable routes | Partly delivered: Energy Conduits and Item Transfer in alpha.3, gold and resonite conduit materials in alpha.4. Fluid conduits remain a proposal |
+| Parallel factory upgrades | Expand throughput while retaining configuration | Delivered in alpha.4: tier kits upgrade a placed machine in place and add parallel lanes |
+| Alloy furnace and forming press | Make useful conductors, plates and structural alloys | Delivered in alpha.3: Alloy Smelter and Metal Press |
+| Brine wells and salt flats | Give chemistry its own exploration loop | Proposal |
+| Sulfur vents and geothermal taps | Turn location into a power/processing choice | Proposal |
+| Resin trees and rubber processing | Link farming to insulation and flexible components | Proposal |
+| Oil seeps and fractionation | Fuels, polymers and reusable chemical byproducts | Proposal |
+| Bauxite deposits and alumina refining | Lightweight machinery through a distinctive processing chain | Proposal |
+| Biomass digesters | A reason to reuse farm waste | Partly delivered in alpha.3: the Biomass Generator burns sawdust, saplings, wheat, kelp and sugar cane. A digester remains a proposal |
+| Hydroponics and tree farms | Renewable food, wood and industrial crops | Proposal |
+| Livestock collection and controlled spawning | An automation branch beyond mining | Proposal |
+| Resource cultivators | Optional skyblock-friendly deterministic materials | Proposal |
+| Recycling and salvage | Recover value from obsolete equipment | Partly delivered in alpha.3: the Recycler turns iron and gold tools and armor into nuggets. Salvage of machines remains a proposal |
+| Prospecting scanner | Explore resource regions before automated mining | Proposal |
+| Blueprint library | Reuse favorite factory layouts with a material bill | Proposal |
+| Building wand and exchange tool | Reduce repetitive base construction | Proposal |
+| Elevators, travel anchors and teleport pads | Make large bases pleasant to navigate | Proposal |
+| Named wireless power links | Connect remote outposts with visible throughput limits | Proposal |
+| Multiblock turbines and reactors | Give large builds functional purpose | Proposal |
+| Energy reservoir with projected runtime | A visible base centerpiece and useful diagnostic | Proposal |
+| Modular tools and equipment | Choose flight, shields, magnetism and area mining | Proposal |
+| Keep-in-stock crafting | Maintain reserves with one understandable rule | Proposal |
+| Factory dashboard | One place for power trends, blocked machines and tasks | Proposal |
+| Factory black box | Explain what caused a production line to stop | Proposal |
+| Network route overlay | Highlight disconnected or overloaded components | Proposal |
+| Production contracts | Optional goals for sustained output and efficiency | Proposal |
+| Closed-loop challenges | Reward reuse and self-sustaining factories | Proposal |
+| Ancient industrial ruins | Find blueprints, damaged machinery and salvage | Proposal |
+| Rift stabilizer | Control anomalies to obtain exotic resources | Proposal |
+| Modular pocket workshops | Compact automation spaces with explicit performance limits | Proposal |
+| Custom industrial dimensions | Much later: curated resource worlds with clear costs | Proposal |
+| Classic and Expert profiles | Open-ended building or more demanding production chains | Proposal |
+| Creative-item milestones | Optional long-term goals after the main progression | Proposal |
+| Shared guide and quest chapters | Teach systems through usable mini-factories | Partly delivered: the Field Guide since alpha.2, and a Progress page driven by advancements in alpha.4. Shared and team progress remain a proposal |
+| Computer control API | Allow advanced players to script diagnostics and requests | Proposal |
+| Cosmetic factory kit | Matching catwalks, windows, lamps, tanks and control panels | Partly delivered in alpha.3: ten building blocks, including lamps, reinforced glass, grilles and control panels. Catwalks and tanks remain proposals |
 
 ## Why these proposals fit the era
 

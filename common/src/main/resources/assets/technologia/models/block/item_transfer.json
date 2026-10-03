@@ -60,7 +60,8 @@
           "texture": "#casing"
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#casing",
+          "cullface": "south"
         },
         "west": {
           "texture": "#casing"
@@ -95,7 +96,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "cullface": "north"
         },
         "south": {
           "texture": "#casing"

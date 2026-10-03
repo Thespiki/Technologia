@@ -2,18 +2,24 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "IPI",
     "PGP",
-    "IPI"
+    "RCR",
+    "PSP"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:iron_nugget"
-    },
     "P": {
-      "tag": "c:plates/iron"
+      "tag": "c:plates/steel"
     },
     "G": {
+      "item": "minecraft:glass"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    },
+    "S": {
       "item": "minecraft:stone"
     }
   },

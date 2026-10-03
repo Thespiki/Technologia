@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:metal_press"
     },
-    "title": "Under pressure",
-    "description": "Form metal plates.",
+    "title": {
+      "translate": "advancement.technologia.press.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.press.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:digital_miner"
     },
-    "title": "Selective extraction",
-    "description": "Build and configure the Survey Miner.",
+    "title": {
+      "translate": "advancement.technologia.miner.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.miner.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

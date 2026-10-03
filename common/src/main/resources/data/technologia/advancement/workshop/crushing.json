@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:crusher"
     },
-    "title": "Break it down",
-    "description": "Double raw metals into dust.",
+    "title": {
+      "translate": "advancement.technologia.crushing.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.crushing.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

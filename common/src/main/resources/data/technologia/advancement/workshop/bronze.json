@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:bronze_ingot"
     },
-    "title": "Age of bronze",
-    "description": "Alloy three copper with one tin.",
+    "title": {
+      "translate": "advancement.technologia.bronze.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.bronze.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

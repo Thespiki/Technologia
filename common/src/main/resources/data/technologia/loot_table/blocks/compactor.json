@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:compactor"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

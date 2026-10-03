@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " G ",
+    "PRP",
+    " G "
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "R": {
+      "item": "technologia:resonite"
+    }
+  },
+  "result": {
+    "id": "technologia:resonite_energy_conduit",
+    "count": 8
+  }
+}

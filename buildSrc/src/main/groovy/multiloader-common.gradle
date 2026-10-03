@@ -13,6 +13,13 @@ java {
     withJavadocJar()
 }
 
+// Reproducible archives: no file timestamps and a stable entry order, so the same source
+// builds the same jar locally and on the release runner.
+tasks.withType(org.gradle.api.tasks.bundling.AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
 repositories {
     mavenCentral()
     // https://docs.gradle.org/current/userguide/declaring_repositories.html#declaring_content_exclusively_found_in_one_repository
@@ -57,15 +64,25 @@ repositories {
     }
 }
 
+// LICENSE refers to these files by name, so they travel with every jar.
+def legalNotices = rootProject.files('MULTILOADER_TEMPLATE_LICENSE.txt', 'TEMPLATE_LICENSE.txt', 'THIRD_PARTY_NOTICES.txt')
+
 sourcesJar {
     from(rootProject.file('LICENSE')) {
         rename { "${it}_${mod_name}" }
     }
+    from(legalNotices)
 }
 
 jar {
     from(rootProject.file('LICENSE')) {
         rename { "${it}_${mod_name}" }
+    }
+    from(legalNotices)
+    doFirst {
+        (legalNotices.files + rootProject.file('LICENSE')).each {
+            if (!it.isFile()) throw new GradleException("Missing licence file: ${it}")
+        }
     }
 
     manifest {

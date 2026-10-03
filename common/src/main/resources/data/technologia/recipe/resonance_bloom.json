@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "technologia:resonite"
+    },
+    {
+      "tag": "minecraft:small_flowers"
+    },
+    {
+      "item": "minecraft:glowstone_dust"
+    }
+  ],
+  "result": {
+    "id": "technologia:resonance_bloom",
+    "count": 1
+  }
+}

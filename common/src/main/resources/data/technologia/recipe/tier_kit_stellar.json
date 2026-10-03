@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "DAD",
+    " D "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:nether_star"
+    },
+    "D": {
+      "item": "minecraft:diamond_block"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    }
+  },
+  "result": {
+    "id": "technologia:tier_kit_stellar",
+    "count": 1
+  }
+}

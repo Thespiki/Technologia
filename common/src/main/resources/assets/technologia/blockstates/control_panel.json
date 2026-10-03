@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
       "model": "technologia:block/control_panel"
+    },
+    "facing=east": {
+      "model": "technologia:block/control_panel",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "technologia:block/control_panel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "technologia:block/control_panel",
+      "y": 270
     }
   }
 }

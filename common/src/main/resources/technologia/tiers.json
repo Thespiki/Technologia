@@ -1,0 +1,20 @@
+{
+  "_comment": "Machine tiers. Read by the mod at start-up and by tools/generate-resources.mjs. One tier kit item is registered for every tier after the first. lanes: parallel processing lanes; speed: work per tick; capacity: energy buffer multiplier; efficiency: energy cost multiplier per operation; generation: generator and solar output multiplier; transfer: energy transfer rate multiplier.",
+  "tiers": [
+    {"id": "basic", "name": "Mk I", "lanes": 1, "speed": 1.0, "capacity": 1.0, "efficiency": 1.0, "generation": 1.0, "transfer": 1.0},
+    {"id": "bronze", "name": "Mk II", "lanes": 1, "speed": 1.5, "capacity": 2.0, "efficiency": 1.0, "generation": 1.5, "transfer": 2.0,
+      "kit": {"pattern": [" P ", "PCP", " P "], "key": {"P": "#c:plates/bronze", "C": "technologia:basic_circuit"}}},
+    {"id": "steel", "name": "Mk III", "lanes": 2, "speed": 1.5, "capacity": 3.0, "efficiency": 0.95, "generation": 2.0, "transfer": 4.0,
+      "kit": {"pattern": [" P ", "PCP", " P "], "key": {"P": "#c:plates/steel", "C": "technologia:basic_circuit"}}},
+    {"id": "resonant", "name": "Mk IV", "lanes": 3, "speed": 2.0, "capacity": 5.0, "efficiency": 0.9, "generation": 3.0, "transfer": 8.0,
+      "kit": {"pattern": ["RPR", "PAP", "RPR"], "key": {"R": "technologia:resonite", "P": "#c:plates/steel", "A": "technologia:advanced_circuit"}}},
+    {"id": "hardened", "name": "Mk V", "lanes": 4, "speed": 2.5, "capacity": 8.0, "efficiency": 0.85, "generation": 4.0, "transfer": 16.0,
+      "kit": {"pattern": ["DPD", "PAP", "DPD"], "key": {"D": "minecraft:diamond", "P": "#c:plates/steel", "A": "technologia:advanced_circuit"}}},
+    {"id": "tempered", "name": "Mk VI", "lanes": 5, "speed": 3.0, "capacity": 12.0, "efficiency": 0.8, "generation": 6.0, "transfer": 32.0,
+      "kit": {"pattern": ["NPN", "PAP", "NPN"], "key": {"N": "minecraft:netherite_scrap", "P": "#c:plates/gold", "A": "technologia:advanced_circuit"}}},
+    {"id": "entangled", "name": "Mk VII", "lanes": 6, "speed": 4.0, "capacity": 20.0, "efficiency": 0.75, "generation": 8.0, "transfer": 64.0,
+      "kit": {"pattern": ["EOE", "OAO", "EOE"], "key": {"E": "minecraft:ender_eye", "O": "minecraft:crying_obsidian", "A": "technologia:advanced_circuit"}}},
+    {"id": "stellar", "name": "Mk VIII", "lanes": 8, "speed": 5.0, "capacity": 32.0, "efficiency": 0.7, "generation": 12.0, "transfer": 128.0,
+      "kit": {"pattern": [" S ", "DAD", " D "], "key": {"S": "minecraft:nether_star", "D": "minecraft:diamond_block", "A": "technologia:advanced_circuit"}}}
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " P ",
+    "PCP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "tag": "c:plates/bronze"
+    },
+    "C": {
+      "item": "technologia:basic_circuit"
+    }
+  },
+  "result": {
+    "id": "technologia:tier_kit_bronze",
+    "count": 1
+  }
+}

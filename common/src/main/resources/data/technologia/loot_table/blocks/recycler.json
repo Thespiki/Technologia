@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:recycler"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

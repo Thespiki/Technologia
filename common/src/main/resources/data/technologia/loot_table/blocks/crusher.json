@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:crusher"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

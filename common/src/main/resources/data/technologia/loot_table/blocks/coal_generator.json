@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:coal_generator"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]
