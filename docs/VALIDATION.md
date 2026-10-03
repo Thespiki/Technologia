@@ -21,9 +21,12 @@ Checks run on 2026-10-03 and 2026-10-04 with Minecraft 1.21.1 and Java 21, on th
 | Client playtest of alpha.5 features | Not performed |
 | Fabric / Forge client start | Not performed for alpha.5. The owner reported a short Fabric client launch of alpha.4 that seemed to work |
 | Other mods, multiplayer, performance | Not performed |
-| GitHub verification, publication and Pages | Recorded here after publication |
+| GitHub verification | [Three-loader build and server tests](https://github.com/Thespiki/Technologia/actions/runs/37157982044) passed on Linux for release source `8311ab4` on its branch and [again on `main`](https://github.com/Thespiki/Technologia/actions/runs/37158147708); the [release build and server tests](https://github.com/Thespiki/Technologia/actions/runs/37158157506) passed for the tag |
+| Publication | [Alpha.5 prerelease](https://github.com/Thespiki/Technologia/releases/tag/v0.1.0-alpha.5) published with exactly three jars. The three public jars were downloaded; they are byte-identical to the jars built on the development PC |
+| Pages | [Deployment passed](https://github.com/Thespiki/Technologia/actions/runs/37158147635); the live page shows alpha.5 |
+| Earlier releases online | The alpha.1 to alpha.4 releases are still listed with three jars each; their tags point at the same commits as before |
 
-SHA-256 of the alpha.5 jars as built on the development PC:
+SHA-256 of the alpha.5 jars. The release workflow builds the jars again from the tag on Linux; the result is byte-identical to the Windows build, so these digests apply to the published files:
 
 | Jar | SHA-256 |
 | --- | --- |
