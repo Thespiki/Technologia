@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:storage_terminal"
     },
-    "title": "One catalogue",
-    "description": "Connect up to four storage cores.",
+    "title": {
+      "translate": "advancement.technologia.nexus.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.nexus.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

@@ -26,10 +26,6 @@ public final class TechnologiaNeoForge {
             var target = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
             return target == null ? 0 : target.receiveEnergy(amount, simulate);
         };
-        Technologia.ENERGY_EXPORT = (machine, side) -> {
-            var target = machine.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK, machine.getBlockPos().relative(side), side.getOpposite());
-            if (target != null) machine.extractEnergy(target.receiveEnergy(Math.min(200, machine.energy.stored()), false), false);
-        };
     }
     private void register(RegisterEvent event) {
         event.register(Registries.BLOCK, helper -> { Technologia.createBlocks(); Technologia.BLOCKS.forEach((id, block) -> helper.register(Technologia.id(id), block)); });
@@ -41,7 +37,10 @@ public final class TechnologiaNeoForge {
             helper.register(Technologia.id("item_transfer"), Technologia.ITEM_TRANSFER_TYPE);
         });
         event.register(Registries.RECIPE_TYPE, helper -> helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.TYPE));
-        event.register(Registries.RECIPE_SERIALIZER, helper -> helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.SERIALIZER));
+        event.register(Registries.RECIPE_SERIALIZER, helper -> {
+            helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.SERIALIZER);
+            helper.register(Technologia.id("machine_crafting"), dev.technologia.recipe.MachineCraftingRecipe.SERIALIZER);
+        });
         event.register(Registries.MENU, helper -> {
             Technologia.MACHINE_MENU = new net.minecraft.world.inventory.MenuType<>(MachineMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
             helper.register(Technologia.id("machine"), Technologia.MACHINE_MENU);
@@ -54,10 +53,10 @@ public final class TechnologiaNeoForge {
     }
     private void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, Technologia.MACHINE_TYPE, (machine, side) -> machine.kind.capacity == 0 ? null : new IEnergyStorage() {
-            public int receiveEnergy(int max, boolean simulate) { return machine.receiveEnergy(Math.min(200, max), simulate); }
-            public int extractEnergy(int max, boolean simulate) { return machine.extractEnergy(Math.min(200, max), simulate); }
+            public int receiveEnergy(int max, boolean simulate) { return machine.receiveExternal(max, simulate); }
+            public int extractEnergy(int max, boolean simulate) { return machine.send(max, simulate); }
             public int getEnergyStored() { return machine.energy.stored(); }
-            public int getMaxEnergyStored() { return machine.kind.capacity; }
+            public int getMaxEnergyStored() { return machine.capacity(); }
             public boolean canExtract() { return machine.kind.suppliesEnergy(); }
             public boolean canReceive() { return machine.kind.acceptsEnergy(); }
         });

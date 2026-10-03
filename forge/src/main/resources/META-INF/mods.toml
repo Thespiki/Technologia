@@ -1,21 +1,21 @@
 modLoader="javafml"
-loaderVersion="[52,)"
+loaderVersion="${forge_loader_version_range}"
 license="All Rights Reserved"
 [[mods]]
 modId="technologia"
 version="${version}"
 displayName="Technologia"
 authors="Technologia"
-description='''Industrial automation with a unified visual language.'''
+description='''${description}'''
 [[dependencies.technologia]]
 modId="forge"
 mandatory=true
-versionRange="[52.0.28,)"
+versionRange="[${forge_version},)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.technologia]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.21.1,1.21.2)"
+versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"

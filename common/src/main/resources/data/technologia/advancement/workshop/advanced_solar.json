@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:advanced_solar_generator"
     },
-    "title": "Solar field",
-    "description": "Build a 64-FE/t solar array.",
+    "title": {
+      "translate": "advancement.technologia.advanced_solar.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.advanced_solar.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

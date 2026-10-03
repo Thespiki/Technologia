@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NPN",
+    "PAP",
+    "NPN"
+  ],
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "P": {
+      "tag": "c:plates/gold"
+    },
+    "A": {
+      "item": "technologia:advanced_circuit"
+    }
+  },
+  "result": {
+    "id": "technologia:tier_kit_tempered",
+    "count": 1
+  }
+}

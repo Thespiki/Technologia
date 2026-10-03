@@ -31,6 +31,10 @@ public final class StorageScreen extends AbstractContainerScreen<StorageMenu> {
     private boolean sortByCount;
     private boolean cataloguePressed;
     private String query = "";
+    private long shownFingerprint = Long.MIN_VALUE;
+    private String shownQuery;
+    private boolean shownSort;
+    private int totalItems, occupiedSlots;
 
     public StorageScreen(StorageMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -64,7 +68,16 @@ public final class StorageScreen extends AbstractContainerScreen<StorageMenu> {
         setInitialFocus(search);
     }
 
+    /** Rebuilds the catalogue only when the stored items, the search text or the order changed. */
+    private void refreshIfChanged() {
+        long fingerprint = menu.fingerprint();
+        if (fingerprint != shownFingerprint || !query.equals(shownQuery) || sortByCount != shownSort) refreshEntries();
+        if (deposit != null) deposit.active = !menu.getCarried().isEmpty();
+    }
+
     private void refreshEntries() {
+        shownFingerprint = menu.fingerprint(); shownQuery = query; shownSort = sortByCount;
+        totalItems = menu.totalItems(); occupiedSlots = menu.occupiedSlots();
         List<StorageMenu.Entry> all = menu.entries();
         totalTypes = all.size();
         String[] terms = query.trim().toLowerCase(Locale.ROOT).split("\\s+");
@@ -92,7 +105,7 @@ public final class StorageScreen extends AbstractContainerScreen<StorageMenu> {
     }
 
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        refreshEntries();
+        refreshIfChanged();
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
         StorageMenu.Entry hovered = entryAt(mouseX, mouseY);
@@ -143,7 +156,7 @@ public final class StorageScreen extends AbstractContainerScreen<StorageMenu> {
         g.drawString(font, text("title", "Nexus storage"), 14, 12, 0xffedf4fc, false);
         Component pageLabel = text("page", "%s / %s", page + 1, pageCount());
         g.drawCenteredString(font, pageLabel, 64, 120, 0xffedf4fc);
-        Component status = text("status", "%s/%s types | %s items | %s/%s slots", filtered.size(), totalTypes, menu.totalItems(), menu.occupiedSlots(), menu.capacity());
+        Component status = text("status", "%s/%s types | %s items | %s/%s slots", filtered.size(), totalTypes, totalItems, occupiedSlots, menu.capacity());
         g.drawString(font, status, 14, 138, 0xffaebed1, false);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xffaebed1, false);
         if (filtered.isEmpty()) {

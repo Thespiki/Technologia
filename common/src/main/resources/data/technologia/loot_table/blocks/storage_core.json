@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:storage_core"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

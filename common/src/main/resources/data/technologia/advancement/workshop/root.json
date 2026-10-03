@@ -3,8 +3,12 @@
     "icon": {
       "id": "technologia:machine_frame"
     },
-    "title": "A workshop worth building",
-    "description": "Craft a Machine Frame.",
+    "title": {
+      "translate": "advancement.technologia.root.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.root.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "crusher",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "technologia:copper_fragment"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "technologia:copper_dust",
+    "count": 1
+  },
+  "time": 60,
+  "energy": 20
+}

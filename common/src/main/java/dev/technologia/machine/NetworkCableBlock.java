@@ -43,6 +43,15 @@ public final class NetworkCableBlock extends PipeBlock {
         return state;
     }
 
+    @Override protected void onPlace(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, BlockState oldState, boolean moving) {
+        if (!state.is(oldState.getBlock())) dev.technologia.Technologia.topologyChanged();
+        super.onPlace(state, level, pos, oldState, moving);
+    }
+    @Override protected void onRemove(BlockState state, net.minecraft.world.level.Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (!state.is(newState.getBlock())) dev.technologia.Technologia.topologyChanged();
+        super.onRemove(state, level, pos, newState, moving);
+    }
+
     @Override protected BlockState updateShape(BlockState state, Direction direction, BlockState neighbor,
                                                LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         return state.setValue(PROPERTY_BY_DIRECTION.get(direction), connectsTo(neighbor));

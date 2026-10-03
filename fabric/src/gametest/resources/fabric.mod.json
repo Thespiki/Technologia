@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "technologia_gametest",
+  "version": "1.0.0",
+  "name": "Technologia GameTests",
+  "description": "Dev-only checks for the Fabric build of Technologia. Never shipped.",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "dev.technologia.test.FabricSmokeTests"
+    ]
+  },
+  "depends": {
+    "technologia": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

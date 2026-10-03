@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:biomass_generator"
     },
-    "title": "Circular workshop",
-    "description": "Power equipment with renewable biomass.",
+    "title": {
+      "translate": "advancement.technologia.biomass.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.biomass.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

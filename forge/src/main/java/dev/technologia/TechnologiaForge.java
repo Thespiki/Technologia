@@ -30,11 +30,6 @@ public final class TechnologiaForge {
             if (block == null) return 0;
             return block.getCapability(ForgeCapabilities.ENERGY, side).map(storage -> storage.receiveEnergy(amount, simulate)).orElse(0);
         };
-        Technologia.ENERGY_EXPORT = (machine, side) -> {
-            var target = machine.getLevel().getBlockEntity(machine.getBlockPos().relative(side));
-            if (target != null) target.getCapability(ForgeCapabilities.ENERGY, side.getOpposite()).ifPresent(storage ->
-                    machine.extractEnergy(storage.receiveEnergy(Math.min(200, machine.energy.stored()), false), false));
-        };
     }
     private void register(RegisterEvent event) {
         event.register(Registries.BLOCK, helper -> { Technologia.createBlocks(); Technologia.BLOCKS.forEach((id, block) -> helper.register(Technologia.id(id), block)); });
@@ -46,7 +41,10 @@ public final class TechnologiaForge {
             helper.register(Technologia.id("item_transfer"), Technologia.ITEM_TRANSFER_TYPE);
         });
         event.register(Registries.RECIPE_TYPE, helper -> helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.TYPE));
-        event.register(Registries.RECIPE_SERIALIZER, helper -> helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.SERIALIZER));
+        event.register(Registries.RECIPE_SERIALIZER, helper -> {
+            helper.register(Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.SERIALIZER);
+            helper.register(Technologia.id("machine_crafting"), dev.technologia.recipe.MachineCraftingRecipe.SERIALIZER);
+        });
         event.register(Registries.MENU, helper -> {
             Technologia.MACHINE_MENU = new net.minecraft.world.inventory.MenuType<>(MachineMenu::new, net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS);
             helper.register(Technologia.id("machine"), Technologia.MACHINE_MENU);
@@ -60,21 +58,23 @@ public final class TechnologiaForge {
     private void attach(AttachCapabilitiesEvent<BlockEntity> event) {
         if (!(event.getObject() instanceof MachineBlockEntity machine)) return;
         LazyOptional<IEnergyStorage> energy = LazyOptional.of(() -> new IEnergyStorage() {
-            public int receiveEnergy(int max, boolean simulate) { return machine.receiveEnergy(Math.min(200, max), simulate); }
-            public int extractEnergy(int max, boolean simulate) { return machine.extractEnergy(Math.min(200, max), simulate); }
+            public int receiveEnergy(int max, boolean simulate) { return machine.receiveExternal(max, simulate); }
+            public int extractEnergy(int max, boolean simulate) { return machine.send(max, simulate); }
             public int getEnergyStored() { return machine.energy.stored(); }
-            public int getMaxEnergyStored() { return machine.kind.capacity; }
+            public int getMaxEnergyStored() { return machine.capacity(); }
             public boolean canExtract() { return machine.kind.suppliesEnergy(); }
             public boolean canReceive() { return machine.kind.acceptsEnergy(); }
         });
-        var items = LazyOptional.of(() -> new SidedInvWrapper(machine, Direction.DOWN));
+        // One handler per face, like NeoForge, so sided rules stay identical on both loaders.
+        java.util.Map<Direction, LazyOptional<SidedInvWrapper>> items = new java.util.EnumMap<>(Direction.class);
+        for (Direction face : Direction.values()) items.put(face, LazyOptional.of(() -> new SidedInvWrapper(machine, face)));
         event.addCapability(Technologia.id("machine"), new ICapabilityProvider() {
             public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction side) {
                 if (capability == ForgeCapabilities.ENERGY && machine.kind.capacity > 0) return energy.cast();
-                if (capability == ForgeCapabilities.ITEM_HANDLER) return items.cast();
+                if (capability == ForgeCapabilities.ITEM_HANDLER) return items.get(side == null ? Direction.DOWN : side).cast();
                 return LazyOptional.empty();
             }
         });
-        event.addListener(energy::invalidate); event.addListener(items::invalidate);
+        event.addListener(energy::invalidate); items.values().forEach(handler -> event.addListener(handler::invalidate));
     }
 }

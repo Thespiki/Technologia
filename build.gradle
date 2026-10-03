@@ -36,6 +36,15 @@ gradle.projectsEvaluated {
                     if (zip.getEntry(artifact.metadata) == null) {
                         throw new GradleException("Missing ${loader} mod metadata in ${jarFile}")
                     }
+                    // A release jar carries its tier data and licences, and never the dev-only tests.
+                    ['technologia/tiers.json', "LICENSE_${mod_name}", 'MULTILOADER_TEMPLATE_LICENSE.txt', 'TEMPLATE_LICENSE.txt', 'THIRD_PARTY_NOTICES.txt'].each { required ->
+                        if (zip.getEntry(required) == null) {
+                            throw new GradleException("Missing ${required} in ${jarFile}")
+                        }
+                    }
+                    if (zip.entries().asIterator().any { it.name.startsWith('dev/technologia/test/') || it.name.startsWith('data/technologia/structure/') }) {
+                        throw new GradleException("Test classes or templates leaked into ${jarFile}")
+                    }
                 }
                 def preservedJar = file("releases/${project.version}/${mod_id}-${loader}-${minecraft_version}-${project.version}.jar")
                 if (preservedJar.exists() && java.nio.file.Files.mismatch(jarFile.toPath(), preservedJar.toPath()) != -1L) {

@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:coal_generator"
     },
-    "title": "First spark",
-    "description": "Build a combustion generator.",
+    "title": {
+      "translate": "advancement.technologia.power.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.power.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

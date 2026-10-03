@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:recycler"
     },
-    "title": "Recover the metal",
-    "description": "Salvage nuggets from old equipment.",
+    "title": {
+      "translate": "advancement.technologia.recycler.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.recycler.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

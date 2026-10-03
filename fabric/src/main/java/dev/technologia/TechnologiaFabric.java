@@ -11,7 +11,6 @@ import net.minecraft.core.registries.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import team.reborn.energy.api.EnergyStorage;
-import team.reborn.energy.api.EnergyStorageUtil;
 
 public final class TechnologiaFabric implements ModInitializer {
     public void onInitialize() {
@@ -29,6 +28,7 @@ public final class TechnologiaFabric implements ModInitializer {
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Technologia.id("item_transfer"), Technologia.ITEM_TRANSFER_TYPE);
         Registry.register(BuiltInRegistries.RECIPE_TYPE, Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.TYPE);
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Technologia.id("processing"), dev.technologia.recipe.MachineRecipe.SERIALIZER);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Technologia.id("machine_crafting"), dev.technologia.recipe.MachineCraftingRecipe.SERIALIZER);
         Technologia.createTab();
         Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Technologia.id("machine"), Technologia.MACHINE_TYPE);
         Registry.register(BuiltInRegistries.MENU, Technologia.id("machine"), Technologia.MACHINE_MENU);
@@ -50,10 +50,6 @@ public final class TechnologiaFabric implements ModInitializer {
                 if (!simulate) transaction.commit();
                 return accepted;
             }
-        };
-        Technologia.ENERGY_EXPORT = (machine, side) -> {
-            var target = EnergyStorage.SIDED.find(machine.getLevel(), machine.getBlockPos().relative(side), side.getOpposite());
-            if (target != null) EnergyStorageUtil.move(energy(machine), target, 200, null);
         };
     }
     private static FabricEnergy energy(MachineBlockEntity machine) {

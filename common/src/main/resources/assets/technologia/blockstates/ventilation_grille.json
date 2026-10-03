@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=north": {
       "model": "technologia:block/ventilation_grille"
+    },
+    "facing=east": {
+      "model": "technologia:block/ventilation_grille",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "technologia:block/ventilation_grille",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "technologia:block/ventilation_grille",
+      "y": 270
     }
   }
 }

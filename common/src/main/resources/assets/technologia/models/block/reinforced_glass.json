@@ -28,22 +28,28 @@
       ],
       "faces": {
         "down": {
-          "texture": "#glass"
+          "texture": "#glass",
+          "cullface": "down"
         },
         "up": {
-          "texture": "#glass"
+          "texture": "#glass",
+          "cullface": "up"
         },
         "north": {
-          "texture": "#glass"
+          "texture": "#glass",
+          "cullface": "north"
         },
         "south": {
-          "texture": "#glass"
+          "texture": "#glass",
+          "cullface": "south"
         },
         "west": {
-          "texture": "#glass"
+          "texture": "#glass",
+          "cullface": "west"
         },
         "east": {
-          "texture": "#glass"
+          "texture": "#glass",
+          "cullface": "east"
         }
       }
     }

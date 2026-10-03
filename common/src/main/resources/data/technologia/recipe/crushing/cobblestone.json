@@ -1,0 +1,18 @@
+{
+  "type": "technologia:processing",
+  "machine": "crusher",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:cobblestone"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "minecraft:gravel",
+    "count": 1
+  },
+  "time": 80,
+  "energy": 20
+}

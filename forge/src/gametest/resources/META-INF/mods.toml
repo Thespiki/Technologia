@@ -1,0 +1,15 @@
+# Dev-only companion mod: Forge finds mods by their mods.toml, so the test classes need their own.
+modLoader="javafml"
+loaderVersion="[52,)"
+license="All Rights Reserved"
+[[mods]]
+modId="technologia_gametest"
+version="0"
+displayName="Technologia GameTests"
+description='''Development-only server tests for Technologia. Never shipped.'''
+[[dependencies.technologia_gametest]]
+modId="technologia"
+mandatory=true
+versionRange="[0,)"
+ordering="AFTER"
+side="BOTH"

@@ -37,13 +37,24 @@ jobs:
           fs.appendFileSync(process.env.GITHUB_ENV, `MOD_VERSION=${version}\nMINECRAFT_VERSION=${minecraft}\n`);
           NODE
       - run: node tools/verify-resources.mjs
+      - name: Tagged resources match the generator
+        shell: bash
+        run: |
+          node tools/generate-resources.mjs
+          # PNG and NBT bytes depend on the zlib build, so only text output is compared.
+          git diff --exit-code -- . ':(exclude)*.png' ':(exclude)*.nbt'
+          untracked="$(git status --porcelain --untracked-files=all | grep '^??' || true)"
+          if [ -n "$untracked" ]; then echo "Generated files are missing from the tag:"; echo "$untracked"; exit 1; fi
+          # The jars must be built from the tagged files, not from regenerated ones.
+          git checkout -- .
       - name: Build the release and test server behavior
         shell: bash
         run: |
           chmod +x gradlew
           set -o pipefail
-          ./gradlew packageRelease :neoforge:runGameTestServer --console=plain 2>&1 | tee release-build.log
-          node -e "if (!/All [1-9][0-9]* required tests passed/.test(require('fs').readFileSync('release-build.log','utf8'))) process.exit(1)"
+          ./gradlew packageRelease :neoforge:runGameTestServer :fabric:runGametest :forge:runGameTestServer --console=plain 2>&1 | tee release-build.log
+          # One success summary per loader: NeoForge (full suite), Fabric and Forge (smoke tests).
+          node -e "const n=(require('fs').readFileSync('release-build.log','utf8').match(/All [1-9][0-9]* required tests passed/g)||[]).length; if (n !== 3) { console.error('Expected 3 passing test summaries, found ' + n); process.exit(1) }"
       - name: Publish the three loader jars
         env:
           GH_TOKEN: ${{ github.token }}

@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:steel_ingot"
     },
-    "title": "Steelworks",
-    "description": "Alloy iron and coal dust.",
+    "title": {
+      "translate": "advancement.technologia.steel.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.steel.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

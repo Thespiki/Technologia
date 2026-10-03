@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:alloy_smelter"
     },
-    "title": "Better together",
-    "description": "Combine counted ingredients into alloys.",
+    "title": {
+      "translate": "advancement.technologia.alloys.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.alloys.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

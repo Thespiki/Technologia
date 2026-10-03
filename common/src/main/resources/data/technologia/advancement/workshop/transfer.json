@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:item_transfer"
     },
-    "title": "Keep it moving",
-    "description": "Transfer and filter adjacent inventories.",
+    "title": {
+      "translate": "advancement.technologia.transfer.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.transfer.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

@@ -63,6 +63,18 @@ public final class StorageNetwork {
         if (!cores.contains(core)) throw new IllegalArgumentException("Core is not in the terminal network");
         BlockPos anchor = terminal.immutable();
         return new Container() {
+            // The network is re-walked only after a topology change, or once a second as a safety net.
+            private int checkedTopology = Technologia.topology();
+            private long checkedAt = level.getGameTime();
+            private boolean connected = true;
+            private boolean sameNetwork() {
+                long now = level.getGameTime();
+                if (checkedTopology != Technologia.topology() || now - checkedAt >= 20 || now < checkedAt) {
+                    connected = findCores(level, anchor).equals(cores);
+                    checkedTopology = Technologia.topology(); checkedAt = now;
+                }
+                return connected;
+            }
             private MachineBlockEntity coreAt(int slot) { return cores.get(slot / 54); }
             public int getContainerSize() { return cores.size() * 54; }
             public boolean isEmpty() { return cores.stream().allMatch(MachineBlockEntity::isEmpty); }
@@ -79,7 +91,7 @@ public final class StorageNetwork {
                         && level.getBlockState(anchor).is(Technologia.BLOCKS.get("storage_terminal"))
                         && cores.stream().allMatch(c -> !c.isRemoved() && level.hasChunkAt(c.getBlockPos())
                             && level.getBlockEntity(c.getBlockPos()) == c)
-                        && findCores(level, anchor).equals(cores);
+                        && sameNetwork();
             }
         };
     }

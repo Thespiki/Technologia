@@ -27,6 +27,7 @@
     "technologia:biomass_generator",
     "technologia:advanced_energy_cell",
     "technologia:advanced_solar_generator",
+    "technologia:auto_sieve",
     "technologia:steel_casing",
     "technologia:bronze_casing",
     "technologia:industrial_bricks",
@@ -36,6 +37,8 @@
     "technologia:steel_pillar",
     "technologia:ventilation_grille",
     "technologia:control_panel",
-    "technologia:reinforced_glass"
+    "technologia:reinforced_glass",
+    "technologia:gold_energy_conduit",
+    "technologia:resonite_energy_conduit"
   ]
 }

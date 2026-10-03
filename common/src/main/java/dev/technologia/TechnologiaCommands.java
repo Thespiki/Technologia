@@ -46,8 +46,8 @@ public final class TechnologiaCommands {
                 .then(Commands.literal("status").requires(source -> source.hasPermission(2)).executes(context -> {
                     var b = Technologia.BALANCE;
                     context.getSource().sendSuccess(() -> Component.literal("Technologia alpha | generator " + b.generatorPerTick()
-                            + " FE/t | machines " + b.machineEnergyPerTick() + " FE/t | cycle " + b.processingTicks()
-                            + " ticks | miner " + (b.minerEnabled() ? "enabled" : "disabled") + ", radius " + b.minerRadius()
+                            + " FE/t | electric furnace " + b.machineEnergyPerTick() + " FE/t, " + b.processingTicks()
+                            + " ticks | " + dev.technologia.machine.MachineTier.count() + " machine tiers | miner " + (b.minerEnabled() ? "enabled" : "disabled") + ", radius " + b.minerRadius()
                             + ", depth " + b.minerDepth() + ". Config: config/technologia.json (restart required)."), false);
                     return 1;
                 })));

@@ -61,7 +61,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "cullface": "west"
         },
         "east": {
           "texture": "#jacket",

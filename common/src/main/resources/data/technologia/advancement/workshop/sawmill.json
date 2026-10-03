@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:sawmill"
     },
-    "title": "Waste becomes fuel",
-    "description": "Saw logs into planks and sawdust.",
+    "title": {
+      "translate": "advancement.technologia.sawmill.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.sawmill.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

@@ -111,7 +111,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "cullface": "north"
         },
         "south": {
           "texture": "#jacket",
@@ -188,7 +189,8 @@
             0,
             16,
             16
-          ]
+          ],
+          "cullface": "south"
         },
         "west": {
           "texture": "#jacket",

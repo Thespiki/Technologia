@@ -2,18 +2,18 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "IPI",
     "PGP",
-    "IPI"
+    "GLG",
+    "PGP"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:iron_nugget"
-    },
     "P": {
       "tag": "c:plates/iron"
     },
     "G": {
+      "item": "minecraft:glass"
+    },
+    "L": {
       "item": "minecraft:glowstone"
     }
   },

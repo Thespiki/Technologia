@@ -2,19 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "IPI",
+    "GPG",
     "PGP",
-    "IPI"
+    "GPG"
   ],
   "key": {
-    "I": {
-      "item": "minecraft:iron_nugget"
+    "G": {
+      "item": "minecraft:glass"
     },
     "P": {
       "tag": "c:plates/iron"
-    },
-    "G": {
-      "item": "minecraft:glass"
     }
   },
   "result": {

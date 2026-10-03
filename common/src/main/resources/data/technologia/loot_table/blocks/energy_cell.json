@@ -8,11 +8,6 @@
           "type": "minecraft:item",
           "name": "technologia:energy_cell"
         }
-      ],
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
       ]
     }
   ]

@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:advanced_energy_cell"
     },
-    "title": "Power reserve",
-    "description": "Build a five-million-FE battery.",
+    "title": {
+      "translate": "advancement.technologia.advanced_power.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.advanced_power.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,

@@ -1,0 +1,35 @@
+{
+  "parent": "technologia:workshop/tier_kit",
+  "display": {
+    "icon": {
+      "id": "technologia:tier_kit_resonant"
+    },
+    "title": {
+      "translate": "advancement.technologia.resonant_kit.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.resonant_kit.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "obtained": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "technologia:tier_kit_resonant"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "obtained"
+    ]
+  ]
+}

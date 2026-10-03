@@ -4,8 +4,12 @@
     "icon": {
       "id": "technologia:energy_conduit"
     },
-    "title": "Wire the workshop",
-    "description": "Route power through conduits.",
+    "title": {
+      "translate": "advancement.technologia.conduits.title"
+    },
+    "description": {
+      "translate": "advancement.technologia.conduits.description"
+    },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,
