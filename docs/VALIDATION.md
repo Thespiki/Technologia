@@ -20,9 +20,12 @@ Checks run on 2026-10-02 and 2026-10-03 with Minecraft 1.21.1 and Java 21, on th
 | Client playtest of alpha.4 features | Not performed |
 | Fabric / Forge client start | Not performed |
 | Other mods, multiplayer, performance | Not performed |
-| GitHub build, release and site | Recorded after publication |
+| GitHub verification | [Three-loader build and server tests](https://github.com/Thespiki/Technologia/actions/runs/37103671596) passed on Linux for release source `e4c7bbf` before it was merged; the [release build and server tests](https://github.com/Thespiki/Technologia/actions/runs/37106437355) passed for the tag |
+| Publication | [Alpha.4 prerelease](https://github.com/Thespiki/Technologia/releases/tag/v0.1.0-alpha.4) published with exactly three jars. The three public jars were downloaded; their SHA-256 digests equal those of the jars built on the development PC |
+| Pages | [Deployment passed](https://github.com/Thespiki/Technologia/actions/runs/37106106567); the live page shows alpha.4 |
+| Earlier releases online | The alpha.1, alpha.2 and alpha.3 releases are still listed; their tags point at the same commits as before |
 
-SHA-256 of the alpha.4 jars built on the development PC (the published jars are built again by the release workflow from the tag, so their digests are listed on the release page, not here):
+SHA-256 of the alpha.4 jars. The release workflow builds the jars again from the tag on Linux; the result is byte-identical to the Windows build, so these digests apply to the published files:
 
 | Jar | SHA-256 |
 | --- | --- |
